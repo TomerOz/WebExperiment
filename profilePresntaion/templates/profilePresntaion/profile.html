@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'profilePresntaion/SliderStyle.css' %}">
+  </head>
+  <body>
+
+    <div class="slidecontainer">
+      <!-- <input type="range" min="1" max="100" value="50" class="slider" id="myRange",disabled="disabled"> -->
+      <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+    </div>
+  </body>
+  <script src="{% static 'profilePresntaion/SliderLogic.js' %}"></script>
+</html>

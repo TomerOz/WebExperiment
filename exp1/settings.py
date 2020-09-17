@@ -22,6 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '(pr0w321w)_4-*p-o7!rl#^ajfi@af0^+@8uc7=zw%)(9%%#*c'
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -128,4 +129,4 @@ STATIC_URL = '/static/'
 try:
     from local_setting import *
 except ImportError:
-    pass 
+    pass

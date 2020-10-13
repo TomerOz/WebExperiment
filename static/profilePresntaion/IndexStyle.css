@@ -1,0 +1,16 @@
+.jumbotron {
+  background: #7a2134;
+  color: white;
+}
+
+.btn {
+  color: white;
+  background: #302d2d;
+  border: #807d7d;
+  font-weight: bold;
+}
+
+.btn:hover  {
+  background: #b5aeae;
+  color: #7a2134;
+}

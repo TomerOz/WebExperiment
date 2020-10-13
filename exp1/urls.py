@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from .GetSubjectProfile import viwes
 
 urlpatterns = [
+    path('', views.home_page, name='home_page'),
     path('profilePresntaion/', include('profilePresntaion.urls')),
+    path('GetSubjectProfile/', include('GetSubjectProfile.urls')),
     path('admin/', admin.site.urls),
 ]

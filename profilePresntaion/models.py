@@ -7,13 +7,18 @@ class ProfileModel(models.Model):
     def __str__(self):
         return ("ProfileModel" + "-" + self.name)
 
-class Feature(models.Model):
-    right_end = models.CharField(max_length=200, default="a")
-    left_end = models.CharField(max_length=200, default="b")
-    feature_name = models.CharField(max_length=200, default="c")
-    value = models.IntegerField(default=0)
-
-    target_profile = models.ForeignKey(ProfileModel, on_delete=models.CASCADE)
+class FeatureLabels(models.Model):
+    right_end = models.CharField(max_length=200, default="right")
+    left_end = models.CharField(max_length=200, default="left")
+    feature_name = models.CharField(max_length=200, default="Name")
 
     def __str__(self):
-        return (self.feature_name)
+        return ("Feature Label" + "-" + self.feature_name)
+
+class FeatureValue(models.Model):
+    target_profile = models.ForeignKey(ProfileModel, on_delete=models.CASCADE)
+    target_feature = models.ForeignKey(FeatureLabels, on_delete=models.CASCADE)
+    value = models.IntegerField()
+
+    def __str__(self):
+        return (self.target_profile.name + " " + self.target_feature.feature_name + " " + str(self.value))

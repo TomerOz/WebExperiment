@@ -10,10 +10,34 @@
   </head>
   <body>
 
-    <div class="slidecontainer">
+    <div class="slidecontainer" id="slidecontainer">
       <!-- <input type="range" min="1" max="100" value="50" class="slider" id="myRange",disabled="disabled"> -->
-      <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+      <!-- <h3 id="title">Title</h3> -->
+      <!-- <div class="row">
+          <div class="column side">ar</div>
+          <div class="column middle">
+              <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+          </div>
+          <div class="column side">al</div> -->
+      </div>
+      <br>
+      <div class="container">
+        <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">Next</button>
+      </div>
+
+
+
+      <script>
+       var context = {{context|safe}}
+      // working with the variable context
+      </script>
     </div>
   </body>
+
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
+
   <script src="{% static 'profilePresntaion/SliderLogic.js' %}"></script>
 </html>

@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .GetSubjectProfile import viwes
+from GetSubjectProfile import views
 
 urlpatterns = [
     path('', views.home_page, name='home_page'),

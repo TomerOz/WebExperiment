@@ -23,6 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '(pr0w321w)_4-*p-o7!rl#^ajfi@af0^+@8uc7=zw%)(9%%#*c'
 
+# Things I added:
+AUTH_USER_MODEL  = 'core.User'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -35,6 +38,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'profilePresntaion.apps.ProfilepresntaionConfig',
     'GetSubjectProfile.apps.GetsubjectprofileConfig',
+    'Register.apps.RegisterConfig',
+    'core.apps.CoreConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

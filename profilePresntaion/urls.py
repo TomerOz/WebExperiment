@@ -6,4 +6,5 @@ app_name = 'profilePresntaion'
 urlpatterns = [
     path('', views.index, name='index'),
     path('<int:profile_pk>/', views.present_profile, name='present_profile'),
+    path('getSubjectProfile/', views.get_subject_profile, name='getSubjectProfile'),
 ]

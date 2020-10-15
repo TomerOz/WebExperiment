@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'profilePresntaion/GetSubject/SubjectSliderStyle.css' %}">
+  </head>
+  <body>
+
+<form action ="" method="post">
+  {% csrf_token %}
+  <!-- {% for f in features_list1 %}
+      <h3 id="title">{{f.0}}</h3>
+      <div class="row">
+          <div class="column side">{{ f.1 }}</div>
+          <div class="column middle">
+              <input type="range" min="1" max="100" value="50" class="slider" id="myRange" name="a">
+          </div>
+          <div class="column side">{{f.2}}</div>
+      </div>
+    {% endfor %} -->
+    <div class="slidecontainer" id="slidecontainer">
+      <!-- <input type="range" min="1" max="100" value="50" class="slider" id="myRange", disabled="Disabled"> -->
+    </div>
+    <br>
+    <div class="container">
+      <input type="submit" value="OK">
+      <button class="btn btn-primary btn" type="submit" name="button">Submit</button>
+    </div>
+  </form>
+
+      <script>
+       var context = {{features_list|safe}}
+      // working with the variable context
+      </script>
+  </body>
+
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
+
+  <script src="{% static 'profilePresntaion/GetSubject/SubjectSliderLogic.js' %}"></script>
+</html>

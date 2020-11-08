@@ -2,6 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title></title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -12,16 +13,6 @@
 
 <form action ="" method="post">
   {% csrf_token %}
-  <!-- {% for f in features_list1 %}
-      <h3 id="title">{{f.0}}</h3>
-      <div class="row">
-          <div class="column side">{{ f.1 }}</div>
-          <div class="column middle">
-              <input type="range" min="1" max="100" value="50" class="slider" id="myRange" name="a">
-          </div>
-          <div class="column side">{{f.2}}</div>
-      </div>
-    {% endfor %} -->
     <div class="slidecontainer" id="slidecontainer">
       <!-- <input type="range" min="1" max="100" value="50" class="slider" id="myRange", disabled="Disabled"> -->
     </div>

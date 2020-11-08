@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'GetSubjectProfile.apps.GetsubjectprofileConfig',
     'Register.apps.RegisterConfig',
     'core.apps.CoreConfig',
+    'home.apps.HomeConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -16,8 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from Register import views as register_views
-
+from home.views import home_page
 urlpatterns = [
+    path('', home_page, name='home'),
     path('signup/', register_views.signup, name='signup'),
     path('signin/', register_views.signin, name='signin'),
     path('profilePresntaion/', include('profilePresntaion.urls')),

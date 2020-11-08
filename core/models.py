@@ -20,6 +20,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
+    exp1_enc_num = models.CharField(max_length=30, blank=True)
+
     #avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
 
     objects = UserManager()

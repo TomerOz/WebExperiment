@@ -1,8 +1,16 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 
 from django.contrib.auth import login, logout, authenticate
 from .forms import RegisterForm
 import ipdb
+
+#targetPageToURL = {"SGS1" : "profilePresntaion/PhaseDecision", None : 'home/home'} # for simple "redirect"
+targetPageToURL = {"SGS1" : "profilePresntaion:PhaseDecision", None : 'home:home'} # for "reverse" --> totally new path
+
+
+def logout_user(request):
+    logout(request)
+    return redirect(reverse('home:home'))
 
 def signup(request):
     if request.method == 'POST':
@@ -19,19 +27,22 @@ def signup(request):
         form = RegisterForm()
 
     return render(request, 'Register/signup.html', {'form': form})
-#sdfg45345fgsdf4
 
-def signin(request):
-    if request.method == 'POST':
+def signin(request, targetPage=None):
+    if request.method == 'POST': # User tries to login
         logout(request)
         email = request.POST["email"]
         password = request.POST["password"]
         user = authenticate(email=email, password=password)
         form_feedback = {}
-        if user != None:
+        if user != None: # Successful login
             login(request, user)
-        else:
+            #return redirect(targetPageToURL[targetPage])
+            return redirect(reverse(targetPageToURL[targetPage]))
+
+        else: # Errors
             form_feedback["errors"] = "Invalid Details"
-        return render(request, 'Register/signin.html', form_feedback)
-    else:
+            return render(request, 'Register/signin.html', form_feedback)
+
+    else: # User is about to login
         return render(request, 'Register/signin.html' )

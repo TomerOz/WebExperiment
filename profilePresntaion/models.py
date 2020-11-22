@@ -57,6 +57,7 @@ class Subject(ProfileModel):
     trials_string_list = models.CharField(max_length=800, default="")
     trials_responses_list = models.CharField(max_length=800, default="")
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
+    current_phase = models.CharField(max_length=30, default="Consent phase")
 
     # def initiate_experiment_phase():
     # def get_experiment_phases

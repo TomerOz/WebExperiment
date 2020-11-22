@@ -10,15 +10,28 @@
   <body>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'profilePresntaion/IndexStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'profilePresntaion/InstructionLogic.js' %}">
 
   <div class="container">
     <div class="jumbotron">
       <!-- Here instructions will be inserted -->
-      Instruction ...
+      {% for instruction in instructions_list %}
+      <p>{{ instruction }}</p>
+      {% endfor %}
     </div>
-  </div>
+
 
     {{subject}}
+    <form class="" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+    </form>
+    <button class="btn btn-primary btn-lg" type="button" name="button">Next</button>
+  </div>
+    <script>
+     var context = {{context|safe}}
+    // working with the variable context
+    </script>
 
   </body>
 </html>

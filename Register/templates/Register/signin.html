@@ -29,6 +29,7 @@
                         <h2 class="form-title">Sign in</h2>
                         <form method="POST" class="register-form" id="login-form">
                           {% csrf_token %}
+                          <input type="hidden" name="TargetURL" value="{{ targetURLAfterLogin }}">
                           <div class="form-group">
                             <label for="email"><i class="zmdi zmdi-email"></i></label>
                             <input type="email" name="email" id="email" placeholder="Your Email"/>

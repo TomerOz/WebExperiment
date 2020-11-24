@@ -12,14 +12,12 @@
     <link rel="stylesheet" type="text/css" href="{% static 'profilePresntaion/IndexStyle.css' %}">
 
   <div class="container">
-      <div class="jumbotron">
+      <div id="instructionContainer" class="jumbotron">
 
         <h1>Thank you for participating!</h1>
 
         <p>Concent Form:</p>
-        {% for instruction in instructions_list %}
-        <p>{{ instruction }}</p>
-        {% endfor %}
+        <p>{{ single_instructions }}</p>
 
         <p>By clicking I agree that: </p>
 
@@ -50,5 +48,9 @@
         </form>
       </div>
     </div>
+    <script type="text/javascript">
+
+        fitty(document.getElementsByClassName('jumbotron'))
+    </script>
   </body>
 </html>

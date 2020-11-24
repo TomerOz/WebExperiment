@@ -1,3 +1,7 @@
+.container {
+  height: 100px;
+}
+
 .jumbotron {
   background: #7a2134;
   color: white;
@@ -13,9 +17,4 @@
 .btn:hover  {
   background: #b5aeae;
   color: #7a2134;
-}
-
-.container {
-    height: 100vh;
-    overflow: auto;
 }

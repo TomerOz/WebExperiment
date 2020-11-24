@@ -1,7 +1,16 @@
 .slidecontainer {
-  width: 75%; /* Width of the outside container */
+  max-width: 75%; /* Width of the outside container */
   margin: auto;
 }
+
+/* Following lines define a diferent width for screens smaller the 1366px */
+@media all and (min-width: 1366px) {
+  .slidecontainer {
+    max-width: 50%; /* Width of the outside container */
+    margin: auto;
+  }
+}
+
 
 /* The slider itself */
 .slider {

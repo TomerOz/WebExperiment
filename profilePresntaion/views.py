@@ -6,17 +6,18 @@ import json
 import ipdb
 import random
 
+from .myUtils.FormsProcessing import FormsProcessor, PhasesDataSaver
 
 sgs1_phases = ["Consent phase", "Pre Task",
             "Pre Get Profile", "During Get Profile",
-            "Pre Profile Presentation", "During Profile Presentation",
+            "Pre Profile Presentation", "Pre Task", "During Profile Presentation",
             "Pre Game", "During Game"]
 
 phase_to_html_page = {
                         "Consent phase":                "Index",
                         "Pre Task":                     "instruction",
                         "Pre Get Profile":              "instruction",
-                        "During Get Profile":           "GetSubject/getSubjectProfile",
+                        "During Get Profile":           "GetSubject\getSubjectProfile",
                         "Pre Profile Presentation":     "instruction",
                         "During Profile Presentation":  "profile",
                         "Pre Game":                     "instruction",
@@ -25,26 +26,14 @@ phase_to_html_page = {
 
 form_phase = "form_phase"
 
+forms_processor = FormsProcessor()
+phases_data_saver = PhasesDataSaver(FeatureLabels, FeatureValue)
+
 # saves subject model with the new phase
 def _update_subject_phase(subject):
     subject_updated_phase = _get_next_phase(subject)
     subject.current_phase = subject_updated_phase
     subject.save()
-
-# checks if consent form was filled correctly - returns a list of errors
-def _process_consent_form(post_data):
-    consent_form_fields = {
-                            "ReadCheckbox" : "You have to read this consent form entirely",
-                            "18Checkbox": "You must be 18 to continue",
-                            "freeWillCheckbox": "Participation is allowed only under free free will",
-                            "privacyPolicy": "You must read the privacy policy and agree to its terms",
-                            }
-    errors = []
-    for field in consent_form_fields.keys():
-        if not field in post_data:
-            errors.append(consent_form_fields[field])
-
-    return errors
 
  # return a query set of all phases-model instances associated with this subject's experiment
 def _get_all_subject_phases(subject):
@@ -76,18 +65,6 @@ def _create_subject(user):
     user.exp1_enc_num = str(new_subject.pk)
     user.save()
     return new_subject
-
-# Fills subject model with posted features provided by the subject user
-def _create_subject_profile(user, post_data):
-        new_subject = _get_user_subject(user)
-        new_subject.featurevalue_set.all().delete() # deeleting existing features data on this profile if re-entered
-        feaure_labels = FeatureLabels.objects.values_list("feature_name", flat=True)
-        for feature_name in feaure_labels:
-            feature = FeatureLabels.objects.get(feature_name=feature_name)
-            feature_value = int(post_data[feature_name])
-            subject_feature = FeatureValue(target_profile=new_subject, target_feature=feature, value=feature_value)
-            subject_feature.save()
-            new_subject.save(force_update=True)
 
 # return the Subject instance associated with the authenticated user
 def _get_user_subject(user):
@@ -128,18 +105,14 @@ def _get_profiles_list_context(all_profiles):
                 profiles_data[profile.id]["features"][f_name]["r"] = f.target_feature.right_end
     return profiles_data
 
-# New subject - creating his/her new progile:
-def get_page_get_subject_profile(request, phase_code):
-    if request.method != 'POST': # On starting to add new subject profile
-        features_list = []
-        for fl in FeatureLabels.objects.all():
-            features_list.append([fl.feature_name, fl.right_end, fl.left_end])
-        random.shuffle(features_list)
-        context = {form_phase: phase_code, "features_list" : json.dumps(features_list)}
-        return render(request, 'profilePresntaion/GetSubject/getSubjectProfil.html', context)
-    else: # On saving a new subject profile
-        _create_subject_profile(request.user, request.POST)
-        get_page_present_profile(request, phase_code) # Not necceraliy here - what should be the next page?
+# Preparing context for the a new subject page
+def _get_new_subject_profile_page_context():
+    features_list = []
+    for fl in FeatureLabels.objects.all():
+        features_list.append([fl.feature_name, fl.right_end, fl.left_end])
+    random.shuffle(features_list)
+    return {"features_list" : json.dumps(features_list)}
+
 
 # Initiation of profiles presentation phase - renders all profiles as JSON, each profile presentation is manged via js
 def get_page_present_profile(request, phase_code):
@@ -148,34 +121,50 @@ def get_page_present_profile(request, phase_code):
     context = {form_phase: phase_code, 'context': json.dumps(profiles_data)}
     return render(request, 'profilePresntaion/profile.html', context)
 
-def render_next_phase(request, users_subject, is_phase_update_needed=True):
-    if is_phase_update_needed:
-        _update_subject_phase(users_subject) # updates "users_subject.current_phase"
+
+def render_next_phase(request, users_subject):
+    errors = None # a place holder for errors
+    if request.method == "POST":
+        errors = forms_processor.process_form(users_subject.current_phase, request.POST)
+        phases_data_saver.save_posted_data(users_subject.current_phase, request.POST, users_subject)
+        if (len(errors) == 0) & (request.POST[form_phase] == users_subject.current_phase):
+            # condition fails on errors or GET (user was sent from home page with a get method) or
+            #in case of page refresh request.POST is previous phasewhile users_subject.current_phase moved forward
+            _update_subject_phase(users_subject) # updates "users_subject.current_phase"
     phases_instructions = _get_phases_instructions(users_subject.current_phase)
-    context = {"form_phase": users_subject.current_phase, "instructions_list": phases_instructions}
+    single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
+    context = {"form_phase": users_subject.current_phase,
+                "instructions_list":  json.dumps(phases_instructions),
+                "errors":errors,
+                "single_instructions": single_instruction}
+
+    if users_subject.current_phase == "During Get Profile":
+        context.update(_get_new_subject_profile_page_context())
+
     return render(request, 'profilePresntaion/{}.html'.format(phase_to_html_page[users_subject.current_phase]), context)
 
 # A general function that serves as phase decider
 def get_phase_page(request):
     users_subject = _get_user_subject(request.user)
+    # TODO: Make sure user is authenticated.. subject is ready --> maybe already take care for
+    # TODO: Make sure subject did not already finished this expperiment
+    # TODO: maybe make user subject creation be mediated by a mail an a manual connection (no in DB)
+    return render_next_phase(request, users_subject)
 
-    if request.method == "POST":
-        if request.POST[form_phase] == "Consent phase":
-            errors = _process_consent_form(request.POST)
-            if len(errors) > 0:
-                return render(request, 'profilePresntaion/Index.html', {"errors":errors, form_phase: "Consent phase"})
+    # New subject profile page -- > this view is kept seprately for development purposes
+    # New subject - creating his/her new progile:
+def get_page_get_subject_profile(request, phase_code):
+    if request.method != 'POST': # On starting to add new subject profile
+        features_list = []
+        for fl in FeatureLabels.objects.all():
+            features_list.append([fl.feature_name, fl.right_end, fl.left_end])
+        random.shuffle(features_list)
+        context = {form_phase: phase_code, "features_list" : json.dumps(features_list)}
+        return render(request, 'profilePresntaion/GetSubject/getSubjectProfile.html', context)
+    else: # On saving a new subject profile
+        _create_subject_profile(request.user, request.POST)
+        get_page_present_profile(request, phase_code) # Not necceraliy here - what should be the next page?
 
-            # In case of page refresh request.POST[form_phase] is still "Consent phase" while users_subject.current_phase moved forward
-            elif users_subject.current_phase !="Consent phase":
-                return render_next_phase(request, users_subject, is_phase_update_needed=False)
-            else:
-                return render_next_phase(request, users_subject)
-
-        elif request.POST[form_phase] == "Pre Task":
-            return render_next_phase(request, users_subject)
-
-    else: # GET - user was sent from home page with a get method
-        return render_next_phase(request, users_subject, is_phase_update_needed=False)
 
 
 # def index(request):

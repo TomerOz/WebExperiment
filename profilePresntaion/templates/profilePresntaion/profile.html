@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     {% load static %}
     <link rel="stylesheet" href="{% static 'profilePresntaion/SliderStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'profilePresntaion/gameStyle.css' %}">
   </head>
   <body>
 
-    <div class="slidecontainer" id="slidecontainer">
+    <div class="slidecontainer text-center" id="slidecontainer">
       xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
       xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
       xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -25,9 +26,56 @@
           </div>
           <div class="column side">al</div> -->
       </div>
+
       <br>
-      <div class="container">
-        <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">Next</button>
+
+      <div class="text-center">
+        <button id="showMatrixButton" class="btn btn-primary btn" type="button" name="button">Ready To Play</button>
+        <div id="matrixContainer">
+          <table class="gameTable">
+            <tbody>
+          <tr>
+            <td>X</td>
+            <td colspan="2">A</td>
+            <td colspan="2">B</td>
+          </tr>
+          <tr class="A TopRow">
+            <td id="A" class="choiceButton" rowspan="2">A</td>
+            <!-- A or B stands for row choice, a or b stands for col choice -->
+            <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
+            <td class="Aa">a gets</td>
+            <td class="Aa">b gets</td>
+            <td class="Ab">a gets</td>
+            <td class="Ab">b gets</td>
+          </tr>
+          <tr class="A BottomRow">
+            <td class="Aa">10 {pA_Aa}</td>
+            <td class="Aa">15 {pB_Aa}</td>
+            <td class="Ab">20 {pA_Ab}</td>
+            <td class="Ab">25 {pB_Ab}</td>
+          <tr class="B TopRow">
+            <td rowspan="2" id="B" class="choiceButton">B</td>
+            <!-- A or B stands for row choice, a or b stands for col choice -->
+            <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
+            <td class="Ba">a gets</td>
+            <td class="Ba">b gets</td>
+            <td class="Bb">a gets</td>
+            <td class="Bb">b gets</td>
+          </tr>
+          <tr class="B BottomRow">
+            <td class="Ba">10 {pA_Ba}</td>
+            <td class="Ba">15 {pB_Ba}</td>
+            <td class="Bb">20 {pA_Bb}</td>
+            <td class="Bb">25 {pB_Bb}</td>
+          </tr>
+      </tbody>
+      </table>
+      </div>
+      </div>
+
+      <br>
+      <div class="container text-center">
+        <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">Next Profile</button>
       </div>
 
       <script>
@@ -43,4 +91,5 @@
   crossorigin="anonymous"></script>
 
   <script src="{% static 'profilePresntaion/SliderLogic.js' %}"></script>
+  <script src="{% static 'profilePresntaion/gameLogic.js' %}"></script>
 </html>

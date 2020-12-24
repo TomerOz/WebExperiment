@@ -12,7 +12,7 @@ def logout_user(request):
     logout(request)
     return redirect(reverse('home:home'))
 
-def signup(request):
+def signup(request, targetPage=None):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -21,8 +21,8 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(email=email, password=raw_password)
             login(request, user)
-            # return redirect('home')
-            return render(request, 'profilePresntaion/index.html')
+            #return redirect(targetPageToURL[targetPage])
+            return redirect(reverse(targetPageToURL[targetPage]))
     else:
         form = RegisterForm()
 
@@ -37,7 +37,7 @@ def signin(request, targetPage=None):
         form_feedback = {}
         if user != None: # Successful login
             login(request, user)
-            #return redirect(targetPageToURL[targetPage])
+            #request.session.set_expiry(60*60) # Controls time in seconds for sesssion expiery
             return redirect(reverse(targetPageToURL[targetPage]))
 
         else: # Errors
@@ -45,4 +45,4 @@ def signin(request, targetPage=None):
             return render(request, 'Register/signin.html', form_feedback)
 
     else: # User is about to login
-        return render(request, 'Register/signin.html' )
+        return render(request, 'Register/signin.html', {"targetURLAfterLogin": targetPage} )

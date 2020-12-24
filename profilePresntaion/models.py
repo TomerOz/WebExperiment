@@ -50,7 +50,6 @@ class Instruction(models.Model):
     def __str__(self):
         return ("Instruction" + "-" + self.experiment.name + " - " + self.str_phase.name + "-" + str(self.int_place))
 
-
 # Subject model that stores user responses and behavior as a subject (user - subject connection is encrypted)
 class Subject(ProfileModel):
     is_subject = True
@@ -59,8 +58,41 @@ class Subject(ProfileModel):
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     current_phase = models.CharField(max_length=30, default="Consent phase")
 
+    subject_session  = models.IntegerField(default=0) # on creation of subject - session is 1, as in first session.
+    completed_experiments = models.CharField(max_length=300, default="") # a list-like string of experiment -> "SGS1, SGS2,"
+    context_group = models.CharField(max_length=50, default="trade") # i.e. romance, conflict, friendship and trade
+
     # def initiate_experiment_phase():
     # def get_experiment_phases
 
     def __str__(self):
         return ("Subject Model" + "-" + self.name)
+
+    def update_subject_session_on_complete(self):
+    # a function intended to be called on session end prior to logging out the user.
+        if self.subject_session == 1:
+            self.subject_session = 2
+        elif self.subject_session == 2:
+            self.completed_experiments = self.completed_experiments + self.experiment.name + ","
+
+
+class GameMatrix(models.Model):
+    game_name = models.CharField(max_length=30, default="no assigned name") # e.g. PD, Chicken
+    ps_threshold = models.FloatField()
+    is_subject_play_row = models.BooleanField(default=True)
+    cooperation_row = models.FloatField(default=0) # 0 top, 1 bottom
+    cooperation_col = models.FloatField(default=0) # 0 left, 1 right
+
+    pA_Aa = models.IntegerField(default=1)
+    pB_Aa = models.IntegerField(default=2)
+    pA_Ab = models.IntegerField(default=3)
+    pB_Ab = models.IntegerField(default=4)
+    pA_Ba = models.IntegerField(default=5)
+    pB_Ba = models.IntegerField(default=6)
+    pA_Bb = models.IntegerField(default=7)
+    pB_Bb = models.IntegerField(default=8)
+
+
+
+    def get_ps_threshold(self):
+        return self.ps_threshold

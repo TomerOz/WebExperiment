@@ -10,7 +10,7 @@ from .myUtils.FormsProcessing import FormsProcessor, PhasesDataSaver
 
 sgs1_phases = ["Consent phase", "Pre Task",
             "Pre Get Profile", "During Get Profile",
-            "Pre Profile Presentation", "Pre Task", "During Profile Presentation",
+            "Pre Profile Presentation", "During Profile Presentation",
             "Pre Game", "During Game"]
 
 phase_to_html_page = {
@@ -29,6 +29,7 @@ form_phase = "form_phase"
 forms_processor = FormsProcessor()
 phases_data_saver = PhasesDataSaver(FeatureLabels, FeatureValue)
 
+## Assistant functions: ###############################################################################################################################################
 # saves subject model with the new phase
 def _update_subject_phase(subject):
     subject_updated_phase = _get_next_phase(subject)
@@ -103,6 +104,8 @@ def _get_profiles_list_context(all_profiles):
                 profiles_data[profile.id]["features"][f_name]["value"] = f.value
                 profiles_data[profile.id]["features"][f_name]["l"] = f.target_feature.left_end
                 profiles_data[profile.id]["features"][f_name]["r"] = f.target_feature.right_end
+
+    random.shuffle(profiles_data["profiles_list"])
     return profiles_data
 
 # Preparing context for the a new subject page
@@ -113,15 +116,27 @@ def _get_new_subject_profile_page_context():
     random.shuffle(features_list)
     return {"features_list" : json.dumps(features_list)}
 
+# Builds a generic context that is used in all views
+def _get_context(form_phase, instructions_list, single_instruction_text, errors):
+    context = {
+                "form_phase": form_phase,
+                "instructions_list":  json.dumps(instructions_list),
+                "single_instructions": single_instruction_text,
+                "errors":errors,
+                }
+    return context
 
-# Initiation of profiles presentation phase - renders all profiles as JSON, each profile presentation is manged via js
-def get_page_present_profile(request, phase_code):
-    profiles_data = _get_profiles_list_context(ProfileModel.objects.all())
-    random.shuffle(profiles_data["profiles_list"])
-    context = {form_phase: phase_code, 'context': json.dumps(profiles_data)}
-    return render(request, 'profilePresntaion/profile.html', context)
+# Updates the generic context on specific phases
+def _update_context_if_necessry(context, current_phase):
+    if current_phase == "During Get Profile":
+        context.update(_get_new_subject_profile_page_context())
+    elif current_phase == "During Profile Presentation":
+        context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
+
+    return context # if condition fails, context remain untouched
 
 
+## Experiment Views: ################################################################################################################################################
 def render_next_phase(request, users_subject):
     errors = None # a place holder for errors
     if request.method == "POST":
@@ -133,13 +148,8 @@ def render_next_phase(request, users_subject):
             _update_subject_phase(users_subject) # updates "users_subject.current_phase"
     phases_instructions = _get_phases_instructions(users_subject.current_phase)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
-    context = {"form_phase": users_subject.current_phase,
-                "instructions_list":  json.dumps(phases_instructions),
-                "errors":errors,
-                "single_instructions": single_instruction}
-
-    if users_subject.current_phase == "During Get Profile":
-        context.update(_get_new_subject_profile_page_context())
+    context = _get_context(users_subject.current_phase, phases_instructions, single_instruction, errors)
+    context = _update_context_if_necessry(context, users_subject.current_phase)
 
     return render(request, 'profilePresntaion/{}.html'.format(phase_to_html_page[users_subject.current_phase]), context)
 
@@ -151,8 +161,8 @@ def get_phase_page(request):
     # TODO: maybe make user subject creation be mediated by a mail an a manual connection (no in DB)
     return render_next_phase(request, users_subject)
 
-    # New subject profile page -- > this view is kept seprately for development purposes
-    # New subject - creating his/her new progile:
+## Development Views: ################################################################################################################################################
+# New subject profile page -- > this view is kept seprately for development purposes, New subject - creating his/her new progile:
 def get_page_get_subject_profile(request, phase_code):
     if request.method != 'POST': # On starting to add new subject profile
         features_list = []
@@ -163,14 +173,16 @@ def get_page_get_subject_profile(request, phase_code):
         return render(request, 'profilePresntaion/GetSubject/getSubjectProfile.html', context)
     else: # On saving a new subject profile
         _create_subject_profile(request.user, request.POST)
-        get_page_present_profile(request, phase_code) # Not necceraliy here - what should be the next page?
-
-
-
-# def index(request):
-#     ipdb.set_trace()
-#     if request.method == 'POST': # When consent form was filled
-#         return get_page_present_profile(request) # NOT HERE - THIS FUNCTION SHOULD BE MOVED
-#     else: # Rendering consent form "Index.html"
-#         subject = _get_user_subject(request.user) # Why is this here?
-#         return render(request, 'profilePresntaion/Index.html', {"subject": subject.pk})
+        get_page_present_profile(request, phase_code)
+# A view that mediates profile presentation to the subject
+def get_page_present_profile(request, phase_code):
+    profiles_data = _get_profiles_list_context(ProfileModel.objects.all())
+    context = {form_phase: phase_code, 'context': json.dumps(profiles_data)}
+    return render(request, 'profilePresntaion/profile.html', context)
+# consent form view
+def index(request):
+    if request.method == 'POST': # When consent form was filled
+        return get_page_present_profile(request) # NOT HERE - THIS FUNCTION SHOULD BE MOVED
+    else: # Rendering consent form "Index.html"
+        subject = _get_user_subject(request.user) # Why is this here?
+        return render(request, 'profilePresntaion/Index.html', {"subject": subject.pk})

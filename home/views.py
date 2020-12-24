@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from django.shortcuts import redirect
+from django.contrib.auth import logout
 
 targetPageToURL = {"SGS1" : "profilePresntaion:PhaseDecision", None : 'home:home'} # for "reverse" --> totally new path
 
@@ -11,6 +12,10 @@ def home_page(request):
     elif request.method == "POST": # TODO: Now this logic reilies on only one form (one experiment option) in home page, later I'll have to know which form is it
         target_experiment = request.POST["form_phase"] # Something like "SGS1"
         if request.user.is_authenticated:
-            return redirect(reverse(targetPageToURL[target_experiment]))
+            if target_experiment == "logout":
+                logout(request)
+                return redirect(reverse(targetPageToURL[None]))
+            else:
+                return redirect(reverse(targetPageToURL[target_experiment]))
         else:
             return redirect('signin/' + target_experiment)

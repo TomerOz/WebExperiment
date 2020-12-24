@@ -1,10 +1,8 @@
-.container {
-  height: 100px;
-}
 
 .jumbotron {
   background: #7a2134;
   color: white;
+  font-size: 22px;
 }
 
 .btn {

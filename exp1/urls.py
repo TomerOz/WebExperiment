@@ -22,6 +22,7 @@ urlpatterns = [
     path('signup/', register_views.signup, name='signup'),
     path('signin/', register_views.signin, name='signin'),
     path('signin/<str:targetPage>', register_views.signin, name='signin'), # singin with argeument
+    path('signup/<str:targetPage>', register_views.signup, name='signup'), # signup with argeument
     path('profilePresntaion/', include('profilePresntaion.urls')),
     path('GetSubjectProfile/', include('GetSubjectProfile.urls')),
     path('admin/', admin.site.urls),

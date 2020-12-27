@@ -1,12 +1,4 @@
 
-
-// var slider = document.getElementById("myRange");
-// slider.addEventListener("input", function showValue() { console.log(slider.value)})
-// // slider.value =context[1].TomerOz[2];
-//
-// var title = document.getElementById("myRange");
-// var endR = document.getElementById("myRange");
-// var endL = document.getElementById("myRange");
 var slidecontainer = document.getElementById("slidecontainer");
 
 db_features = "features_list"
@@ -17,6 +9,8 @@ var feature_title = "Title new"
 var default_value = "50"
 
 function InjectProfileDataToHTML(title, right_end, left_end, value){
+  // the -"- is used for HTML properties while the
+  // -'- encapsulates the hole JS string, as in: '<div class="className"'
   basicProfileHTMLText = '<h3 id="title">'+ title + '</h3>\
     <div class="row"> \
       <div class="column side">'+ left_end + '</div> \
@@ -36,6 +30,7 @@ function GetProfileFeatureData (feature) {
   return feature_title, right_end, left_end;
 }
 
+currentFeature = 0;
 function InitializeProfilePresentation(){
   context.forEach((feature, i) => {
       feature_title, right_end, left_end = GetProfileFeatureData(feature);

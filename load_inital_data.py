@@ -28,13 +28,14 @@ def create_experiment_phases():
     for i, phase in enumerate(sgs1_phases):
         phase_query = ExperimentPhase.objects.filter(name=phase)
         experiment = Experiment.objects.get(name="SGS1")
-        if phase_query == 0:
-            phase_query = ExperimentPhase(name=phase, phase_place=i+1, experiment=experiment)
-            phase_query.save()
+        if len(phase_query) == 0:
+            new_phase = ExperimentPhase(name=phase, phase_place=i+1, experiment=experiment)
+            new_phase.save()
+
+#py manage.py shell
+#from profilePresntaion.models import *
+#exec(open('load_inital_data.py').read())
 
 create_feature_labels()
 create_experiment_instance()
 create_experiment_phases()
-#py manage.py shell
-#from profilePresntaion.models import *
-#exec(open('load_inital_data.py').read())

@@ -47,3 +47,25 @@
   background: #CDFF44;
   text-decoration-style: double;
 }
+
+.cellHighlighted {
+  background: #11DDa4;
+  color: white;
+  font-weight: bold;
+}
+
+.explantions {
+  border-radius: 2%;
+  text-align: left;
+  margin: auto;
+  width: 45%;
+  color: white;
+  background: gray;
+  padding: 2%;
+  }
+
+  @media screen and (max-width: 600px) {
+   .explantions {
+      width: 90%;
+   }
+  }

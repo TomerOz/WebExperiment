@@ -1,5 +1,5 @@
-from django.shortcuts import render, get_object_or_404
-from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment, Instruction
+from django.shortcuts import render, redirect, reverse, get_object_or_404
+from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment, Instruction, GameMatrix
 from django.core import serializers
 
 import json
@@ -9,19 +9,19 @@ import random
 from .myUtils.FormsProcessing import FormsProcessor, PhasesDataSaver
 
 sgs1_phases = ["Consent phase", "Pre Task",
-            "Pre Get Profile", "During Get Profile",
+            "Pre Get Profile", "During Get Profile", "Matrix tutorial",
             "Pre Profile Presentation", "During Profile Presentation",
-            "Pre Game", "During Game"]
+            "end"]
 
 phase_to_html_page = {
                         "Consent phase":                "Index",
                         "Pre Task":                     "instruction",
                         "Pre Get Profile":              "instruction",
                         "During Get Profile":           "GetSubject\getSubjectProfile",
+                        "Matrix tutorial":              "MatrixLearnTest",
                         "Pre Profile Presentation":     "instruction",
                         "During Profile Presentation":  "profile",
-                        "Pre Game":                     "instruction",
-                        "During Game":                  "profile",
+                        "end":                          "endPage",
                     }
 
 form_phase = "form_phase"
@@ -35,6 +35,9 @@ def _update_subject_phase(subject):
     subject_updated_phase = _get_next_phase(subject)
     subject.current_phase = subject_updated_phase
     subject.save()
+    if subject_updated_phase == "end of experiment":
+        subject.update_subject_session_on_complete()
+
 
  # return a query set of all phases-model instances associated with this subject's experiment
 def _get_all_subject_phases(subject):
@@ -43,10 +46,11 @@ def _get_all_subject_phases(subject):
 # returns the name of next phase of this subject
 def _get_next_phase(subject):
     next_phase_index = sgs1_phases.index(subject.current_phase) + 1
-    if next_phase_index < len(sgs1_phases):
+    #if next_phase_index < len(sgs1_phases):
+    if next_phase_index < 7: # temporary hardcoded
         return sgs1_phases[next_phase_index]
     else:
-        return Exception("reached last phase")
+        return "end of experiment"
 
 # returns a list all instruciton-model instances texts associated with this phase - orderd by order property
 def _get_phases_instructions(phase_name):
@@ -62,6 +66,7 @@ def _create_subject(user):
     new_subject.save()
     new_subject.is_subject = True
     new_subject.name = "Subject-"+str(new_subject.pk)
+    new_subject.subject_session = 1 # on creation subject session is one
     new_subject.save(force_update=True)
     user.exp1_enc_num = str(new_subject.pk)
     user.save()
@@ -127,14 +132,47 @@ def _get_context(form_phase, instructions_list, single_instruction_text, errors)
     return context
 
 # Updates the generic context on specific phases
-def _update_context_if_necessry(context, current_phase):
+def _update_context_if_necessry(context, current_phase, users_subject):
     if current_phase == "During Get Profile":
         context.update(_get_new_subject_profile_page_context())
+
+    elif current_phase == "Matrix tutorial":
+        game = _get_game_data(users_subject)
+        gameJSON = json.dumps(_get_game_dict(game))
+        context.update({"game":game,
+                        "gameJSON":gameJSON,
+                        })
     elif current_phase == "During Profile Presentation":
-        context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
+        game = _get_game_data(users_subject)
+        gameJSON = json.dumps(_get_game_dict(game))
+        context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all())),
+                        "game":game,
+                        "gameJSON":gameJSON,
+                        })
+
 
     return context # if condition fails, context remain untouched
 
+def _get_game_data(subject):
+    # How it will look once models are updaed:
+    # game = GameMatrix.objects.filter(context=subject.context_group, ps=subject.session_to_ps)
+    game = GameMatrix.objects.filter(phase__name=subject.current_phase)[0]
+    return game
+
+def _get_game_dict(game):
+    game_dict = {}
+    game_dict["A"] = game.strategy_a
+    game_dict["B"] = game.strategy_b
+    game_dict["pA_Aa"] = game.pA_Aa
+    game_dict["pB_Aa"] = game.pB_Aa
+    game_dict["pA_Ab"] = game.pA_Ab
+    game_dict["pB_Ab"] = game.pB_Ab
+    game_dict["pA_Ba"] = game.pA_Ba
+    game_dict["pB_Ba"] = game.pB_Ba
+    game_dict["pA_Bb"] = game.pA_Bb
+    game_dict["pB_Bb"] = game.pB_Bb
+
+    return game_dict
 
 ## Experiment Views: ################################################################################################################################################
 def render_next_phase(request, users_subject):
@@ -146,10 +184,12 @@ def render_next_phase(request, users_subject):
             # condition fails on errors or GET (user was sent from home page with a get method) or
             #in case of page refresh request.POST is previous phasewhile users_subject.current_phase moved forward
             _update_subject_phase(users_subject) # updates "users_subject.current_phase"
+            if users_subject.current_phase == "end of experiment":
+                return redirect(reverse('home:home')) # temporary - SHOULD HAVE ITS OWN END PAGE (FEEDBACK)
     phases_instructions = _get_phases_instructions(users_subject.current_phase)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
     context = _get_context(users_subject.current_phase, phases_instructions, single_instruction, errors)
-    context = _update_context_if_necessry(context, users_subject.current_phase)
+    context = _update_context_if_necessry(context, users_subject.current_phase, users_subject)
 
     return render(request, 'profilePresntaion/{}.html'.format(phase_to_html_page[users_subject.current_phase]), context)
 

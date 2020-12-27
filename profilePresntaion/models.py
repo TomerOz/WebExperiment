@@ -61,6 +61,7 @@ class Subject(ProfileModel):
     subject_session  = models.IntegerField(default=0) # on creation of subject - session is 1, as in first session.
     completed_experiments = models.CharField(max_length=300, default="") # a list-like string of experiment -> "SGS1, SGS2,"
     context_group = models.CharField(max_length=50, default="trade") # i.e. romance, conflict, friendship and trade
+    # session_to_ps = #mapping session to randomly assigned ps
 
     # def initiate_experiment_phase():
     # def get_experiment_phases
@@ -72,8 +73,10 @@ class Subject(ProfileModel):
     # a function intended to be called on session end prior to logging out the user.
         if self.subject_session == 1:
             self.subject_session = 2
+            self.current_phase = "Consent phase" # Bringing the subject to the begining of the experiment
         elif self.subject_session == 2:
             self.completed_experiments = self.completed_experiments + self.experiment.name + ","
+        self.save()
 
 
 class GameMatrix(models.Model):
@@ -82,6 +85,9 @@ class GameMatrix(models.Model):
     is_subject_play_row = models.BooleanField(default=True)
     cooperation_row = models.FloatField(default=0) # 0 top, 1 bottom
     cooperation_col = models.FloatField(default=0) # 0 left, 1 right
+    strategy_a = models.CharField(max_length=30, default="cooperate")
+    strategy_b = models.CharField(max_length=30, default="defect")
+    phase = models.ForeignKey(ExperimentPhase, null=True, on_delete=models.SET_NULL)
 
     pA_Aa = models.IntegerField(default=1)
     pB_Aa = models.IntegerField(default=2)
@@ -93,6 +99,8 @@ class GameMatrix(models.Model):
     pB_Bb = models.IntegerField(default=8)
 
 
-
     def get_ps_threshold(self):
         return self.ps_threshold
+
+    def __str__(self):
+        return ("Game Matrix" + "-" + self.game_name + ": Ps " + str(self.get_ps_threshold()))

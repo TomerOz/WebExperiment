@@ -34,6 +34,7 @@ class PhasesDataSaver(object):
         self.FeatureValue = FeatureValue
         self.phase_to_saver_function = {
             "During Get Profile" : self._process_create_new_subject_profile,
+            "During Profile Presentation": self._save_trials_data,
         }
 
     def save_posted_data(self, phase_name, post_data, subject):
@@ -41,7 +42,11 @@ class PhasesDataSaver(object):
             save_phase_data = self.phase_to_saver_function[phase_name]
             save_phase_data(post_data, subject) # returns a list of form errors if any
 
-    # Fills subject model with posted features provided by the subject user
+    def _save_trials_data(self, post_data, subject):
+        subject.trials_responses_list += post_data["responses"]
+        subject.save()
+
+    # Fills subject model with posted features provided by the subject user (subject profile witg default values already exists)
     def _process_create_new_subject_profile(self, post_data, new_subject):
         new_subject.featurevalue_set.all().delete() # deeleting existing features data on this profile if re-entered
         feaure_labels = self.FeatureLabels.objects.values_list("feature_name", flat=True)

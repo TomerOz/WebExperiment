@@ -17,7 +17,7 @@ phase_to_html_page = {
                         "Consent phase":                "Index",
                         "Pre Task":                     "instruction",
                         "Pre Get Profile":              "instruction",
-                        "During Get Profile":           "GetSubject\getSubjectProfile",
+                        "During Get Profile":           "GetSubject/getSubjectProfile",
                         "Matrix tutorial":              "MatrixLearnTest",
                         "Pre Profile Presentation":     "instruction",
                         "During Profile Presentation":  "profile",

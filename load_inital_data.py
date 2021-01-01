@@ -1,5 +1,6 @@
 import ipdb
 import pandas as pd
+import os
 
 def create_feature_labels():
     features = [
@@ -33,7 +34,8 @@ def create_experiment_phases():
             new_phase.save()
 
 def processs_instructions_df():
-    instructions_df = pd.read_excel(r'profilePresntaion\myUtils\instructions.xlsx')
+    path = os.path.join("profilePresntaion","myUtils","instructions.xlsx")
+    instructions_df = pd.read_excel(path)
     last_phase = None
     phase_counter = 1
     for index, row in instructions_df.iterrows():

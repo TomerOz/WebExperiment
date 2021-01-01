@@ -55,7 +55,7 @@ def _get_next_phase(subject):
 # returns a list all instruciton-model instances texts associated with this phase - orderd by order property
 def _get_phases_instructions(phase_name):
     instructions_list = []
-    instruction_queryset = Instruction.objects.filter(str_phase__name = phase_name).order_by("int_place")
+    instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=True).order_by("int_place")
     for instruction_query in instruction_queryset:
         instructions_list.append(instruction_query.instruction_text)
     return instructions_list
@@ -149,9 +149,12 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         "game":game,
                         "gameJSON":gameJSON,
                         })
-
-
     return context # if condition fails, context remain untouched
+def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, single_instruction):
+    if subject.current_phase == "Matrix tutorial":
+        game = _get_game_data(subject)
+        phases_instructions[0] = phases_instructions[0].format(game.strategy_a,game.strategy_b)
+    return phases_instructions, single_instruction
 
 def _get_game_data(subject):
     # How it will look once models are updaed:
@@ -188,6 +191,7 @@ def render_next_phase(request, users_subject):
                 return redirect(reverse('home:home')) # temporary - SHOULD HAVE ITS OWN END PAGE (FEEDBACK)
     phases_instructions = _get_phases_instructions(users_subject.current_phase)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
+    phases_instructions, single_instruction = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction)
     context = _get_context(users_subject.current_phase, phases_instructions, single_instruction, errors)
     context = _update_context_if_necessry(context, users_subject.current_phase, users_subject)
 

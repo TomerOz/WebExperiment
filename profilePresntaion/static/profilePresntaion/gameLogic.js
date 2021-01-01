@@ -67,6 +67,7 @@ function ChooseRow(rowIndex){
   rows[otherIndex]["Top"].classList.remove("rowSelected");
   rows[otherIndex]["Bottom"].classList.remove("rowSelected");
   rows[otherIndex]["button"].classList.remove("rowSelected");
+  explantionsDiv.style.display = "block";
   explantionsDiv.innerHTML  = ChoiceToText(rowIndex);
 
 };

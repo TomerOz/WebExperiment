@@ -47,6 +47,9 @@ class Instruction(models.Model):
     int_place = models.IntegerField() # Place in order in case of multiple instructions
     str_phase = models.ForeignKey(ExperimentPhase, on_delete=models.CASCADE) # Description of phase,e.g. "Initial", "Mid break", "Report instrucion"
 
+    is_in_order = models.BooleanField(default=True)
+    off_order_place = models.CharField(max_length=30, default="irrelevant")
+
     def __str__(self):
         return ("Instruction" + "-" + self.experiment.name + " - " + self.str_phase.name + "-" + str(self.int_place))
 

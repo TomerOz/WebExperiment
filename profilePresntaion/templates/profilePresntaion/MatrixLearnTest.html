@@ -6,7 +6,11 @@
     <title></title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Fonts links -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     {% load static %}
+    <!-- styles links -->
     <link rel="stylesheet" href="{% static 'profilePresntaion/gameStyle.css' %}">
     <link rel="stylesheet" href="{% static 'profilePresntaion/MatrixTutorialStyle.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'profilePresntaion/IndexStyle.css' %}">
@@ -19,11 +23,12 @@
       {{instructions_list}} Place Holder holer holder
     </div>
     {% endif %}
-      <!-- Game table -->
+    <!-- Buttons -->
       <div class="text-center">
       <button id="showMatrixButton" class="btn btn-primary btn" type="button" name="button">Ready To Play</button>
       <button id="NextStepButton" class="btn btn-primary btn" type="button" name="button">Next Step</button>
     </div>
+    <!-- Game table -->
       <div class="text-center">
         <div id="matrixContainer">
           <table class="gameTable">
@@ -64,19 +69,184 @@
           </tr>
         </tbody>
         </table>
-      </div>
-      <br>
+      </div><br>
       <div class="explantions">
+      </div><br>
       </div>
-      <br>
-      </div>
-      <div class="container text-center">
-      </div>
-      <script>
-       var instructions_list = {{instructions_list|safe}}
-       var gameJSON = {{gameJSON|safe}}
-      // working with the variable context
-      </script>
+    <!-- Matrix Test -->
+    <div class="testbox">
+      <form action="/">
+        <div class="banner">
+          <h1>Annual Conference</h1>
+        </div>
+        <br/>
+        <p>
+        <center>Thank you for your interest in attending the Conference.
+          To reserve your seat, please fill out the information below.
+        </center>
+        </p>
+        <br/>
+        <div class="colums">
+          <div class="item">
+            <label for="fname"> First Name<span>*</span></label>
+            <input id="fname" type="text" name="fname" required/>
+          </div>
+          <div class="item">
+            <label for="lname"> Last Name<span>*</span></label>
+            <input id="lname" type="text" name="lname" required/>
+          </div>
+          <div class="item">
+            <label for="title">Title<span>*</span></label>
+            <input id="title" type="text" name="title" required/>
+          </div>
+          <div class="item">
+            <label for="org">Organization<span>*</span></label>
+            <input id="org" type="text"   name="org" required/>
+          </div>
+          <div class="item">
+            <label for="eaddress">Email Address<span>*</span></label>
+            <input id="eaddress" type="text"   name="eaddress" required/>
+          </div>
+          <div class="item">
+            <label for="phone">Business Phone<span>*</span></label>
+            <input id="phone" type="tel"   name="phone" required/>
+          </div>
+          <div class="item">
+            <label for="fax">Fax<span>*</span></label>
+            <input id="fax" type="text"   name="fax" required/>
+          </div>
+          <div class="item">
+            <label for="address1">Address 1<span>*</span></label>
+            <input id="address1" type="text"   name="address1" required/>
+          </div>
+          <div class="item">
+            <label for="address2">Address 2<span>*</span></label>
+            <input id="address2" type="text"   name="address2" required/>
+          </div>
+          <div class="item">
+            <label for="city">City<span>*</span></label>
+            <input id="city" type="text"   name="city" required/>
+          </div>
+          <div class="item">
+            <label for="state">State<span>*</span></label>
+            <input id="state" type="text"   name="state" required/>
+          </div>
+          <div class="item">
+            <label for="code">Postal Code<span>*</span></label>
+            <input id="code" type="text"   name="code" required/>
+          </div>
+        </div>
+        <div class="question">
+          <label>Include my contact information on lists distributed to other attendees.</label>
+          <div class="question-answer">
+            <div>
+              <input type="radio" value="none" id="radio_1" name="info"/>
+              <label for="radio_1" class="radio"><span>Yes</span></label>
+            </div>
+            <div>
+              <input  type="radio" value="none" id="radio_2" name="info"/>
+              <label for="radio_2" class="radio"><span>No</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <p>Meal Preference</p>
+          <select>
+            <option selected value="" disabled selected></option>
+            <option value="b" >Beef</option>
+            <option value="ch">Chicken</option>
+            <option value="v">Vegetarian</option>
+            <option value="n">None</option>
+          </select>
+        </div>
+        <div class="week">
+          <div class="question">
+            <label>Days Attending </label>
+            <div class="question-answer">
+              <div>
+                <input type="radio" value="none" id="radio_3" name="day"/>
+                <label for="radio_3" class="radio"><span>Sunday</span></label>
+              </div>
+              <div>
+                <input  type="radio" value="none" id="radio_4" name="day"/>
+                <label for="radio_4" class="radio"><span>Monday</span></label>
+              </div>
+              <div>
+                <input  type="radio" value="none" id="radio_5" name="day"/>
+                <label for="radio_5" class="radio"><span>Tuesday</span></label>
+              </div>
+              <div>
+                <input  type="radio" value="none" id="radio_6" name="day"/>
+                <label for="radio_6" class="radio"><span>Wednesday</span></label>
+              </div>
+              <div>
+                <input  type="radio" value="none" id="radio_7" name="day"/>
+                <label for="radio_7" class="radio"><span>Thursday</span></label>
+              </div>
+              <div>
+                <input  type="radio" value="none" id="radio_8" name="day"/>
+                <label for="radio_8" class="radio"><span>Friday</span></label>
+              </div>
+              <div>
+                <input  type="radio" value="none" id="radio_9" name="day"/>
+                <label for="radio_9" class="radio"><span>Saturday</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="question">
+            <label>Activities Attending</label>
+            <div class="question-answer">
+              <div>
+                <input type="radio" value="none" id="radio_10" name="activity"/>
+                <label for="radio_10" class="radio"><span>CEO luncheon</span></label>
+              </div>
+              <div>
+                <input  type="radio" value="none" id="radio_11" name="activity"/>
+                <label for="radio_11" class="radio"><span>Finance seminar</span></label>
+              </div>
+              <div>
+                <input  type="radio" value="none" id="radio_12" name="activity"/>
+                <label for="radio_12" class="radio"><span>Leadership seminar</span></label>
+              </div>
+              <div>
+                <input  type="radio" value="none" id="radio_13" name="activity"/>
+                <label for="radio_13" class="radio"><span>Marketing workshop</span></label>
+              </div>
+              <div>
+                <input  type="radio" value="none" id="radio_14" name="activity"/>
+                <label for="radio_14" class="radio"><span>Teamwork seminar</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <label for="visit">Special Requirements</label>
+          <textarea id="visit" rows="3"></textarea>
+        </div>
+        <div class="question">
+          <label>Did you attend last years conference?</label>
+          <div class="question-answer">
+            <div>
+              <input type="radio" value="none" id="radio_15" name="contact"/>
+              <label for="radio_15" class="radio"><span>Yes</span></label>
+            </div>
+            <div>
+              <input  type="radio" value="none" id="radio_16" name="contact"/>
+              <label for="radio_16" class="radio"><span>No</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="btn-block">
+          <button type="submit" href="/">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+     var instructions_list = {{instructions_list|safe}}
+     var gameJSON = {{gameJSON|safe}}
+    // working with the variable context
+    </script>
     </div>
     <form id="subjectResonseForm" method="post">
       {% csrf_token %}
@@ -88,7 +258,7 @@
     <form id="instructionsForm" class="" method="post">
       {% csrf_token %}
       <input type="hidden" name="form_phase" value="{{ form_phase }}">
-      
+
     </form>
   </body>
 

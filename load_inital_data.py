@@ -33,7 +33,7 @@ def create_experiment_phases():
             new_phase = ExperimentPhase(name=phase, phase_place=i+1, experiment=experiment)
             new_phase.save()
 
-def processs_instructions_df():
+def create_instructinos():
     path = os.path.join("profilePresntaion","myUtils","instructions.xlsx")
     instructions_df = pd.read_excel(path)
     last_phase = None
@@ -60,11 +60,35 @@ def processs_instructions_df():
             new_instruction.is_in_order = True if int_place != 999 else False
             new_instruction.save()
 
+def create_games_matrices():
+    contexts = ["tutorial", "trade", "romantic", "friendship", "conflict"]
+    path = os.path.join("profilePresntaion","myUtils","games.xlsx")
+    games_df = pd.read_excel(path)
+    GameMatrix.objects.all().delete()
+    for index, row in games_df.iterrows():
+        new_game = GameMatrix()
+        new_game.game_name =        row.game_name
+        new_game.ps_threshold =     row.ps_threshold
+        new_game.strategy_a =       row.strategy_a
+        new_game.strategy_b =       row.strategy_b
+        new_game.phase =            ExperimentPhase.objects.get(name=row.phase)
+        new_game.context_group =    row.context_group
+        new_game.pA_Aa =            row.pA_Aa
+        new_game.pB_Aa =            row.pB_Aa
+        new_game.pA_Ab =            row.pA_Ab
+        new_game.pB_Ab =            row.pB_Ab
+        new_game.pA_Ba =            row.pA_Ba
+        new_game.pB_Ba =            row.pB_Ba
+        new_game.pA_Bb =            row.pA_Bb
+        new_game.pB_Bb =            row.pB_Bb
+        new_game.save()
+
 #conda activate exp1 / source exp1/bin/activate
 #py manage.py shell;
 #from profilePresntaion.models import *
 #exec(open('load_inital_data.py').read())
-processs_instructions_df()
+create_instructinos()
 create_feature_labels()
 create_experiment_instance()
 create_experiment_phases()
+create_games_matrices()

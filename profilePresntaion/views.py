@@ -57,8 +57,24 @@ def _get_phases_instructions(phase_name):
     instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=True).order_by("int_place")
     for instruction_query in instruction_queryset:
         instructions_list.append(instruction_query.instruction_text)
-    return instructions_list
 
+    off_order_instructions_dict = {}
+    off_order_instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=False)
+    for instruction_query in off_order_instruction_queryset:
+        off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text
+
+    return instructions_list, off_order_instructions_dict
+
+def _get_random_context():
+    contexts = ["trade", "conflict", "romantic","friendship"]
+    return contexts[random.randint(0, len(contexts)-1)] # temporary - TODO: monitro with db maybe via the Experiment model
+
+def _get_sessions_ps(context):
+    rand_i = random.randint(0, 1) # temporary - TODO: monitro with db maybe via the Experiment model
+    other_i =(rand_i - 1) * -1
+    games = GameMatrix.objects.filter(context_group=context) # assuming only tow games Ps* per context
+    pss = (games[rand_i].ps_threshold, games[other_i].ps_threshold)
+    return pss
 # creates a  BLANK Subject model instance and associtates it with ForeignKey to the authenticated user
 def _create_subject(user):
     new_subject = Subject(experiment=Experiment.objects.get(name="SGS1"))
@@ -66,6 +82,8 @@ def _create_subject(user):
     new_subject.is_subject = True
     new_subject.name = "Subject-"+str(new_subject.pk)
     new_subject.subject_session = 1 # on creation subject session is one
+    new_subject.context_group = _get_random_context()
+    new_subject.session_1_ps, new_subject.session_2_ps = _get_sessions_ps(new_subject.context_group)
     new_subject.save(force_update=True)
     user.exp1_enc_num = str(new_subject.pk)
     user.save()
@@ -121,10 +139,11 @@ def _get_new_subject_profile_page_context():
     return {"features_list" : json.dumps(features_list)}
 
 # Builds a generic context that is used in all views
-def _get_context(form_phase, instructions_list, single_instruction_text, errors):
+def _get_context(form_phase, instructions_list, single_instruction_text, off_order_instructions, errors):
     context = {
                 "form_phase": form_phase,
                 "instructions_list":  json.dumps(instructions_list),
+                "off_order_instructions_dict": off_order_instructions,
                 "single_instructions": single_instruction_text,
                 "errors":errors,
                 }
@@ -149,16 +168,32 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         "gameJSON":gameJSON,
                         })
     return context # if condition fails, context remain untouched
-def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, single_instruction):
+
+def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, single_instruction, off_order_instructions):
     if subject.current_phase == "Matrix tutorial":
         game = _get_game_data(subject)
         phases_instructions[0] = phases_instructions[0].format(game.strategy_a,game.strategy_b)
-    return phases_instructions, single_instruction
+        
+        off_order_instructions["You_Aa"] = off_order_instructions["You"].format(game.strategy_a, game.strategy_a)
+        off_order_instructions["You_Ab"] = off_order_instructions["You"].format(game.strategy_a, game.strategy_b)
+        off_order_instructions["You_Ba"] = off_order_instructions["You"].format(game.strategy_b, game.strategy_a)
+        off_order_instructions["You_Bb"] = off_order_instructions["You"].format(game.strategy_b, game.strategy_b)
+        off_order_instructions["Other_Aa"] = off_order_instructions["other"].format(game.strategy_a, game.strategy_a)
+        off_order_instructions["Other_Ab"] = off_order_instructions["other"].format(game.strategy_a, game.strategy_b)
+        off_order_instructions["Other_Ba"] = off_order_instructions["other"].format(game.strategy_b, game.strategy_a)
+        off_order_instructions["Other_Bb"] = off_order_instructions["other"].format(game.strategy_b, game.strategy_b)
+    return phases_instructions, single_instruction, off_order_instructions
 
 def _get_game_data(subject):
     # How it will look once models are updaed:
     # game = GameMatrix.objects.filter(context=subject.context_group, ps=subject.session_to_ps)
-    game = GameMatrix.objects.filter(phase__name=subject.current_phase)[0]
+    ps_threshold = subject.session_1_ps
+    if subject.subject_session == 2:
+        ps_threshold = subject.session_2_ps
+    if subject.current_phase == "Matrix tutorial":
+        game = GameMatrix.objects.get(phase__name=subject.current_phase)
+    else:
+        game = GameMatrix.objects.get(phase__name=subject.current_phase, context_group=subject.context_group, ps_threshold=ps_threshold)
     return game
 
 def _get_game_dict(game):
@@ -190,10 +225,10 @@ def render_next_phase(request, users_subject):
                 users_subject.current_phase = "Consent phase"
                 users_subject.save()
                 return redirect(reverse('home:home')) # temporary - SHOULD HAVE ITS OWN END PAGE (FEEDBACK)
-    phases_instructions = _get_phases_instructions(users_subject.current_phase)
+    phases_instructions, off_order_instructions = _get_phases_instructions(users_subject.current_phase)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
-    phases_instructions, single_instruction = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction)
-    context = _get_context(users_subject.current_phase, phases_instructions, single_instruction, errors)
+    phases_instructions, single_instruction, off_order_instructions = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction, off_order_instructions)
+    context = _get_context(users_subject.current_phase, phases_instructions, single_instruction, off_order_instructions, errors)
     context = _update_context_if_necessry(context, users_subject.current_phase, users_subject)
     return render(request, 'profilePresntaion/{}.html'.format(phase_to_html_page[users_subject.current_phase]), context)
 

@@ -64,10 +64,9 @@ class Subject(ProfileModel):
     subject_session  = models.IntegerField(default=0) # on creation of subject - session is 1, as in first session.
     completed_experiments = models.CharField(max_length=300, default="") # a list-like string of experiment -> "SGS1, SGS2,"
     context_group = models.CharField(max_length=50, default="trade") # i.e. romance, conflict, friendship and trade
+    session_1_ps = models.FloatField(default=0.5)
+    session_2_ps = models.FloatField(default=0.5)
     # session_to_ps = #mapping session to randomly assigned ps
-
-    # def initiate_experiment_phase():
-    # def get_experiment_phases
 
     def __str__(self):
         return ("Subject Model" + "-" + self.name)
@@ -91,6 +90,7 @@ class GameMatrix(models.Model):
     strategy_a = models.CharField(max_length=30, default="cooperate")
     strategy_b = models.CharField(max_length=30, default="defect")
     phase = models.ForeignKey(ExperimentPhase, null=True, on_delete=models.SET_NULL)
+    context_group = models.CharField(max_length=30, default="tutorial")
 
     pA_Aa = models.IntegerField(default=1)
     pB_Aa = models.IntegerField(default=2)
@@ -106,4 +106,4 @@ class GameMatrix(models.Model):
         return self.ps_threshold
 
     def __str__(self):
-        return ("Game Matrix" + "-" + self.game_name + ": Ps " + str(self.get_ps_threshold()))
+        return ("Game Matrix" + "-" + self.game_name + " "+ self.context_group + ": Ps " + str(self.get_ps_threshold()))

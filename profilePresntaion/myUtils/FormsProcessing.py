@@ -1,8 +1,10 @@
+import ipdb
 
 class FormsProcessor(object):
     def __init__(self):
         self.phase_to_form_processor = {
             "Consent phase" : self._process_consent_form,
+            "Matrix tutorial" : self._process_matrix_tutorial_form,
         }
 
     def process_form(self, phase_name, post_data):
@@ -26,6 +28,9 @@ class FormsProcessor(object):
                 errors.append(consent_form_fields[field])
 
         return errors
+
+    def _process_matrix_tutorial_form(self, post_data):
+        ipdb.set_trace()
 
 
 class PhasesDataSaver(object):

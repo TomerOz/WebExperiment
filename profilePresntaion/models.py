@@ -76,9 +76,9 @@ class Subject(ProfileModel):
     # a function intended to be called on session end prior to logging out the user.
         if self.subject_session == 1:
             self.subject_session = 2
-            self.current_phase = "Consent phase" # Bringing the subject to the begining of the experiment
         elif self.subject_session == 2:
             self.completed_experiments = self.completed_experiments + self.experiment.name + ","
+        self.current_phase = "end"
         self.save()
 
 

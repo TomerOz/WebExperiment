@@ -18,4 +18,4 @@ def home_page(request):
             else:
                 return redirect(reverse(targetPageToURL[target_experiment]))
         else:
-            return redirect('signin/' + target_experiment)
+            return redirect('signup/' + target_experiment)

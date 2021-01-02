@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    {% load static %}
+  </head>
+  <body>
+    Thanku!
+
+    <form id="instructionsForm" class="" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      <button class="btn btn-primary btn-lg" id="NextInstructionButton" type="submit" name="button">Next</button>
+    </form>
+  </body>
+</html>

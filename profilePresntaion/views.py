@@ -35,9 +35,8 @@ def _update_subject_phase(subject):
     subject_updated_phase = _get_next_phase(subject)
     subject.current_phase = subject_updated_phase
     subject.save()
-    if subject_updated_phase == "end of experiment":
+    if subject_updated_phase == "end":
         subject.update_subject_session_on_complete()
-
 
  # return a query set of all phases-model instances associated with this subject's experiment
 def _get_all_subject_phases(subject):
@@ -47,10 +46,10 @@ def _get_all_subject_phases(subject):
 def _get_next_phase(subject):
     next_phase_index = sgs1_phases.index(subject.current_phase) + 1
     #if next_phase_index < len(sgs1_phases):
-    if next_phase_index < 7: # temporary hardcoded
+    if next_phase_index < len(sgs1_phases):
         return sgs1_phases[next_phase_index]
-    else:
-        return "end of experiment"
+    else: # upon ening a session
+        return "session end"
 
 # returns a list all instruciton-model instances texts associated with this phase - orderd by order property
 def _get_phases_instructions(phase_name):
@@ -187,14 +186,15 @@ def render_next_phase(request, users_subject):
             # condition fails on errors or GET (user was sent from home page with a get method) or
             #in case of page refresh request.POST is previous phasewhile users_subject.current_phase moved forward
             _update_subject_phase(users_subject) # updates "users_subject.current_phase"
-            if users_subject.current_phase == "end of experiment":
+            if users_subject.current_phase == "session end":
+                users_subject.current_phase = "Consent phase"
+                users_subject.save()
                 return redirect(reverse('home:home')) # temporary - SHOULD HAVE ITS OWN END PAGE (FEEDBACK)
     phases_instructions = _get_phases_instructions(users_subject.current_phase)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
     phases_instructions, single_instruction = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction)
     context = _get_context(users_subject.current_phase, phases_instructions, single_instruction, errors)
     context = _update_context_if_necessry(context, users_subject.current_phase, users_subject)
-
     return render(request, 'profilePresntaion/{}.html'.format(phase_to_html_page[users_subject.current_phase]), context)
 
 # A general function that serves as phase decider

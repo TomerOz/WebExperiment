@@ -26,7 +26,7 @@ def signup(request, targetPage=None):
     else:
         form = RegisterForm()
 
-    return render(request, 'Register/signup.html', {'form': form})
+    return render(request, 'Register/signup.html', {'form': form, "targetURLAfterLogin": targetPage})
 
 def signin(request, targetPage=None):
     if request.method == 'POST': # User tries to login
@@ -45,4 +45,4 @@ def signin(request, targetPage=None):
             return render(request, 'Register/signin.html', form_feedback)
 
     else: # User is about to login
-        return render(request, 'Register/signin.html', {"targetURLAfterLogin": targetPage} )
+        return render(request, 'Register/signin.html', {"targetURLAfterLogin": targetPage})

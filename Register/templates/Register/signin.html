@@ -22,11 +22,12 @@
                 <div class="signin-content">
                     <div class="signin-image">
                         <figure><img src="{% static 'Register/images/signin-image.jpg' %}" alt="sing up image"></figure>
-                        <a class="signup-image-link" href="/signup/{{ targetURLAfterLogin }}"> {{ targetURLAfterLogin }} Create an account</a>
                     </div>
 
                     <div class="signin-form">
-                        <h2 class="form-title">Sign in</h2>
+                      <h3 class="form-title" style="text-align:center; padding:6px;">Don't have an account?<br>
+                        <a href="/signup/{{ targetURLAfterLogin }}"> Sign up here</a></h3>
+                        <h2 class="form-title">Log in</h2>
                         <form method="POST" class="register-form" id="login-form">
                           {% csrf_token %}
                           <input type="hidden" name="TargetURL" value="{{ targetURLAfterLogin }}">

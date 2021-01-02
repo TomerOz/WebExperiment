@@ -105,5 +105,18 @@ class GameMatrix(models.Model):
     def get_ps_threshold(self):
         return self.ps_threshold
 
+    def get_payoffs_dictionary(self):
+        payoffs_dict = {
+            "pA_Aa": self.pA_Aa,
+            "pB_Aa": self.pB_Aa,
+            "pA_Ab": self.pA_Ab,
+            "pB_Ab": self.pB_Ab,
+            "pA_Ba": self.pA_Ba,
+            "pB_Ba": self.pB_Ba,
+            "pA_Bb": self.pA_Bb,
+            "pB_Bb": self.pB_Bb,
+        }
+        return payoffs_dict
+
     def __str__(self):
         return ("Game Matrix" + "-" + self.game_name + " "+ self.context_group + ": Ps " + str(self.get_ps_threshold()))

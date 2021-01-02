@@ -1,7 +1,8 @@
 import ipdb
 
 class FormsProcessor(object):
-    def __init__(self):
+    def __init__(self, GameMatrix):
+        self.GameMatrix = GameMatrix
         self.phase_to_form_processor = {
             "Consent phase" : self._process_consent_form,
             "Matrix tutorial" : self._process_matrix_tutorial_form,
@@ -30,8 +31,13 @@ class FormsProcessor(object):
         return errors
 
     def _process_matrix_tutorial_form(self, post_data):
-        ipdb.set_trace()
-
+        game = self.GameMatrix.objects.get(phase__name="Matrix tutorial")
+        payoffs = game.get_payoffs_dictionary()
+        errors = []
+        for key in payoffs:
+            if payoffs[key] != int(post_data[key]):
+                errors.append(key)
+        return errors
 
 class PhasesDataSaver(object):
     def __init__(self, FeatureLabels, FeatureValue):

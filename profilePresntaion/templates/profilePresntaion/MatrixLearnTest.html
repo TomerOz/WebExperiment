@@ -88,42 +88,45 @@
         </p>
         <br/>
         <div class="colums">
-          <div class="item"><label for="You_Aa"> {{ off_order_instructions_dict.You_Aa  }}<span>*</span></label>
+          <div class="item"><label for="pA_Aa"> {{ off_order_instructions_dict.You_Aa  }}<span>*</span></label>
             <!-- <input id="fname" type="text" name="You_Aa" required/> -->
-              <input type="number" id="You_Aa" name="You_Aa" min="1" max="50" required>
+              <input type="number" id="pA_Aa" name="pA_Aa" min="1" max="50" required>
           </div>
-          <div class="item"><label for="You_Ab"> {{ off_order_instructions_dict.You_Ab  }}<span>*</span></label>
+          <div class="item"><label for="pA_Ab"> {{ off_order_instructions_dict.You_Ab  }}<span>*</span></label>
             <!-- <input id="fname" type="text" name="You_Aa" required/> -->
-              <input type="number" id="You_Ab" name="You_Ab" min="1" max="50" required>
-          </div>
-
-          <div class="item"><label for="You_Ba"> {{ off_order_instructions_dict.You_Ba  }}<span>*</span></label>
-            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
-              <input type="number" id="You_Ba" name="You_Ba" min="1" max="50" required>
-          </div>
-          <div class="item"><label for="You_Bb"> {{ off_order_instructions_dict.You_Bb  }}<span>*</span></label>
-            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
-              <input type="number" id="You_Bb" name="You_Bb" min="1" max="50" required>
+              <input type="number" id="pA_Ab" name="pA_Ab" min="1" max="50" required>
           </div>
 
-          <div class="item"><label for="Other_Aa"> {{ off_order_instructions_dict.Other_Aa  }}<span>*</span></label>
+          <div class="item"><label for="pA_Ba"> {{ off_order_instructions_dict.You_Ba  }}<span>*</span></label>
             <!-- <input id="fname" type="text" name="You_Aa" required/> -->
-              <input type="number" id="Other_Aa" name="Other_Aa" min="1" max="50" required>
+              <input type="number" id="pA_Ba" name="pA_Ba" min="1" max="50" required>
           </div>
-          <div class="item"><label for="Other_Ab"> {{ off_order_instructions_dict.Other_Ab  }}<span>*</span></label>
+          <div class="item"><label for="pA_Bb"> {{ off_order_instructions_dict.You_Bb  }}<span>*</span></label>
             <!-- <input id="fname" type="text" name="You_Aa" required/> -->
-              <input type="number" id="Other_Ab" name="Other_Ab" min="1" max="50" required>
+              <input type="number" id="pA_Bb" name="pA_Bb" min="1" max="50" required>
           </div>
 
-          <div class="item"><label for="Other_Ba"> {{ off_order_instructions_dict.Other_Ba  }}<span>*</span></label>
+          <div class="item"><label for="pB_Aa"> {{ off_order_instructions_dict.Other_Aa  }}<span>*</span></label>
             <!-- <input id="fname" type="text" name="You_Aa" required/> -->
-              <input type="number" id="Other_Ba" name="Other_Ba" min="1" max="50" required>
+              <input type="number" id="pB_Aa" name="pB_Aa" min="1" max="50" required>
           </div>
-          <div class="item"><label for="Other_Bb"> {{ off_order_instructions_dict.Other_Bb  }}<span>*</span></label>
+          <div class="item"><label for="pB_Ab"> {{ off_order_instructions_dict.Other_Ab  }}<span>*</span></label>
             <!-- <input id="fname" type="text" name="You_Aa" required/> -->
-              <input type="number" id="Other_Bb" name="Other_Bb" min="1" max="50" required>
+              <input type="number" id="pB_Ab" name="pB_Ab" min="1" max="50" required>
           </div>
-        <div class="btn-block">
+
+          <div class="item"><label for="pB_Ba"> {{ off_order_instructions_dict.Other_Ba  }}<span>*</span></label>
+            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+              <input type="number" id="pB_Ba" name="pB_Ba" min="1" max="50" required>
+          </div>
+          <div class="item"><label for="pB_Bb"> {{ off_order_instructions_dict.Other_Bb  }}<span>*</span></label>
+            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+              <input type="number" id="pB_Bb" name="pB_Bb" min="1" max="50" required>
+          </div>
+        <div class="btn-block" style="direction:ltr; color:red; text-align:left;">
+          {% if errors %}
+          <span>One answer or more is incorrect!<span><br>
+          {% endif %}
           <input type="hidden" name="form_phase" value="{{ form_phase }}">
           <button type="submit" href="/">Submit</button>
         </div>
@@ -133,6 +136,7 @@
     <script>
      var instructions_list = {{instructions_list|safe}}
      var gameJSON = {{gameJSON|safe}}
+     var errorsJSON = {{errorsJSON|safe}}
     // working with the variable context
     </script>
     </div>

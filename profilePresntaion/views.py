@@ -26,7 +26,7 @@ phase_to_html_page = {
 
 form_phase = "form_phase"
 
-forms_processor = FormsProcessor()
+forms_processor = FormsProcessor(GameMatrix)
 phases_data_saver = PhasesDataSaver(FeatureLabels, FeatureValue)
 
 ## Assistant functions: ###############################################################################################################################################
@@ -145,7 +145,8 @@ def _get_context(form_phase, instructions_list, single_instruction_text, off_ord
                 "instructions_list":  json.dumps(instructions_list),
                 "off_order_instructions_dict": off_order_instructions,
                 "single_instructions": single_instruction_text,
-                "errors":errors,
+                "errors": errors,
+                "errorsJSON": json.dumps(errors),
                 }
     return context
 
@@ -172,8 +173,10 @@ def _update_context_if_necessry(context, current_phase, users_subject):
 def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, single_instruction, off_order_instructions):
     if subject.current_phase == "Matrix tutorial":
         game = _get_game_data(subject)
-        phases_instructions[0] = phases_instructions[0].format(game.strategy_a,game.strategy_b)
-        
+        a =game.strategy_a
+        b=game.strategy_b
+        phases_instructions[1] = phases_instructions[1].format(a, b, a, b, b)
+
         off_order_instructions["You_Aa"] = off_order_instructions["You"].format(game.strategy_a, game.strategy_a)
         off_order_instructions["You_Ab"] = off_order_instructions["You"].format(game.strategy_a, game.strategy_b)
         off_order_instructions["You_Ba"] = off_order_instructions["You"].format(game.strategy_b, game.strategy_a)

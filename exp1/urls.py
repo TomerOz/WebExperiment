@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from Register import views as register_views
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('', include('home.urls')),
@@ -27,4 +29,4 @@ urlpatterns = [
     path('GetSubjectProfile/', include('GetSubjectProfile.urls')),
     path('admin/', admin.site.urls),
     path('logout/', register_views.logout_user, name="logout"),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

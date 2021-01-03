@@ -219,6 +219,7 @@ def render_next_phase(request, users_subject):
     errors = None # a place holder for errors
     if request.method == "POST":
         errors = forms_processor.process_form(users_subject.current_phase, request.POST)
+        errors = [] if errors == None else errors # making sure errors are provided as list
         phases_data_saver.save_posted_data(users_subject.current_phase, request.POST, users_subject)
         if (len(errors) == 0) & (request.POST[form_phase] == users_subject.current_phase):
             # condition fails on errors or GET (user was sent from home page with a get method) or

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'profilePresntaion/SliderStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'profilePresntaion/IdentificationTask.css' %}">
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td id="leftCell">
+          <div class="slidecontainer text-center" id="slidecontainer">
+            ad
+            </div>
+        </td>
+
+        <td id="rightCell">b
+        </td>
+      </tr>
+
+    </table>
+
+      <br>
+      <div class="container text-center">
+        <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">Next Profile</button>
+      </div>
+
+      <script>
+       var context = {{context|safe}}
+      // working with the variable context
+      </script>
+    </div>
+    <form id="subjectResonseForm" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      <input id="subjectResonses" type="hidden" name="responses" value="">
+      <input id="trial" type="hidden" name="currentTrial" value="">
+    </form>
+  </body>
+
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
+
+  <script src="{% static 'profilePresntaion/IdentificationTask.js' %}"></script>
+</html>

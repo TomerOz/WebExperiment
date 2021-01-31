@@ -1,5 +1,3 @@
-import ipdb
-
 class FormsProcessor(object):
     def __init__(self, GameMatrix):
         self.GameMatrix = GameMatrix

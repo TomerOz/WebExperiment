@@ -1,5 +1,8 @@
 
 var slidecontainer = document.getElementById("slidecontainer");
+var hiddenInputs = document.getElementById("hiddenInputs");
+var featuresForm = document.getElementById("featuresForm");
+var nextFeatureButton = document.getElementById("nextFeatureButton");
 
 db_features = "features_list"
 
@@ -23,6 +26,17 @@ function InjectProfileDataToHTML(title, right_end, left_end, value){
     return basicProfileHTMLText;
 }
 
+function getHiddenInputOfLastFeature(featureIndex){
+  hiddenInputOfLastFeature = ' ';
+  if(featureIndex >= 0){
+    feature_title, right_end, left_end = GetProfileFeatureData(context[featureIndex]);
+    value = document.getElementById(feature_title).value;
+    console.log(value);
+    hiddenInputOfLastFeature = ' <input type="hidden" name="'+ feature_title +'" value="' + value + '">';
+  };
+  return hiddenInputOfLastFeature;
+}
+
 function GetProfileFeatureData (feature) {
   feature_title = feature[0];
   right_end = feature[1];
@@ -32,10 +46,16 @@ function GetProfileFeatureData (feature) {
 
 currentFeature = 0;
 function InitializeProfilePresentation(){
-  context.forEach((feature, i) => {
-      feature_title, right_end, left_end = GetProfileFeatureData(feature);
-      slidecontainer.innerHTML += InjectProfileDataToHTML(feature_title, right_end, left_end, default_value);
-      });
-  }
+  if(currentFeature < context.length){
+    hiddenInputs.innerHTML = hiddenInputs.innerHTML + getHiddenInputOfLastFeature(currentFeature-1);
+    feature = context[currentFeature];
+    feature_title, right_end, left_end = GetProfileFeatureData(feature);
+    slidecontainer.innerHTML = InjectProfileDataToHTML(feature_title, right_end, left_end, default_value);
+    currentFeature += 1;
+  } else {
+    featuresForm.submit();
+}};
 
 InitializeProfilePresentation();
+
+nextFeatureButton.addEventListener('click', InitializeProfilePresentation);

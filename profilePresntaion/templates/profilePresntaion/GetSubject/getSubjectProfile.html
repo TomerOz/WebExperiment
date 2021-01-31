@@ -11,7 +11,7 @@
   </head>
   <body>
 
-<form action ="" method="post">
+<form action ="" method="post" id="featuresForm">
   {% csrf_token %}
     <div class="slidecontainer" id="slidecontainer">
       <!-- <input type="range" min="1" max="100" value="50" class="slider" id="myRange", disabled="Disabled"> -->
@@ -19,9 +19,13 @@
     <br>
     <div class="container">
       <input type="hidden" name="form_phase" value="{{ form_phase }}">
-      <button class="btn btn-primary btn" type="submit" name="button">Submit</button>
+    </div>
+      <div class="container" id="hiddenInputs">
     </div>
   </form>
+  <div class="container">
+    <button class="btn btn-primary btn" id="nextFeatureButton" name="button">הבא</button>
+  </div>
 
       <script>
        var context = {{features_list|safe}}

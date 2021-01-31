@@ -22,10 +22,10 @@ def create_experiment_instance():
         new_exp.save()
 
 def create_experiment_phases():
-    sgs1_phases = ["Consent phase", "Pre Task",
-                "Pre Get Profile", "During Get Profile", "Matrix tutorial",
-                "Pre Profile Presentation", "During Profile Presentation",
-                "end"]
+    sgs1_phases = ["Consent phase", "Pre Task", "Pre Get Profile",
+                "During Get Profile", "Identification Task","Matrix tutorial",
+                "Pre Profile Presentation", "During Profile Presentation", "end"]
+
     for i, phase in enumerate(sgs1_phases):
         phase_query = ExperimentPhase.objects.filter(name=phase)
         experiment = Experiment.objects.get(name="SGS1")
@@ -83,7 +83,7 @@ def create_games_matrices():
         new_game.pB_Bb =            row.pB_Bb
         new_game.save()
 
-#conda activate exp1 / source exp1/bin/activate
+#conda activate exp1 (at localhost)/ source exp1/bin/activate (at server)
 #py manage.py shell;
 #from profilePresntaion.models import *
 #exec(open('load_inital_data.py').read())

@@ -8,16 +8,16 @@ import random
 
 from .myUtils.FormsProcessing import FormsProcessor, PhasesDataSaver
 
-sgs1_phases = ["Consent phase", "Pre Task",
-            "Pre Get Profile", "During Get Profile", "Matrix tutorial",
-            "Pre Profile Presentation", "During Profile Presentation",
-            "end"]
+sgs1_phases = ["Consent phase", "Pre Task", "Pre Get Profile",
+            "During Get Profile", "Identification Task","Matrix tutorial",
+            "Pre Profile Presentation", "During Profile Presentation", "end"]
 
 phase_to_html_page = {
                         "Consent phase":                "Index",
                         "Pre Task":                     "instruction",
                         "Pre Get Profile":              "instruction",
                         "During Get Profile":           "GetSubject/getSubjectProfile",
+                        "Identification Task":           "IdentificationTask",
                         "Matrix tutorial":              "MatrixLearnTest",
                         "Pre Profile Presentation":     "instruction",
                         "During Profile Presentation":  "profile",
@@ -65,16 +65,19 @@ def _get_phases_instructions(phase_name):
 
     return instructions_list, off_order_instructions_dict
 
+# Returns one of the contexts
 def _get_random_context():
     contexts = ["trade", "conflict", "romantic","friendship"]
     return contexts[random.randint(0, len(contexts)-1)] # temporary - TODO: monitro with db maybe via the Experiment model
 
+# Returns the current session ps
 def _get_sessions_ps(context):
     rand_i = random.randint(0, 1) # temporary - TODO: monitro with db maybe via the Experiment model
     other_i =(rand_i - 1) * -1
     games = GameMatrix.objects.filter(context_group=context) # assuming only tow games Ps* per context
     pss = (games[rand_i].ps_threshold, games[other_i].ps_threshold)
     return pss
+
 # creates a  BLANK Subject model instance and associtates it with ForeignKey to the authenticated user
 def _create_subject(user):
     new_subject = Subject(experiment=Experiment.objects.get(name="SGS1"))
@@ -116,16 +119,19 @@ def _get_profiles_list_context(all_profiles):
             profiles_data[profile.id] = {}
             profiles_data["profiles_list"].append(profile.id)
 
-            features_list = profile.featurevalue_set.all()[::1]
+            features_list = profile.featurevalue_set.all()[::1] # the [::1] converts the query set into a list
             profiles_data[profile.id]["name"] = profile.name
             profiles_data[profile.id]["is_subject"] = profile.is_subject
             profiles_data[profile.id]["features"] = {}
+            profiles_data[profile.id]["features_order"] = []
             for f in features_list:
                 f_name = f.target_feature.feature_name
+                profiles_data[profile.id]["features_order"].append(f_name)
                 profiles_data[profile.id]["features"][f_name] = {}
                 profiles_data[profile.id]["features"][f_name]["value"] = f.value
                 profiles_data[profile.id]["features"][f_name]["l"] = f.target_feature.left_end
                 profiles_data[profile.id]["features"][f_name]["r"] = f.target_feature.right_end
+            random.shuffle(profiles_data[profile.id]["features_order"])
 
     random.shuffle(profiles_data["profiles_list"])
     return profiles_data
@@ -138,7 +144,7 @@ def _get_new_subject_profile_page_context():
     random.shuffle(features_list)
     return {"features_list" : json.dumps(features_list)}
 
-# Builds a generic context that is used in all views
+# Builds a generic context that is used in all views (db-html-js context, not manipulated context)
 def _get_context(form_phase, instructions_list, single_instruction_text, off_order_instructions, errors):
     context = {
                 "form_phase": form_phase,
@@ -149,6 +155,28 @@ def _get_context(form_phase, instructions_list, single_instruction_text, off_ord
                 "errorsJSON": json.dumps(errors),
                 }
     return context
+
+
+def _get_subject_profile(request):
+    users_subject = _get_user_subject(request.user)
+    user_profile = ProfileModel.objects.get(name = users_subject.name)
+    user_profile_data = {"features": {}, "features_order": [], "name": user_profile.name, "is_subject": user_profile.is_subject}
+    features_data = user_profile.featurevalue_set.all()[::1] # the [::1] converts the query set into a list
+    for feature in features_data:
+        f_name = feature.target_feature.feature_name
+        user_profile_data["features_order"].append(f_name)
+        user_profile_data["features"][f_name] = {}
+        user_profile_data["features"][f_name]["value"] = feature.value
+        user_profile_data["features"][f_name]["l"] = feature.target_feature.left_end
+        user_profile_data["features"][f_name]["r"] = feature.target_feature.right_end
+
+    random.shuffle(user_profile_data["features_order"])
+    return user_profile_data
+
+def _generate_profiles():
+    ################## Continue here #############################
+    pass
+
 
 # Updates the generic context on specific phases
 def _update_context_if_necessry(context, current_phase, users_subject):
@@ -168,6 +196,9 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         "game":game,
                         "gameJSON":gameJSON,
                         })
+    elif current_phase == "Identification Task":
+        context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
+
     return context # if condition fails, context remain untouched
 
 def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, single_instruction, off_order_instructions):

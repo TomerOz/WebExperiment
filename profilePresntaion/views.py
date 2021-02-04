@@ -1,16 +1,13 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment, Instruction, GameMatrix
+from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment, Instruction, GameMatrix, ExperimentPhase, SimilarityContextModel
 from django.core import serializers
 
 import json
 import ipdb
 import random
+import copy
 
 from .myUtils.FormsProcessing import FormsProcessor, PhasesDataSaver
-
-sgs1_phases = ["Consent phase", "Pre Task", "Pre Get Profile",
-            "During Get Profile", "Identification Task","Matrix tutorial",
-            "Pre Profile Presentation", "During Profile Presentation", "end"]
 
 phase_to_html_page = {
                         "Consent phase":                "Index",
@@ -44,6 +41,7 @@ def _get_all_subject_phases(subject):
 
 # returns the name of next phase of this subject
 def _get_next_phase(subject):
+    sgs1_phases = ExperimentPhase.objects.all()[::1] # the [::1] creates a list from the query set
     next_phase_index = sgs1_phases.index(subject.current_phase) + 1
     #if next_phase_index < len(sgs1_phases):
     if next_phase_index < len(sgs1_phases):
@@ -157,8 +155,7 @@ def _get_context(form_phase, instructions_list, single_instruction_text, off_ord
     return context
 
 
-def _get_subject_profile(request):
-    users_subject = _get_user_subject(request.user)
+def _get_subject_profile(users_subject):
     user_profile = ProfileModel.objects.get(name = users_subject.name)
     user_profile_data = {"features": {}, "features_order": [], "name": user_profile.name, "is_subject": user_profile.is_subject}
     features_data = user_profile.featurevalue_set.all()[::1] # the [::1] converts the query set into a list
@@ -173,7 +170,52 @@ def _get_subject_profile(request):
     random.shuffle(user_profile_data["features_order"])
     return user_profile_data
 
-def _generate_profiles():
+def _get_inital_artificial_profile(user_profile_data):
+    profile = copy.deepcopy(user_profile_data)
+    random.shuffle(profile["features_order"]) ## Maybe should be in the same order
+    profile["is_subject"] = False
+    profile["name"] = "artificial"
+
+    for f_name in user_profile_data["features"]:
+        profile["features"][f_name]
+        profile["features"][f_name]["value"] = random.randint(0,100)
+
+    return profile
+
+def _get_feature_distance_dict(subject_profile, other_profile):
+    distances_dict = {}
+    for f_name in subject_profile["features"]:
+        d = abs(subject_profile["features"][f_name]["value"] - other_profile["features"][f_name]["value"])
+        distances_dict[f_name] = d
+    return distances_dict
+
+def _get_subject_other_similarity(model, sp, ap):
+    similarity = 0
+    for f_name in sp["features"]:
+         s_value = sp["features"][f_name]["value"] # subject profile
+         a_value = ap["features"][f_name]["value"] # artificial profile
+         w = model.featureweight_set.get(feature_label__feature_name=f_name).value
+         similarity += w * abs(s_value - a_value)
+
+def _get_min_similarity(model, subject_profile):
+    similarity = 0
+    for f_name in subject_profile["features"]:
+         value = subject_profile["features"][f_name]["value"]
+         distance = (100-value if value<=50 else value)/100
+         w = model.featureweight_set.get(feature_label__feature_name=f_name).value
+         similarity += w*distance
+    return 1-similarity
+
+def _generate_profile(users_subject, target_similarity):
+    sp = _get_subject_profile(users_subject) # subject profile
+    ap = _get_inital_artificial_profile(sp) # artificial profile
+    model = SimilarityContextModel.objects.get(context__name=users_subject.context_group)
+    min_s = _get_min_similarity(model, sp)
+    adapted_target_s = (target_similarity * 100 * (1-min_s)) + min_s
+    ipdb.set_trace()
+    distances_dict = _get_feature_distance_dict(sp, ap)
+
+
     ################## Continue here #############################
     pass
 
@@ -198,6 +240,7 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         })
     elif current_phase == "Identification Task":
         context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
+        _generate_profile(users_subject, 0.2)
 
     return context # if condition fails, context remain untouched
 

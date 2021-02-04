@@ -33,6 +33,26 @@ class Experiment(models.Model):
     def __str__(self):
         return (self.name)
 
+class Context(models.Model):
+    name = models.CharField(max_length=30, default="Neutral")
+
+    def __str__(self):
+        return (self.name + " Context")
+
+class SimilarityContextModel(models.Model):
+    context = models.ForeignKey(Context, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return ("Similarity Weights Model of " + self.context.name  + " Context")
+
+class FeatureWeight(models.Model):
+    feature_label = models.ForeignKey(FeatureLabels, on_delete=models.CASCADE)
+    model = models.ForeignKey(SimilarityContextModel, on_delete=models.CASCADE)
+    value = models.FloatField(default=0.5)
+
+    def __str__(self):
+        return ("W " + self.feature_label.feature_name+ " - " + self.model.context.name)
+
 class ExperimentPhase(models.Model):
     name = models.CharField(max_length=30, default="")
     phase_place = models.IntegerField()
@@ -90,7 +110,7 @@ class GameMatrix(models.Model):
     strategy_a = models.CharField(max_length=30, default="cooperate")
     strategy_b = models.CharField(max_length=30, default="defect")
     phase = models.ForeignKey(ExperimentPhase, null=True, on_delete=models.SET_NULL)
-    context_group = models.CharField(max_length=30, default="tutorial")
+    context_group = models.ForeignKey(Context, on_delete=models.CASCADE)
 
     pA_Aa = models.IntegerField(default=1)
     pB_Aa = models.IntegerField(default=2)
@@ -119,4 +139,4 @@ class GameMatrix(models.Model):
         return payoffs_dict
 
     def __str__(self):
-        return ("Game Matrix" + "-" + self.game_name + " "+ self.context_group + ": Ps " + str(self.get_ps_threshold()))
+        return ("Game Matrix" + "-" + self.game_name + " " + self.context_group.name + ": Ps " + str(self.get_ps_threshold()))

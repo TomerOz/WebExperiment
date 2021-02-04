@@ -33,8 +33,9 @@ function GetProfileFeatureData (feature) {
 }
 function InitializeProfilePresentation(current_profile){
   var profile_features = context[all_profiles_ids[current_profile]][db_features];
+  var features_list = context[all_profiles_ids[current_profile]]["features_order"]
   slidecontainer.innerHTML = "";
-  for (var feature in profile_features) {
+  for (var feature in features_list) {
       right_end, left_end, value = GetProfileFeatureData(profile_features[feature]);
       // check if the property/key is defined in the object itself, not in parent
       if (profile_features.hasOwnProperty(feature)) {

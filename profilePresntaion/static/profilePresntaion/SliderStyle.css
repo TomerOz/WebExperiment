@@ -51,15 +51,20 @@
 }
 
 .side {
-  width: 15%;
+  width: 20%;
+  font-size: 13px;
 }
 
 .middle {
-  width: 70%;
+  width: 60%;
 }
 /* Clear floats after the columns */
 .row:after {
   content: "";
   display: table;
   clear: both;
+}
+
+#title{
+  font-size: 17px;
 }

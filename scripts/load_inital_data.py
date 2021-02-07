@@ -3,6 +3,7 @@ import pandas as pd
 import os
 
 from profilePresntaion.models import *
+
 def run():
     def _get_txt_list(path_and_file, splitter):
         with open(path_and_file,'r') as f:

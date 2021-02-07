@@ -41,11 +41,10 @@ def _get_all_subject_phases(subject):
 
 # returns the name of next phase of this subject
 def _get_next_phase(subject):
-    sgs1_phases = ExperimentPhase.objects.all()[::1] # the [::1] creates a list from the query set
-    next_phase_index = sgs1_phases.index(subject.current_phase) + 1
-    #if next_phase_index < len(sgs1_phases):
-    if next_phase_index < len(sgs1_phases):
-        return sgs1_phases[next_phase_index]
+    phases = ExperimentPhase.objects.all()
+    if subject.current_phase.name != "end":
+        next_phase = phases.get(phase_place=subject.current_phase+1)
+        return next_phase.name
     else: # upon ening a session
         return "session end"
 
@@ -212,8 +211,11 @@ def _generate_profile(users_subject, target_similarity):
     model = SimilarityContextModel.objects.get(context__name=users_subject.context_group)
     min_s = _get_min_similarity(model, sp)
     adapted_target_s = (target_similarity * 100 * (1-min_s)) + min_s
-    ipdb.set_trace()
     distances_dict = _get_feature_distance_dict(sp, ap)
+    #ipdb.set_trace()
+    return ap
+
+
 
 
     ################## Continue here #############################
@@ -240,7 +242,12 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         })
     elif current_phase == "Identification Task":
         context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
-        _generate_profile(users_subject, 0.2)
+        ap = _generate_profile(users_subject, 0.2)
+        ap2 = _generate_profile(users_subject, 0.5)
+        sp = _get_subject_profile(users_subject)
+        d2 = {"identification_task" : json.dumps({"subject": sp, "artificials": [ap, ap2]})}
+        context.update(d2)
+        #ipdb.set_trace()
 
     return context # if condition fails, context remain untouched
 

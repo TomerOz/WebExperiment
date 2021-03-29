@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment, Instruction, GameMatrix, ExperimentPhase, SimilarityContextModel
+from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment
+from .models import Instruction, GameMatrix, ExperimentPhase, SimilarityContextModel
+from .models import Context
 from django.core import serializers
 
 import json
@@ -43,8 +45,8 @@ def _get_all_subject_phases(subject):
 def _get_next_phase(subject):
     phases = ExperimentPhase.objects.all()
     if subject.current_phase.name != "end":
-        next_phase = phases.get(phase_place=subject.current_phase+1)
-        return next_phase.name
+        next_phase = phases.get(phase_place=subject.current_phase.phase_place+1)
+        return next_phase
     else: # upon ening a session
         return "session end"
 
@@ -71,7 +73,8 @@ def _get_random_context():
 def _get_sessions_ps(context):
     rand_i = random.randint(0, 1) # temporary - TODO: monitro with db maybe via the Experiment model
     other_i =(rand_i - 1) * -1
-    games = GameMatrix.objects.filter(context_group=context) # assuming only tow games Ps* per context
+    subjects_context = Context.objects.get(name=context)
+    games = GameMatrix.objects.filter(context_group=subjects_context) # assuming only tow games Ps* per context
     pss = (games[rand_i].ps_threshold, games[other_i].ps_threshold)
     return pss
 
@@ -84,6 +87,7 @@ def _create_subject(user):
     new_subject.subject_session = 1 # on creation subject session is one
     new_subject.context_group = _get_random_context()
     new_subject.session_1_ps, new_subject.session_2_ps = _get_sessions_ps(new_subject.context_group)
+    new_subject.current_phase = ExperimentPhase.objects.get(name="Consent phase")
     new_subject.save(force_update=True)
     user.exp1_enc_num = str(new_subject.pk)
     user.save()
@@ -252,7 +256,7 @@ def _update_context_if_necessry(context, current_phase, users_subject):
     return context # if condition fails, context remain untouched
 
 def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, single_instruction, off_order_instructions):
-    if subject.current_phase == "Matrix tutorial":
+    if subject.current_phase.name == "Matrix tutorial":
         game = _get_game_data(subject)
         a =game.strategy_a
         b=game.strategy_b
@@ -274,10 +278,10 @@ def _get_game_data(subject):
     ps_threshold = subject.session_1_ps
     if subject.subject_session == 2:
         ps_threshold = subject.session_2_ps
-    if subject.current_phase == "Matrix tutorial":
-        game = GameMatrix.objects.get(phase__name=subject.current_phase)
+    if subject.current_phase.name == "Matrix tutorial":
+        game = GameMatrix.objects.get(phase__name=subject.current_phase.name)
     else:
-        game = GameMatrix.objects.get(phase__name=subject.current_phase, context_group=subject.context_group, ps_threshold=ps_threshold)
+        game = GameMatrix.objects.get(phase__name=subject.current_phase.name, context_group=subject.context_group, ps_threshold=ps_threshold)
     return game
 
 def _get_game_dict(game):
@@ -299,23 +303,23 @@ def _get_game_dict(game):
 def render_next_phase(request, users_subject):
     errors = None # a place holder for errors
     if request.method == "POST":
-        errors = forms_processor.process_form(users_subject.current_phase, request.POST)
+        errors = forms_processor.process_form(users_subject.current_phase.name, request.POST)
         errors = [] if errors == None else errors # making sure errors are provided as list
-        phases_data_saver.save_posted_data(users_subject.current_phase, request.POST, users_subject)
-        if (len(errors) == 0) & (request.POST[form_phase] == users_subject.current_phase):
+        phases_data_saver.save_posted_data(users_subject.current_phase.name, request.POST, users_subject)
+        if (len(errors) == 0) & (request.POST[form_phase] == users_subject.current_phase.name):
             # condition fails on errors or GET (user was sent from home page with a get method) or
-            #in case of page refresh request.POST is previous phasewhile users_subject.current_phase moved forward
-            _update_subject_phase(users_subject) # updates "users_subject.current_phase"
-            if users_subject.current_phase == "session end":
-                users_subject.current_phase = "Consent phase"
+            #in case of page refresh request.POST is previous phasewhile users_subject.current_phase.name moved forward
+            _update_subject_phase(users_subject) # updates "users_subject.current_phase.name"
+            if users_subject.current_phase.name == "session end":
+                users_subject.current_phase.name = "Consent phase"
                 users_subject.save()
                 return redirect(reverse('home:home')) # temporary - SHOULD HAVE ITS OWN END PAGE (FEEDBACK)
-    phases_instructions, off_order_instructions = _get_phases_instructions(users_subject.current_phase)
+    phases_instructions, off_order_instructions = _get_phases_instructions(users_subject.current_phase.name)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
     phases_instructions, single_instruction, off_order_instructions = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction, off_order_instructions)
-    context = _get_context(users_subject.current_phase, phases_instructions, single_instruction, off_order_instructions, errors)
-    context = _update_context_if_necessry(context, users_subject.current_phase, users_subject)
-    return render(request, 'profilePresntaion/{}.html'.format(phase_to_html_page[users_subject.current_phase]), context)
+    context = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, errors)
+    context = _update_context_if_necessry(context, users_subject.current_phase.name, users_subject)
+    return render(request, 'profilePresntaion/{}.html'.format(phase_to_html_page[users_subject.current_phase.name]), context)
 
 # A general function that serves as phase decider
 def get_phase_page(request):

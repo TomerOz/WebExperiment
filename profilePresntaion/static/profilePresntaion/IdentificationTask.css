@@ -6,3 +6,8 @@ table{
 td {
   width: 65vw;
 }
+
+button {
+  margin: auto;
+  text-align: center;
+}

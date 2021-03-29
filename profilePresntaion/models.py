@@ -4,10 +4,11 @@ from django.db import models
 class ProfileModel(models.Model):
     name = models.CharField(max_length=200)
     is_subject = models.BooleanField(default=False)
-
+    is_artificial = models.BooleanField(default=False)
     #pub_date = models.DateTimeField('date published')
     def __str__(self):
         return ("Profile Model" + "-" + self.name)
+
 
 class FeatureLabels(models.Model):
     right_end = models.CharField(max_length=200, default="right")
@@ -79,7 +80,7 @@ class Subject(ProfileModel):
     trials_string_list = models.CharField(max_length=800, default="")
     trials_responses_list = models.CharField(max_length=800, default="")
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
-    current_phase = models.CharField(max_length=30, default="Consent phase")
+    current_phase = models.ForeignKey(ExperimentPhase, null=True, on_delete=models.SET_NULL)
 
     subject_session  = models.IntegerField(default=0) # on creation of subject - session is 1, as in first session.
     completed_experiments = models.CharField(max_length=300, default="") # a list-like string of experiment -> "SGS1, SGS2,"
@@ -99,6 +100,18 @@ class Subject(ProfileModel):
             self.completed_experiments = self.completed_experiments + self.experiment.name + ","
         self.current_phase = "end"
         self.save()
+
+class ArtificialProfileModel(ProfileModel):
+    '''
+        Holds artificial profiles the belong to specic subject.
+        Additional propeties:
+            name, is_subject(default=true)
+    '''
+    is_artificial = True
+    target_subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return ("Artificial Profile Model" + "-" + self.name + " - of - " + self.target_subject.name)
 
 
 class GameMatrix(models.Model):

@@ -16,6 +16,7 @@ phase_to_html_page = {
                         "Pre Task":                     "instruction",
                         "Pre Get Profile":              "instruction",
                         "During Get Profile":           "GetSubject/getSubjectProfile",
+                        "Pre Identification Task":      "instruction",
                         "Identification Task":           "IdentificationTask",
                         "Matrix tutorial":              "MatrixLearnTest",
                         "Pre Profile Presentation":     "instruction",
@@ -247,9 +248,12 @@ def _update_context_if_necessry(context, current_phase, users_subject):
     elif current_phase == "Identification Task":
         context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
         ap = _generate_profile(users_subject, 0.2)
-        ap2 = _generate_profile(users_subject, 0.5)
+        ap2 = _generate_profile(users_subject, 0.3)
+        ap3 = _generate_profile(users_subject, 0.4)
+        ap4 = _generate_profile(users_subject, 0.5)
+        ap5 = _generate_profile(users_subject, 0.6)
         sp = _get_subject_profile(users_subject)
-        d2 = {"identification_task" : json.dumps({"subject": sp, "artificials": [ap, ap2]})}
+        d2 = {"identification_task" : json.dumps({"subject": sp, "artificials": [ap, ap2, ap3, ap4, ap5]})}
         context.update(d2)
         #ipdb.set_trace()
 

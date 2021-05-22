@@ -25,6 +25,7 @@ def run():
             new_exp.save()
 
     def create_experiment_phases():
+        ExperimentPhase.objects.all().delete()
         sgs1_phases = _get_txt_list(os.path.join("profilePresntaion","myUtils", 'phases.txt'), "\n")
         for i, phase in enumerate(sgs1_phases):
             phase_query = ExperimentPhase.objects.filter(name=phase)
@@ -34,6 +35,7 @@ def run():
                 new_phase.save()
 
     def create_instructinos(): # Depends on an existing "Experiment" instance of SGS1
+        Instruction.objects.all().delete()
         path = os.path.join("profilePresntaion","myUtils","instructions.xlsx")
         instructions_df = pd.read_excel(path)
         last_phase = None
@@ -113,10 +115,10 @@ def run():
     features_df = pd.read_excel(path)
     features_names = features_df.feature.tolist()
 
-    create_instructinos()
-    create_feature_labels(features_df)
     create_experiment_instance()
     create_experiment_phases()
+    create_instructinos()
+    create_feature_labels(features_df)
     create_contexts()
     create_models()
     create_games_matrices()

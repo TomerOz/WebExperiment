@@ -10,6 +10,10 @@ var currentTrial = document.getElementById("trial");
 var responseTimes = document.getElementById("RTs");
 var profilesSides = document.getElementById("profilesSides");
 
+var instructionContainer = document.getElementById("instructionContainer");
+var textContainer = document.getElementById("textContainer");
+var nextInstructionButton = document.getElementById("NextInstructionButton");
+
 db_features = "features"
 var current_profile = 0
 var all_profiles_ids = task_profiles["artificials"]
@@ -105,23 +109,38 @@ function InitiateTimeCount() {
   t0 = new Date();
 }
 
-function HandelResponseButtons(){
+function HandelResponseButtons(containers){
   nextLeftButton.style.display = 'none';
   nextRightButton.style.display = 'none';
   if(trialCounter<instructionsTrial){
     setTimeout(function() {nextLeftButton.style.display = 'block'}, 2000);
     setTimeout(function() {nextRightButton.style.display = 'block'}, 2000);
+  } else if(trialCounter===instructionsTrial){
+    instructionContainer.style.display = 'block'
+    textContainer.innerText = instructionText.preQuickPhase;
+    containers[0].style.display = 'none';
+    containers[1].style.display = 'none';
   } else {
-    // do something else
-  }
+    setTimeout(function() {nextLeftButton.style.display = 'block'}, 1000);
+    setTimeout(function() {nextRightButton.style.display = 'block'}, 1000);
+  };
 }
 
 function HideAndShowContainers(containers){
   containers[0].style.display = 'none';
   containers[1].style.display = 'none';
-  setTimeout(function() {containers[0].style.display = 'block'}, 1000);
-  setTimeout(function() {containers[1].style.display = 'block'}, 1000);
+  if(trialCounter!=instructionsTrial){
+    setTimeout(function() {containers[0].style.display = 'block'}, 1000);
+    setTimeout(function() {containers[1].style.display = 'block'}, 1000);
+  };
 }
+
+function InitiateQuickIdentificationTask(){
+  instructionContainer.style.display = "none"; // hiding instructions
+  current_profile -=1;
+  NextTrial();
+}
+
 
 function InitializeProfilePresentation(current_profile){
   var profile_features = task_profiles["subject"][db_features];
@@ -136,7 +155,7 @@ function InitializeProfilePresentation(current_profile){
   profiles_possitions.push(sides[subject_side])
   containers[other_side].innerHTML = artificial_profile_text
   HideAndShowContainers(containers);
-  HandelResponseButtons();
+  HandelResponseButtons(containers);
   InitiateTimeCount();
 }
 
@@ -155,7 +174,9 @@ nextLeftButton.addEventListener("click",  function(){RecordResponses(left)})
 nextRightButton.addEventListener("click",  function(){RecordResponses(right)})
 
 // starting first_trial
+instructionContainer.style.display = "none"; // hiding instructions
 InitializeProfilePresentation(current_profile);
+nextInstructionButton.addEventListener("click",  function(){InitiateQuickIdentificationTask()});
 // leftCell = document.getElementById("leftCell");
 // rightCell = document.getElementById("rightCell");
 // rightCell.innerHTML = leftCell.innerHTML;

@@ -1,0 +1,5 @@
+1) in order to choose the feature ser (normal, meaninigless, blogs-extracted), change line 61 in ipa_1_2\MyUtils\FormsProcessing.py
+2) always use FeatureLabels  - but add a field - set A,B,C
+3) in view.py line 144, make it be relevant to subject's designated features set
+4) connecting home to ipa_1_2
+4) line 244 and 249 in views should lead to the relevant profiles of sets A,B,C

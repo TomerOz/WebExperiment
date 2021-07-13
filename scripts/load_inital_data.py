@@ -3,6 +3,7 @@ import pandas as pd
 import os
 
 from profilePresntaion.models import *
+CURRENT_APP_NAME = "profilePresntaion"
 
 def run():
     def _get_txt_list(path_and_file, splitter):
@@ -26,7 +27,7 @@ def run():
 
     def create_experiment_phases():
         ExperimentPhase.objects.all().delete()
-        sgs1_phases = _get_txt_list(os.path.join("profilePresntaion","myUtils", 'phases.txt'), "\n")
+        sgs1_phases = _get_txt_list(os.path.join(CURRENT_APP_NAME,"myUtils", 'phases.txt'), "\n")
         for i, phase in enumerate(sgs1_phases):
             phase_query = ExperimentPhase.objects.filter(name=phase)
             experiment = Experiment.objects.get(name="SGS1")
@@ -36,7 +37,7 @@ def run():
 
     def create_instructinos(): # Depends on an existing "Experiment" instance of SGS1
         Instruction.objects.all().delete()
-        path = os.path.join("profilePresntaion","myUtils","instructions.xlsx")
+        path = os.path.join(CURRENT_APP_NAME,"myUtils","instructions.xlsx")
         instructions_df = pd.read_excel(path)
         last_phase = None
         phase_counter = 1
@@ -63,7 +64,7 @@ def run():
                 new_instruction.save()
 
     def create_contexts():
-        contexts = _get_txt_list( os.path.join("profilePresntaion","myUtils",'contexts.txt'), "\n")
+        contexts = _get_txt_list( os.path.join(CURRENT_APP_NAME,"myUtils",'contexts.txt'), "\n")
         for context in contexts:
             context_query = Context.objects.filter(name=context)
             if len(context_query) == 0:
@@ -71,7 +72,7 @@ def run():
                 new_context.save()
 
     def create_models():
-        models = pd.read_excel(os.path.join("profilePresntaion","myUtils","models.xlsx"))
+        models = pd.read_excel(os.path.join(CURRENT_APP_NAME,"myUtils","models.xlsx"))
         features = [feature.feature_name for feature in FeatureLabels.objects.all()]
         SimilarityContextModel.objects.all().delete()
         for i, row in models.iterrows():
@@ -83,8 +84,8 @@ def run():
                     fw, created = FeatureWeight.objects.get_or_create(feature_label=feature_label, model=context_model, value=row[feature])
 
     def create_games_matrices():
-        contexts = _get_txt_list(os.path.join("profilePresntaion","myUtils",'contexts.txt'), "\n")
-        path = os.path.join("profilePresntaion","myUtils","games.xlsx")
+        contexts = _get_txt_list(os.path.join(CURRENT_APP_NAME,"myUtils",'contexts.txt'), "\n")
+        path = os.path.join(CURRENT_APP_NAME,"myUtils","games.xlsx")
         games_df = pd.read_excel(path)
         GameMatrix.objects.all().delete()
         for index, row in games_df.iterrows():
@@ -111,7 +112,7 @@ def run():
     #exec(open('load_inital_data.py').read())
 
 
-    path = os.path.join("profilePresntaion","myUtils","features.xlsx")
+    path = os.path.join(CURRENT_APP_NAME,"myUtils","features.xlsx")
     features_df = pd.read_excel(path)
     features_names = features_df.feature.tolist()
 

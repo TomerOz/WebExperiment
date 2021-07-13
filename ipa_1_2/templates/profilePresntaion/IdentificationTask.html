@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'profilePresntaion/SliderStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'profilePresntaion/IdentificationTask.css' %}">
+    <link rel="stylesheet" href="{% static 'profilePresntaion/IndexStyle.css' %}">
+  </head>
+  <body>
+
+    <div class="container" id="instructionContainer" >
+      <div class="jumbotron" id="textContainer">
+      </div>
+        <button class="btn btn-primary btn-lg" id="NextInstructionButton" type="button" name="button">המשך</button>
+    </div>
+
+
+
+    <table>
+      <tr>
+        <td id="leftCell">
+          <div class="slidecontainer text-center" id="slidecontainer">
+            </div>
+            <div class="text-center">
+              <br>
+              <button id="Next_left" class="btn btn-primary btn" type="button" name="button">אני</button>
+            </div>
+        </td>
+
+        <td id="rightCell">
+          <div class="slidecontainer text-center" id="slidecontainer_right">
+            </div>
+            <div class="text-center">
+              <br>
+              <button id="Next_right" class="btn btn-primary btn" type="button" name="button">אני</button>
+            </div>
+        </td>
+      </tr>
+
+    </table>
+
+      <script>
+       var context = {{context|safe}}
+       var instructionText = {{off_order_instructions_dict|safe}}
+       var task_profiles = {{identification_task|safe}}
+      // working with the variable context
+      </script>
+    </div>
+    <form id="subjectResonseForm" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      <input id="subjectResonses" type="hidden" name="responses" value="">
+      <input id="trial" type="hidden" name="currentTrial" value="">
+      <input id="RTs" type="hidden" name="reactionTimes" value="">
+      <input id="profilesSides" type="hidden" name="profilesSides" value="">
+      <!-- <input id="profilesIDs" type="hidden" name="profilesIDsList" value="{{ context.profiles_ids_list }}"> -->
+    </form>
+  </body>
+
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
+
+  <script src="{% static 'profilePresntaion/IdentificationTask.js' %}"></script>
+</html>

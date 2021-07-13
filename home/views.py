@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, reverse
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 
-targetPageToURL = {"SGS1" : "profilePresntaion:PhaseDecision", None : 'home:home'} # for "reverse" --> totally new path
+targetPageToURL = {"SGS1" : "profilePresntaion:PhaseDecision", "ipa_1_2": "ipa_1_2:PhaseDecision", None : 'home:home'} # for "reverse" --> totally new path
 
 # Create your views here.
 def home_page(request):

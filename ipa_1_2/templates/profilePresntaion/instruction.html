@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height initial-scale=1, shrink-to-fit=yes">
+    <title>IPA 2020 - Instructions</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  </head>
+  <body>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'profilePresntaion/IndexStyle.css' %}">
+    {% if instructions_list %}
+  <div class="container">
+    <div id="instructionContainer" class="jumbotron">
+      <!-- Here instructions will be inserted -->
+      {{instructions_list}} Place Holder holer holder
+    </div>
+    {% endif %}
+
+    {{subject}}
+    <form id="instructionsForm" class="" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      <button class="btn btn-primary btn-lg" id="NextInstructionButton" type="button" name="button">Next</button>
+    </form>
+  </div>
+    <script>
+     var instructions_list = {{instructions_list|safe}}
+    </script>
+
+  </body>
+    <script src="{% static 'profilePresntaion/InstructionLogic.js' %}"></script>
+</html>

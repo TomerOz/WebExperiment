@@ -185,7 +185,11 @@
               <p class="card-text">Experiment 2 - Not active</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-secondary" disabled="disabled">Start</button>
+                  <form action=""  method="post">
+                    {% csrf_token %}
+                      <input type="hidden" name="form_phase" value="ipa_1_2"><!-- Hidden input tells server which form was submitted, form_name should be constant in all forms, just the value shoudl change -->
+                      <button type="submit" class="btn btn-sm btn-outline-secondary">Start</button>
+                  </form>
                 </div>
                 <small class="text-muted">35 mins</small>
               </div>

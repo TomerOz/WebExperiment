@@ -26,7 +26,8 @@ urlpatterns = [
     path('signin/<str:targetPage>', register_views.signin, name='signin'), # singin with argeument
     path('signup/<str:targetPage>', register_views.signup, name='signup'), # signup with argeument
     path('profilePresntaion/', include('profilePresntaion.urls')),
-    path('GetSubjectProfile/', include('GetSubjectProfile.urls')),
+    path('ipa_1_2/', include('ipa_1_2.urls')),
+    #path('GetSubjectProfile/', include('GetSubjectProfile.urls')),
     path('admin/', admin.site.urls),
     path('logout/', register_views.logout_user, name="logout"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

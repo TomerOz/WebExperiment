@@ -37,7 +37,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'profilePresntaion.apps.ProfilepresntaionConfig',
-    'GetSubjectProfile.apps.GetsubjectprofileConfig',
+    'ipa_1_2.apps.Ipa12Config',
     'Register.apps.RegisterConfig',
     'core.apps.CoreConfig',
     'home.apps.HomeConfig',

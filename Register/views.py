@@ -5,7 +5,7 @@ from .forms import RegisterForm
 import ipdb
 
 #targetPageToURL = {"SGS1" : "profilePresntaion/PhaseDecision", None : 'home/home'} # for simple "redirect"
-targetPageToURL = {"SGS1" : "profilePresntaion:PhaseDecision", None : 'home:home'} # for "reverse" --> totally new path
+targetPageToURL = {"SGS1" : "profilePresntaion:PhaseDecision", "ipa_1_2": "ipa_1_2:PhaseDecision", None : 'home:home'} # for "reverse" --> totally new path
 
 
 def logout_user(request):

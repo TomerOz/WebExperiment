@@ -123,6 +123,6 @@ def run():
     create_feature_labels(features_df)
     create_contexts()
     create_models()
-    create_games_matrices()
+    # create_games_matrices()
 
 #py manage.py runscript load_inital_data

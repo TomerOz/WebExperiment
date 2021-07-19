@@ -1,10 +1,11 @@
 Consent phase
 Pre Task
+Get Min Max Similarity
 Pre Get Profile
 During Get Profile
 Pre Identification Task
 Identification Task
-Matrix tutorial
 Pre Profile Presentation
 During Profile Presentation
+Report Similariy
 end

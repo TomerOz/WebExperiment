@@ -14,6 +14,7 @@ from .myUtils.FormsProcessing import FormsProcessor, PhasesDataSaver
 phase_to_html_page = {
                         "Consent phase":                "Index",
                         "Pre Task":                     "instruction",
+                        "Get Min Max Similarity":       "MinMaxSimilariy",
                         "Pre Get Profile":              "instruction",
                         "During Get Profile":           "GetSubject/getSubjectProfile",
                         "Pre Identification Task":      "instruction",
@@ -21,6 +22,7 @@ phase_to_html_page = {
                         "Matrix tutorial":              "MatrixLearnTest",
                         "Pre Profile Presentation":     "instruction",
                         "During Profile Presentation":  "profile",
+                        "Report Similariy":  "ReportSimilarity",
                         "end":                          "endPage",
                     }
 
@@ -141,7 +143,7 @@ def _get_profiles_list_context(all_profiles):
 # Preparing context for the a new subject page
 def _get_new_subject_profile_page_context():
     features_list = []
-    for fl in FeatureLabels.objects.get(label_set="B").all():
+    for fl in FeatureLabels.objects.filter(label_set="B").all():
         features_list.append([fl.feature_name, fl.right_end, fl.left_end])
     random.shuffle(features_list)
     return {"features_list" : json.dumps(features_list)}
@@ -206,7 +208,10 @@ def _get_min_similarity(model, subject_profile):
     for f_name in subject_profile["features"]:
          value = subject_profile["features"][f_name]["value"]
          distance = (100-value if value<=50 else value)/100
-         w = model.featureweight_set.get(feature_label__feature_name=f_name).value
+         if len(model.featureweight_set.filter(feature_label__feature_name=f_name)) == 0:
+             w = 0 # In case current feaures set doesnt have an equivalent model
+         else:
+             w = model.featureweight_set.get(feature_label__feature_name=f_name).value
          similarity += w*distance
     return 1-similarity
 
@@ -260,7 +265,10 @@ def _update_context_if_necessry(context, current_phase, users_subject):
     return context # if condition fails, context remain untouched
 
 def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, single_instruction, off_order_instructions):
-    if subject.current_phase.name == "Matrix tutorial":
+    if subject.current_phase.name == "Get Min Max Similarity":
+        pass
+
+    elif subject.current_phase.name == "Matrix tutorial":
         game = _get_game_data(subject)
         a =game.strategy_a
         b=game.strategy_b
@@ -321,9 +329,10 @@ def render_next_phase(request, users_subject):
     phases_instructions, off_order_instructions = _get_phases_instructions(users_subject.current_phase.name)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
     phases_instructions, single_instruction, off_order_instructions = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction, off_order_instructions)
-    context = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, errors)
-    context = _update_context_if_necessry(context, users_subject.current_phase.name, users_subject)
-    return render(request, 'profilePresntaion/{}.html'.format(phase_to_html_page[users_subject.current_phase.name]), context)
+    context_to_send = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, errors)
+    context_to_send = _update_context_if_necessry(context_to_send, users_subject.current_phase.name, users_subject)
+    # ipdb.set_trace()
+    return render(request, 'ipa_1_2/{}.html'.format(phase_to_html_page[users_subject.current_phase.name]), context_to_send)
 
 # A general function that serves as phase decider
 def get_phase_page(request):

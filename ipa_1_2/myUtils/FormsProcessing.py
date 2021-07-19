@@ -59,7 +59,7 @@ class PhasesDataSaver(object):
     def _process_create_new_subject_profile(self, post_data, new_subject):
         new_subject.featurevalue_set.all().delete() # deeleting existing features data on this profile if re-entered
         ########################### Mind which features set to choose from! 13.07.21
-        feaure_labels = self.FeatureLabels.objects.get(label_set="B").values_list("feature_name", flat=True)
+        feaure_labels = self.FeatureLabels.objects.filter(label_set="B").values_list("feature_name", flat=True)
         ###########################
         for feature_name in feaure_labels:
             feature = self.FeatureLabels.objects.get(feature_name=feature_name)

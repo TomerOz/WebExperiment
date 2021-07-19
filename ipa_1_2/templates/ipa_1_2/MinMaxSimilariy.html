@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Fonts links -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+    {% load static %}
+    <!-- styles links -->
+    <link rel="stylesheet" href="{% static 'ipa_1_2/MinMaxSimilarityStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'ipa_1_2/getSimilarity.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'ipa_1_2/IndexStyle.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'ipa_1_2/getSimilarity.css' %}">
+  </head>
+  <body>
+    {% if instructions_list %}
+  <div class="container">
+    <div id="instructionContainer" class="jumbotron">
+      <!-- Here instructions will be inserted -->
+      {{instructions_list}} Place Holder holer holder
+    </div>
+    {% endif %}
+    <!-- Buttons -->
+      <div class="text-center">
+      <button id="NextStepButton" class="btn btn-primary btn" type="button" name="button">Next Step</button>
+    </div>
+    <!-- Questions: -->
+    <div class="testbox" style="direction:rtl">
+      <form id="testForm" method="post">
+      {% csrf_token %}
+        <br/>
+        <p>
+        <center>
+            <h3>הכנס כאן הוראות כלליות</h3>
+        </center>
+        </p>
+        <br/>
+
+            <div class="item"><label for="maxSimilarity"> {{ off_order_instructions_dict.MaxName }}<span> *</span></label>
+              <input type="text" id="maxSimilarity" name="maxSimilarityName" min="1" max="50" required>
+              <div class="row" style="direction:ltr">
+                <canvas id="myCanvas" width="400" height="320"></canvas>
+                <br/>
+                <div class="column side">Very low similarity</div>
+                <div class="column middle">
+                  <input type="range" min="0" max="100" value="50" class="slider" id="myRange" name="maxSimilarityValue">
+                </div>
+                <div class="column side">Very high similarity</div>
+              </div>
+            </div>
+
+            <div class="item" display="none"><label for="maxSimilarity"> {{ off_order_instructions_dict.MinName }}<span> *</span></label>
+              <input type="text" id="minSimilarity" name="minSimilarityName" min="1" max="50" required>
+              <div class="row" style="direction:ltr">
+                <canvas id="myCanvas" width="400" height="320"></canvas>
+                <br/>
+                <div class="column side">Very low similarity</div>
+                <div class="column middle">
+                  <input type="range" min="0" max="100" value="50" class="slider" id="myRange" name="minSimilarityValue">
+                </div>
+                <div class="column side">Very high similarity</div>
+              </div>
+              <button type="button" href="/">Next</button>
+            </div>
+
+        <div class="btn-block" style="direction:ltr; color:red; text-align:left;">
+          {% if errors %}
+          <span>One answer or more is incorrect!<span><br>
+          {% endif %}
+          <input type="hidden" name="form_phase" value="{{ form_phase }}">
+          <button type="submit" href="/" id"changeButton">Submit</button>
+        </div>
+      </form>
+    <!-- </div> -->
+
+    <script>
+     var instructions_list = {{instructions_list|safe}}
+     var errorsJSON = {{errorsJSON|safe}}
+    // working with the variable context
+    </script>
+    </div>
+
+    <form id="subjectResonseForm" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      <input id="subjectResonses" type="hidden" name="responses" value="">
+      <input id="trial" type="hidden" name="currentTrial" value="">
+    </form>
+
+    <form id="instructionsForm" class="" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+    </form>
+  </body>
+
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
+  <script src="{% static 'ipa_1_2/MinMaxSimilariyLogic.js' %}"></script>
+  <script src="{% static 'ipa_1_2/getSimilarity.js' %}"></script>
+</html>

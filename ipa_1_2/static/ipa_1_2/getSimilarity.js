@@ -85,4 +85,4 @@ function checkKey(e) {
 };
 
 drawBall();
-nextFeatureButton.addEventListener('click', function(){SaveReort()});
+reportSections["max"].style.display = "none";

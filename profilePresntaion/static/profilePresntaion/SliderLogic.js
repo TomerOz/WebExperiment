@@ -35,7 +35,7 @@ function GetProfileFeatureData (feature) {
 // Check new change using features_order
 function InitializeProfilePresentation(current_profile){
   var profile_features = context[all_profiles_ids[current_profile]][db_features];
-  var features_list = context[all_profiles_ids[current_profile]]["features_order"]
+  var features_list = context[all_profiles_ids[current_profile]]["features_order"];
   slidecontainer.innerHTML = "";
   for (var feature in features_list) {
       right_end, left_end, value = GetProfileFeatureData(profile_features[feature]);

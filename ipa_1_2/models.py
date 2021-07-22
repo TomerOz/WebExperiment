@@ -79,16 +79,22 @@ class Instruction(models.Model):
 # Subject model that stores user responses and behavior as a subject (user - subject connection is encrypted)
 class Subject(ProfileModel):
     is_subject = True
-    trials_string_list = models.CharField(max_length=800, default="")
-    trials_responses_list = models.CharField(max_length=800, default="")
+    trials_string_list = models.CharField(max_length=800, default="-")
+    trials_responses_list = models.CharField(max_length=800, default="-")
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     current_phase = models.ForeignKey(ExperimentPhase, null=True, on_delete=models.SET_NULL)
 
     subject_session  = models.IntegerField(default=0) # on creation of subject - session is 1, as in first session.
-    completed_experiments = models.CharField(max_length=300, default="") # a list-like string of experiment -> "SGS1, SGS2,"
+    completed_experiments = models.CharField(max_length=300, default="-") # a list-like string of experiment -> "SGS1, SGS2,"
     context_group = models.CharField(max_length=50, default="trade") # i.e. romance, conflict, friendship and trade
-    session_1_ps = models.FloatField(default=0.5)
-    session_2_ps = models.FloatField(default=0.5)
+
+    max_similarity_value = models.IntegerField(default=999)
+    min_similarity_value = models.IntegerField(default=999)
+    max_similarity_name = models.CharField(max_length=50, default="not_provided")
+    min_similarity_name = models.CharField(max_length=50, default="not_provided")
+
+    #session_1_ps = models.FloatField(default=0.5)
+    #session_2_ps = models.FloatField(default=0.5)
     # session_to_ps = #mapping session to randomly assigned ps
 
     def __str__(self):

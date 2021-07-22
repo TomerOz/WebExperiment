@@ -27,7 +27,7 @@
     {% endif %}
     <!-- Buttons -->
       <div class="text-center">
-      <button id="NextStepButton" class="btn btn-primary btn" type="button" name="button">Next Step</button>
+      <button id="NextStepButton" style="display:none" class="btn btn-primary btn" type="button" name="button">Next Step</button>
     </div>
     <!-- Questions: -->
     <div class="testbox" style="direction:rtl">
@@ -41,9 +41,12 @@
         </p>
         <br/>
 
-            <div class="item"><label for="maxSimilarity"> {{ off_order_instructions_dict.MaxName }}<span> *</span></label>
-              <input type="text" id="maxSimilarity" name="maxSimilarityName" min="1" max="50" required>
-              <div class="row" style="direction:ltr">
+            <div id="MaxSimilaritySection" class="item"><label for="maxSimilarity"> {{ off_order_instructions_dict.MaxName }}<span> *</span></label>
+              <div class="input-group">
+                <input type="text" id="maxSimilarity" name="maxSimilarityName" min="1" max="50" required>
+
+              </div>
+              <div id="MaxSimilarityReportSection" class="row" style="direction:ltr">
                 <canvas id="myCanvas" width="400" height="320"></canvas>
                 <br/>
                 <div class="column side">Very low similarity</div>
@@ -52,20 +55,23 @@
                 </div>
                 <div class="column side">Very high similarity</div>
               </div>
+              <span class="input-group-btn"><button id="approve_name_1" type="button" href="/">המשך</button></span>
             </div>
 
-            <div class="item" display="none"><label for="maxSimilarity"> {{ off_order_instructions_dict.MinName }}<span> *</span></label>
-              <input type="text" id="minSimilarity" name="minSimilarityName" min="1" max="50" required>
-              <div class="row" style="direction:ltr">
-                <canvas id="myCanvas" width="400" height="320"></canvas>
+            <div id="MinSimilaritySection" class="item"><label for="minSimilarity"> {{ off_order_instructions_dict.MinName }}<span> *</span></label>
+              <div class="input-group">
+                <input type="text" id="minSimilarity" name="minSimilarityName" min="1" max="50" required>
+              </div>
+              <div id="MinSimilarityReportSection" class="row" style="direction:ltr">
+                <canvas id="myCanvas2" width="400" height="320"></canvas>
                 <br/>
                 <div class="column side">Very low similarity</div>
                 <div class="column middle">
-                  <input type="range" min="0" max="100" value="50" class="slider" id="myRange" name="minSimilarityValue">
+                  <input type="range" min="0" max="100" value="50" class="slider" id="myRange2" name="minSimilarityValue">
                 </div>
                 <div class="column side">Very high similarity</div>
               </div>
-              <button type="button" href="/">Next</button>
+                <span class="input-group-btn"><button id="approve_name_2" type="button" href="/">המשך</button></span>
             </div>
 
         <div class="btn-block" style="direction:ltr; color:red; text-align:left;">
@@ -73,7 +79,7 @@
           <span>One answer or more is incorrect!<span><br>
           {% endif %}
           <input type="hidden" name="form_phase" value="{{ form_phase }}">
-          <button type="submit" href="/" id"changeButton">Submit</button>
+          <button id="submitButton" type="submit" href="/" id"changeButton">Submit</button>
         </div>
       </form>
     <!-- </div> -->

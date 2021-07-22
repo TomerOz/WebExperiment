@@ -107,6 +107,21 @@ def run():
             new_game.pB_Bb =            row.pB_Bb
             new_game.save()
 
+
+
+    def create_n_pilot_profiles(n):
+        profile = ProfileModel(name="pilot-"+str(n), profile_label_set="B")
+        profile.save()
+        feaure_labels = self.FeatureLabels.objects.filter(label_set="B").values_list("feature_name", flat=True)
+        for feature_name in feaure_labels:
+            feature = self.FeatureLabels.objects.get(feature_name=feature_name)
+            feature_value = random.randint(0,100)
+            profile_feature = self.FeatureValue(target_profile=profile, target_feature=feature, value=feature_value)
+            profile_feature.save()
+            profile.save(force_update=True)
+
+
+
     #conda activate exp1 (at localhost)/ source exp1/bin/activate (at server)
     #py manage.py shell;
     #from profilePresntaion.models import *
@@ -123,6 +138,7 @@ def run():
     create_feature_labels(features_df)
     create_contexts()
     create_models()
-    # create_games_matrices()
+    create_n_pilot_profiles(4)
+
 
 #py manage.py runscript load_inital_data

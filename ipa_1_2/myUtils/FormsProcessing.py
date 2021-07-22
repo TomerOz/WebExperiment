@@ -1,9 +1,12 @@
+import ipdb
+
 class FormsProcessor(object):
     def __init__(self, GameMatrix):
         self.GameMatrix = GameMatrix
         self.phase_to_form_processor = {
             "Consent phase" : self._process_consent_form,
             "Matrix tutorial" : self._process_matrix_tutorial_form,
+
         }
 
     def process_form(self, phase_name, post_data):
@@ -37,6 +40,7 @@ class FormsProcessor(object):
                 errors.append(key)
         return errors
 
+
 class PhasesDataSaver(object):
     def __init__(self, FeatureLabels, FeatureValue):
         self.FeatureLabels = FeatureLabels
@@ -44,6 +48,7 @@ class PhasesDataSaver(object):
         self.phase_to_saver_function = {
             "During Get Profile" : self._process_create_new_subject_profile,
             "During Profile Presentation": self._save_trials_data,
+            "Get Min Max Similarity" : self._process_min_max_similarity,
         }
 
     def save_posted_data(self, phase_name, post_data, subject):
@@ -67,3 +72,10 @@ class PhasesDataSaver(object):
             subject_feature = self.FeatureValue(target_profile=new_subject, target_feature=feature, value=feature_value)
             subject_feature.save()
             new_subject.save(force_update=True)
+
+    def _process_min_max_similarity(self, post_data, subject):
+        subject.max_similarity_name = post_data["maxSimilarityName"]
+        subject.max_similarity_value = post_data["maxSimilarityValue"]
+        subject.min_similarity_name = post_data["minSimilarityName"]
+        subject.min_similarity_value = post_data["minSimilarityValue"]
+        subject.save()

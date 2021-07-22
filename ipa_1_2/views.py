@@ -69,7 +69,7 @@ def _get_phases_instructions(phase_name):
 
 # Returns one of the contexts
 def _get_random_context():
-    contexts = ["trade", "conflict", "romantic","friendship"]
+    contexts = ["trade", "violence", "romantic","friendship"]
     return contexts[random.randint(0, len(contexts)-1)] # temporary - TODO: monitro with db maybe via the Experiment model
 
 # Returns the current session ps
@@ -89,7 +89,7 @@ def _create_subject(user):
     new_subject.name = "Subject-"+str(new_subject.pk)
     new_subject.subject_session = 1 # on creation subject session is one
     new_subject.context_group = _get_random_context()
-    new_subject.session_1_ps, new_subject.session_2_ps = _get_sessions_ps(new_subject.context_group)
+    #new_subject.session_1_ps, new_subject.session_2_ps = _get_sessions_ps(new_subject.context_group)
     new_subject.current_phase = ExperimentPhase.objects.get(name="Consent phase")
     new_subject.save(force_update=True)
     user.exp1_enc_num = str(new_subject.pk)
@@ -244,12 +244,7 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         "gameJSON":gameJSON,
                         })
     elif current_phase == "During Profile Presentation":
-        game = _get_game_data(users_subject)
-        gameJSON = json.dumps(_get_game_dict(game))
-        context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.get(profile_label_set="B").all())),
-                        "game":game,
-                        "gameJSON":gameJSON,
-                        })
+        context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.filter(profile_label_set="B").all()))})
     elif current_phase == "Identification Task":
         context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
         ap = _generate_profile(users_subject, 0.2)

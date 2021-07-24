@@ -14,8 +14,10 @@
     <!-- styles links -->
     <link rel="stylesheet" href="{% static 'ipa_1_2/MinMaxSimilarityStyle.css' %}">
     <link rel="stylesheet" href="{% static 'ipa_1_2/getSimilarity.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'ipa_1_2/IndexStyle.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'ipa_1_2/getSimilarity.css' %}">
+    <link rel="stylesheet" href="{% static 'ipa_1_2/IndexStyle.css' %}">
+
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'ipa_1_2/IndexStyle.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'ipa_1_2/getSimilarity.css' %}"> -->
   </head>
   <body>
     {% if instructions_list %}
@@ -40,11 +42,9 @@
         </center>
         </p>
         <br/>
-
             <div id="MaxSimilaritySection" class="item"><label for="maxSimilarity"> {{ off_order_instructions_dict.MaxName }}<span> *</span></label>
               <div class="input-group">
                 <input type="text" id="maxSimilarity" name="maxSimilarityName" min="1" max="50" required>
-
               </div>
               <div id="MaxSimilarityReportSection" class="row" style="direction:ltr">
                 <canvas id="myCanvas" width="400" height="320"></canvas>

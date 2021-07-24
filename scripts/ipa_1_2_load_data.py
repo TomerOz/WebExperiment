@@ -1,10 +1,12 @@
 import ipdb
 import pandas as pd
 import os
+import random
 
 from ipa_1_2.models import *
 CURRENT_APP_NAME = "ipa_1_2"
 
+EXPERIMENT_NAME = "IPA1.2"
 def run():
     def _get_txt_list(path_and_file, splitter):
         with open(path_and_file,'r') as f:
@@ -21,9 +23,9 @@ def run():
                 new_feature.save()
 
     def create_experiment_instance():
-        exp_query = Experiment.objects.filter(name="SGS1")
+        exp_query = Experiment.objects.filter(name=EXPERIMENT_NAME)
         if len(exp_query) == 0:
-            new_exp = Experiment(name="SGS1")
+            new_exp = Experiment(name=EXPERIMENT_NAME)
             new_exp.save()
 
     def create_experiment_phases():
@@ -31,7 +33,7 @@ def run():
         sgs1_phases = _get_txt_list(os.path.join(CURRENT_APP_NAME,"myUtils", 'phases.txt'), "\n")
         for i, phase in enumerate(sgs1_phases):
             phase_query = ExperimentPhase.objects.filter(name=phase)
-            experiment = Experiment.objects.get(name="SGS1")
+            experiment = Experiment.objects.get(name=EXPERIMENT_NAME)
             if len(phase_query) == 0:
                 new_phase = ExperimentPhase(name=phase, phase_place=i+1, experiment=experiment)
                 new_phase.save()
@@ -59,7 +61,7 @@ def run():
                 new_instruction.int_place = int_place
                 new_instruction.instruction_text = row.text_he
                 new_instruction.str_phase = phase
-                new_instruction.experiment = Experiment.objects.get(name="SGS1")
+                new_instruction.experiment = Experiment.objects.get(name=EXPERIMENT_NAME)
                 new_instruction.off_order_place = off_order_place
                 new_instruction.is_in_order = True if int_place != 999 else False
                 new_instruction.save()
@@ -108,17 +110,17 @@ def run():
             new_game.save()
 
 
-
     def create_n_pilot_profiles(n):
-        profile = ProfileModel(name="pilot-"+str(n), profile_label_set="B")
-        profile.save()
-        feaure_labels = self.FeatureLabels.objects.filter(label_set="B").values_list("feature_name", flat=True)
-        for feature_name in feaure_labels:
-            feature = self.FeatureLabels.objects.get(feature_name=feature_name)
-            feature_value = random.randint(0,100)
-            profile_feature = self.FeatureValue(target_profile=profile, target_feature=feature, value=feature_value)
-            profile_feature.save()
-            profile.save(force_update=True)
+        for i in range(n):
+            profile = ProfileModel(name="pilot-"+str(i), profile_label_set="B")
+            profile.save()
+            feaure_labels = FeatureLabels.objects.filter(label_set="B").values_list("feature_name", flat=True)
+            for feature_name in feaure_labels:
+                feature = FeatureLabels.objects.get(feature_name=feature_name)
+                feature_value = random.randint(0,100)
+                profile_feature = FeatureValue(target_profile=profile, target_feature=feature, value=feature_value)
+                profile_feature.save()
+                profile.save(force_update=True)
 
 
 
@@ -132,13 +134,13 @@ def run():
     features_df = pd.read_excel(path)
     features_names = features_df.feature.tolist()
 
-    create_experiment_instance()
-    create_experiment_phases()
+    # create_experiment_instance()
+    # create_experiment_phases()
     create_instructinos()
-    create_feature_labels(features_df)
-    create_contexts()
-    create_models()
-    create_n_pilot_profiles(4)
+    # create_feature_labels(features_df)
+    # create_contexts()
+    # create_models()
+    # create_n_pilot_profiles(4)
 
 
 #py manage.py runscript load_inital_data

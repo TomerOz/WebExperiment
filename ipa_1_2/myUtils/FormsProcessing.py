@@ -58,6 +58,7 @@ class PhasesDataSaver(object):
 
     def _save_trials_data(self, post_data, subject):
         subject.trials_responses_list += post_data["responses"]
+        subject.trials_string_list += post_data["profilesList"]
         subject.save()
 
     # Fills subject model with posted features provided by the subject user (subject profile witg default values already exists)

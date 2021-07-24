@@ -1,9 +1,8 @@
 .slidecontainer {
-  max-width: 75%; /* Width of the outside container */
+  width: 75%; /* Width of the outside container */
   margin: auto;
 }
 
-/* Following lines define a diferent width for screens smaller the 1366px */
 @media all and (min-width: 1366px) {
   .slidecontainer {
     max-width: 50%; /* Width of the outside container */
@@ -15,7 +14,7 @@
 .slider {
   -webkit-appearance: none;  /* Override default CSS styles */
   appearance: none;
-  width: 100%; /* Full-width */
+  width: 75%; /* Full-width */
   height: 25px; /* Specified height */
   background: #d3d3d3; /* Grey background */
   outline: none; /* Remove outline */
@@ -35,14 +34,14 @@
   appearance: none;
   width: 25px; /* Set a specific slider handle width */
   height: 25px; /* Slider handle height */
-  background: #af4c50; /* Green background */
+  background: #4CAF50; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
 
 .slider::-moz-range-thumb {
   width: 25px; /* Set a specific slider handle width */
   height: 25px; /* Slider handle height */
-  background: #af4c50; /* Green background */
+  background: #4CAF50; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
 
@@ -52,11 +51,12 @@
 }
 
 .side {
-  width: 15%;
+  width: 20%;
+  font-size: 13px;
 }
 
 .middle {
-  width: 70%;
+  width: 60%;
 }
 /* Clear floats after the columns */
 .row:after {
@@ -65,13 +65,6 @@
   clear: both;
 }
 
-canvas {
-  background: white;
-  display: block;
-  margin: 0 auto;
-}
-
-.profiles_size {
-  width: 50%;
-  margin: 0 auto;
+#title{
+  font-size: 17px;
 }

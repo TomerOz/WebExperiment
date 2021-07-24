@@ -1,0 +1,71 @@
+.gameTable {
+  text-align: center;
+  border-collapse: collapse;
+  background-color: #CCFFCC;
+  width: 90vw;
+  height: 30vh;
+  margin: auto;
+  margin-top: 2vh;
+  border-radius: 2%;
+}
+
+@media screen and (min-width: 600px) {
+ .gameTable {
+    width: 35vw;
+    height: 35vh;
+ }
+}
+
+#A, #B {
+
+}
+.choiceButton {
+  background: #99FF99;
+  color: grey;
+  border-radius: 23px;
+  border: none;
+  text-align: center;
+}
+
+.rowHighligt {
+  background: #CCFF99;
+  cursor: pointer;
+}
+
+.topRowHighligt {
+  border-top: 1px solid #CCFF99;
+  border-bottom: none;
+}
+
+.bottomRowHighligt {
+  border-bottom: 1px solid #CCFF99;
+  border-top: none;
+  box-shadow: 0px 9px 4px -6px #CCFF99;
+}
+
+.rowSelected {
+  background: #CDFF44;
+  text-decoration-style: double;
+}
+
+.cellHighlighted {
+  background: #11DDa4;
+  color: white;
+  font-weight: bold;
+}
+
+.explantions {
+  border-radius: 2%;
+  text-align: left;
+  margin: auto;
+  width: 45%;
+  color: white;
+  background: gray;
+  padding: 2%;
+  }
+
+  @media screen and (max-width: 600px) {
+   .explantions {
+      width: 90%;
+   }
+  }

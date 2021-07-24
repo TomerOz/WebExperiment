@@ -3,20 +3,38 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title></title>
+    <title>profile</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     {% load static %}
     <link rel="stylesheet" href="{% static 'ipa_1_2/SliderStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'ipa_1_2/getSimilarity.css' %}">
+    <link rel="stylesheet" href="{% static 'ipa_1_2/anchorsStyle.css' %}">
   </head>
   <body>
-
     <div class="slidecontainer text-center" id="slidecontainer">
+    </div>
+      <div id="MaxSimilarityReportSection" class="row profiles_size" style="direction:ltr">
+        <canvas id="myCanvas" width="400" height="320"></canvas>
+        <br/>
+        <div class="column side">Very low similarity</div>
+        <div class="column middle">
+          <input type="range" min="0" max="100" value="50" class="slider" id="myRange" name="maxSimilarityValue">
+        </div>
+        <div class="column side">Very high similarity</div>
       </div>
-
+      <div class="container">
+        <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      </div>
+      <div class="container" id="hiddenInputs">
+      </div>
       <div class="container text-center">
         <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">Next Profile</button>
       </div>
+
+      <div id="max" class="box arrow-top">
+        This 
+    </div>
 
       <script>
        var context = {{context|safe}}
@@ -27,6 +45,7 @@
       {% csrf_token %}
       <input type="hidden" name="form_phase" value="{{ form_phase }}">
       <input id="subjectResonses" type="hidden" name="responses" value="">
+      <input id="profilesList" type="hidden" name="profilesList" value="">
       <input id="trial" type="hidden" name="currentTrial" value="">
     </form>
   </body>
@@ -37,4 +56,5 @@
   crossorigin="anonymous"></script>
 
   <script src="{% static 'ipa_1_2/SliderLogic.js' %}"></script>
+  <script src="{% static 'ipa_1_2/getSimilarity.js' %}"></script>
 </html>

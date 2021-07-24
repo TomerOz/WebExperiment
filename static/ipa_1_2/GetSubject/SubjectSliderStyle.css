@@ -11,6 +11,7 @@
   }
 }
 
+
 /* The slider itself */
 .slider {
   -webkit-appearance: none;  /* Override default CSS styles */
@@ -63,15 +64,4 @@
   content: "";
   display: table;
   clear: both;
-}
-
-canvas {
-  background: white;
-  display: block;
-  margin: 0 auto;
-}
-
-.profiles_size {
-  width: 50%;
-  margin: 0 auto;
 }

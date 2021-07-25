@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment
+from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment, MinMaxProfileModel
 from .models import Instruction, GameMatrix, ExperimentPhase, SimilarityContextModel
 from .models import Context
 from django.core import serializers
@@ -19,6 +19,10 @@ phase_to_html_page = {
                         "During Get Profile":           "GetSubject/getSubjectProfile",
                         "Pre Identification Task":      "instruction",
                         "Identification Task":           "IdentificationTask",
+                        "Pre Get Max Profile":          "instruction",
+                        "Get Max Similarity Profile":   "GetSubject/getSubjectProfile",
+                        "Pre Get Min Profile":          "instruction",
+                        "Get Min Similarity Profile":   "GetSubject/getSubjectProfile",
                         "Matrix tutorial":              "MatrixLearnTest",
                         "Pre Profile Presentation":     "instruction",
                         "During Profile Presentation":  "profile",
@@ -29,7 +33,7 @@ phase_to_html_page = {
 form_phase = "form_phase"
 
 forms_processor = FormsProcessor(GameMatrix)
-phases_data_saver = PhasesDataSaver(FeatureLabels, FeatureValue)
+phases_data_saver = PhasesDataSaver(FeatureLabels, FeatureValue, MinMaxProfileModel)
 
 ## Assistant functions: ###############################################################################################################################################
 # saves subject model with the new phase
@@ -48,6 +52,7 @@ def _get_all_subject_phases(subject):
 def _get_next_phase(subject):
     phases = ExperimentPhase.objects.all()
     if subject.current_phase.name != "end":
+        ipdb.set_trace()
         next_phase = phases.get(phase_place=subject.current_phase.phase_place+1)
         return next_phase
     else: # upon ening a session
@@ -83,7 +88,7 @@ def _get_sessions_ps(context):
 
 # creates a  BLANK Subject model instance and associtates it with ForeignKey to the authenticated user
 def _create_subject(user):
-    new_subject = Subject(experiment=Experiment.objects.get(name="SGS1"))
+    new_subject = Subject(experiment=Experiment.objects.get(name="IPA1.2"))
     new_subject.save()
     new_subject.is_subject = True
     new_subject.name = "Subject-"+str(new_subject.pk)
@@ -234,7 +239,7 @@ def _generate_profile(users_subject, target_similarity):
 
 # Updates the generic context on specific phases
 def _update_context_if_necessry(context, current_phase, users_subject):
-    if current_phase == "During Get Profile":
+    if current_phase == "During Get Profile" or current_phase =="Get Max Similarity Profile" or current_phase=="Get Min Similarity Profile":
         context.update(_get_new_subject_profile_page_context())
 
     elif current_phase == "Matrix tutorial":
@@ -245,6 +250,11 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         })
     elif current_phase == "During Profile Presentation":
         context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.filter(profile_label_set="B").all()))})
+        context.update({"maxValue":users_subject.max_similarity_value,
+                        "maxName":users_subject.max_similarity_name,
+                        "minValue":users_subject.min_similarity_value,
+                        "minName":users_subject.min_similarity_name,
+                        })
     elif current_phase == "Identification Task":
         context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
         ap = _generate_profile(users_subject, 0.2)
@@ -255,8 +265,8 @@ def _update_context_if_necessry(context, current_phase, users_subject):
         sp = _get_subject_profile(users_subject)
         d2 = {"identification_task" : json.dumps({"subject": sp, "artificials": [ap, ap2, ap3, ap4, ap5]})}
         context.update(d2)
-        #ipdb.set_trace()
 
+    # ipdb.set_trace()
     return context # if condition fails, context remain untouched
 
 def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, single_instruction, off_order_instructions):

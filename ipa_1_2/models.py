@@ -5,6 +5,7 @@ class ProfileModel(models.Model):
     name = models.CharField(max_length=200)
     is_subject = models.BooleanField(default=False)
     is_artificial = models.BooleanField(default=False)
+    is_MinMax = models.BooleanField(default=False)
     profile_label_set = models.CharField(max_length=2, default="A")
     #pub_date = models.DateTimeField('date published')
     def __str__(self):
@@ -113,7 +114,7 @@ class ArtificialProfileModel(ProfileModel):
     '''
         Holds artificial profiles the belong to specic subject.
         Additional propeties:
-            name, is_subject(default=true)
+            name, is_artificial(default=true)
     '''
     is_artificial = True
     target_subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
@@ -121,6 +122,17 @@ class ArtificialProfileModel(ProfileModel):
     def __str__(self):
         return ("Artificial Profile Model" + "-" + self.name + " - of - " + self.target_subject.name)
 
+class MinMaxProfileModel(ProfileModel):
+    '''
+        Holds profiles of max and min similarity reported by a specic subject.
+        Additional propeties:
+            name, is_subject(default=true)
+    '''
+    is_MinMax = True
+    target_subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return (self.name + "ProfileModel Profile Model" + "-" + " - of - " + self.target_subject.name)
 
 class GameMatrix(models.Model):
     game_name = models.CharField(max_length=30, default="no assigned name") # e.g. PD, Chicken

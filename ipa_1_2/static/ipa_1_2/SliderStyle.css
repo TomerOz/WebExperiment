@@ -1,11 +1,11 @@
 .slidecontainer {
-  width: 75%; /* Width of the outside container */
+  width: 85%; /* Width of the outside container */
   margin: auto;
 }
 
 @media all and (min-width: 1366px) {
   .slidecontainer {
-    max-width: 50%; /* Width of the outside container */
+    max-width: 60%; /* Width of the outside container */
     margin: auto;
   }
 }

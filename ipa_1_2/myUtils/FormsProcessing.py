@@ -42,13 +42,16 @@ class FormsProcessor(object):
 
 
 class PhasesDataSaver(object):
-    def __init__(self, FeatureLabels, FeatureValue):
+    def __init__(self, FeatureLabels, FeatureValue, MinMaxProfileModel):
         self.FeatureLabels = FeatureLabels
         self.FeatureValue = FeatureValue
+        self.MinMaxProfileModel = MinMaxProfileModel
         self.phase_to_saver_function = {
             "During Get Profile" : self._process_create_new_subject_profile,
             "During Profile Presentation": self._save_trials_data,
             "Get Min Max Similarity" : self._process_min_max_similarity,
+            "Get Max Similarity Profile" : self._get_min_max_similarity_profile,
+            "Get Min Similarity Profile" : self._get_min_max_similarity_profile,
         }
 
     def save_posted_data(self, phase_name, post_data, subject):
@@ -65,7 +68,7 @@ class PhasesDataSaver(object):
     def _process_create_new_subject_profile(self, post_data, new_subject):
         new_subject.featurevalue_set.all().delete() # deeleting existing features data on this profile if re-entered
         ########################### Mind which features set to choose from! 13.07.21
-        feaure_labels = self.FeatureLabels.objects.filter(label_set="B").values_list("feature_name", flat=True)
+        feaure_labels = self.FeatureLabels.objects.filter(label_set=new_subject.profile_label_set).values_list("feature_name", flat=True)
         ###########################
         for feature_name in feaure_labels:
             feature = self.FeatureLabels.objects.get(feature_name=feature_name)
@@ -73,6 +76,21 @@ class PhasesDataSaver(object):
             subject_feature = self.FeatureValue(target_profile=new_subject, target_feature=feature, value=feature_value)
             subject_feature.save()
             new_subject.save(force_update=True)
+
+    def _get_min_max_similarity_profile(self, post_data, subject):
+        if post_data["form_phase"] == "Get Max Similarity Profile":
+            profile_name = "Max"
+        else:
+            profile_name = "Min"
+        profile = self.MinMaxProfileModel(name=profile_name, profile_label_set=subject.profile_label_set, target_subject=subject)
+        profile.save()
+        feaure_labels = self.FeatureLabels.objects.filter(label_set=subject.profile_label_set).values_list("feature_name", flat=True)
+        for feature_name in feaure_labels:
+            feature = self.FeatureLabels.objects.get(feature_name=feature_name)
+            feature_value = int(post_data[feature_name])
+            profile_feature = self.FeatureValue(target_profile=profile, target_feature=feature, value=feature_value)
+            profile_feature.save()
+            profile.save(force_update=True)
 
     def _process_min_max_similarity(self, post_data, subject):
         subject.max_similarity_name = post_data["maxSimilarityName"]

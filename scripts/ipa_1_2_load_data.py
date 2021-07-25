@@ -28,10 +28,30 @@ def run():
             new_exp = Experiment(name=EXPERIMENT_NAME)
             new_exp.save()
 
+    def squezze_in_new_phases():
+        experiment = Experiment.objects.get(name=EXPERIMENT_NAME)
+        exp_phases = _get_txt_list(os.path.join(CURRENT_APP_NAME,"myUtils", 'phases.txt'), "\n")
+        current_phases = ExperimentPhase.objects.all()
+        added_phases = 0
+        for i, phase in enumerate(exp_phases):
+            if len(current_phases.filter(name=phase)) == 0:
+                # new phase to add
+                new_phase = ExperimentPhase(name=phase, phase_place=i+1+added_phases, experiment=experiment)
+                new_phase.save()
+                added_phases+=1
+            else:
+                existing_phase = current_phases.get(name=phase)
+                existing_phase.phase_place = i+1+added_phases
+                existing_phase.save()
+
+        phases_to_remove = [phase for phase in current_phases if not phase.name in exp_phases]
+        for phase in phases_to_remove:
+            phase.delete()
+
     def create_experiment_phases():
         ExperimentPhase.objects.all().delete()
-        sgs1_phases = _get_txt_list(os.path.join(CURRENT_APP_NAME,"myUtils", 'phases.txt'), "\n")
-        for i, phase in enumerate(sgs1_phases):
+        exp_phases = _get_txt_list(os.path.join(CURRENT_APP_NAME,"myUtils", 'phases.txt'), "\n")
+        for i, phase in enumerate(exp_phases):
             phase_query = ExperimentPhase.objects.filter(name=phase)
             experiment = Experiment.objects.get(name=EXPERIMENT_NAME)
             if len(phase_query) == 0:
@@ -136,11 +156,12 @@ def run():
 
     # create_experiment_instance()
     # create_experiment_phases()
-    create_instructinos()
+    #create_instructinos()
     # create_feature_labels(features_df)
     # create_contexts()
     # create_models()
-    # create_n_pilot_profiles(4)
 
+    # create_n_pilot_profiles(4)
+    squezze_in_new_phases()
 
 #py manage.py runscript load_inital_data

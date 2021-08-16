@@ -97,4 +97,4 @@ if(document.title != "profile"){
 
 // Listen for the event.
 body = document.getElementsByTagName("body")[0];
-body.addEventListener("NewProfile", function(){draw()});
+body.addEventListener("NewProfile", function(){draw()}); // event NewProfile is defined in Slider logic

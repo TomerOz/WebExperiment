@@ -7,6 +7,8 @@ var instructionsForm = document.getElementById('instructionsForm');
 var testForm = document.getElementById('testForm');
 var showMatrixButton = document.getElementById('showMatrixButton');
 var changeButton = document.getElementById('changeButton');
+var beforeReportMax = document.getElementById('beforeReportMax');
+var beforeReportMin = document.getElementById('beforeReportMin');
 
 currentInstruction = 0;
 correctAnswers = ["Ready button", 1, 0];
@@ -15,11 +17,12 @@ wasCorrect = false;
 
 function HandleInstructions() {
   if(wasCorrect){
-    if(currentInstruction < instructions_list.length) {
+    if(currentInstruction <= instructions_list.length) {
       instructionTextContainer.textContent = instructions_list[currentInstruction];
-      if(currentInstruction == instructions_list.length-1){
-        testForm.style.display = "block";
-      };
+       testForm.style.display = "block";
+      // if(currentInstruction == instructions_list.length-1){
+      //   testForm.style.display = "block";
+      // };
       currentInstruction += 1;
     };
   };
@@ -41,26 +44,6 @@ function recieveChoice(rowIndex){
 wasCorrect = true;
 HandleInstructions();
 wasCorrect = false;
-
-
-//
-// aChoice.addEventListener("click", function(){recieveChoice(0)});
-// bChoice.addEventListener("click", function(){recieveChoice(1)});
-// showMatrixButton.addEventListener("click", function(){recieveChoice("Ready button")});
-
-// if(errorsJSON.length > 0){
-//   testForm.style.display = "block";
-//   instructionTextContainer.textContent = instructions_list[instructions_list.length-1];
-//   showMatrixButton.click();
-//   showMatrixButton.removeEventListener("click", function(){recieveChoice("Ready button")})
-//   aChoice.removeEventListener("click", function(){recieveChoice(0)});
-//   bChoice.removeEventListener("click", function(){recieveChoice(1)});
-// }
-
-// changeButton.addEventListener("click", function(){
-//   documet.getElementById("item").style.display="none";
-// })
-
 
 // second canvas2: -- coppied from getSimilarity.js:
 var slider2 = document.getElementById("myRange2");
@@ -127,25 +110,8 @@ function draw2(direction) {
     x1_2 = r/2 + canvas2.width/2 + (50-(slider2.value))/100 * canvas2.width/4
     x2_2 = canvas2.width/ 2 - r/2 - (50-(slider2.value))/100 * canvas2.width/4
     drawBall2();
-}
-
-function checkKey(e) {
-  e = e || window.event;
-  if (e.keyCode == '38') {
-    // up arrow
-  }
-  else if (e.keyCode == '40') {
-    // down arrow
-  }
-  else if (e.keyCode == '37') {
-    // left arrow
-    draw(-1)
-  }
-  else if (e.keyCode == '39') {
-    // right arrow
-    draw(1)
-  }
 };
+
 drawBall2();
 
 // Page flow control
@@ -157,6 +123,10 @@ var minSimilarityReportSection = document.getElementById("MinSimilarityReportSec
 var minSimilaritySection = document.getElementById("MinSimilaritySection");
 var maxSimilaritySection = document.getElementById("MaxSimilaritySection");
 var submitButton = document.getElementById("submitButton");
+var maxSimilarityQuestion = document.getElementById("maxSimilarityQuestion");
+var minSimilarityQuestion = document.getElementById("minSimilarityQuestion");
+var maxSimilarity = document.getElementById("maxSimilarity");
+var minSimilarity = document.getElementById("minSimilarity");
 
 var flowPhases = {"max": 0, "min": 0};
 var sections = {"max": maxSimilaritySection, "min":minSimilaritySection};
@@ -170,22 +140,35 @@ approve_2.addEventListener("click", function(){showCircles("min")})
 
 function showCircles(circlesName){
   phase = flowPhases[circlesName];
-  flowOrder[phase][circlesName].style.display = "block";
-  flowPhases[circlesName] = phase + 1;
+  if(circlesName=="max" && phase==0){
+    flowOrder[phase][circlesName].style.display = "block";
+    flowPhases[circlesName] = phase + 1;
+    let result = beforeReportMax.textContent.replaceAll("{}", maxSimilarity.value);
+    beforeReportMax.textContent = result;
+    maxSimilarityQuestion.style.display = "none";
+  }
+
   // At the end of max after report
   if(circlesName=="max" && phase==1){
+    flowPhases[circlesName] = phase + 1;
     sections["max"].style.display = "none";
     reportSections["max"].style.display = "none";
     sections["min"].style.display = "block";
+    minSimilarityQuestion.style.display = "block";
+
+    wasCorrect = true;
+    HandleInstructions();
   }
-  if(circlesName=="min" && phase==1){
-    flowOrder[phase][circlesName].style.display = "none";
-    sections["min"].style.display = "none";
+  if(circlesName=="min" && phase==0){
+    flowPhases[circlesName] = phase + 1;
+    minSimilarityReportSection.style.display = "block"
+    let result = beforeReportMin.textContent.replaceAll("{}", minSimilarity.value);
+    beforeReportMin.textContent = result;
+    minSimilarityQuestion.style.display = "none";
     submitButton.style.display = "block";
     approve_2.style.display = "none";
-    approve_2.style.display = "none";
   }
-}
+};
 
 sections["min"].style.display = "none";
 reportSections["min"].style.display = "none";

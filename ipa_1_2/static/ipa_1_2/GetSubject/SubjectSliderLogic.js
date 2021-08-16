@@ -11,14 +11,14 @@ var left_end = "l"
 var feature_title = "Title new"
 var default_value = "50"
 
-function InjectProfileDataToHTML(title, right_end, left_end, value){
+function InjectProfileDataToHTML(title, right_end, left_end, feature_name, value){
   // the -"- is used for HTML properties while the
   // -'- encapsulates the hole JS string, as in: '<div class="className"'
-  basicProfileHTMLText = '<h3 id="title">'+ title + '</h3>\
+  basicProfileHTMLText = '<h3 id="title" style="direction:rtl">'+ title + '</h3>\
     <div class="row"> \
       <div class="column side">'+ left_end + '</div> \
       <div class="column middle"> \
-          <input type="range" min="1" max="100" value='+ value + ' class="slider" name="' + title + '" id="' + title + '">\
+          <input type="range" min="1" max="100" value='+ value + ' class="slider" name="' + feature_name + '" id="' + feature_name + '">\
       </div>\
       <div class="column side">'+ right_end + '</div>\
   </div>';
@@ -29,28 +29,29 @@ function InjectProfileDataToHTML(title, right_end, left_end, value){
 function getHiddenInputOfLastFeature(featureIndex){
   hiddenInputOfLastFeature = ' ';
   if(featureIndex >= 0){
-    feature_title, right_end, left_end = GetProfileFeatureData(context[featureIndex]);
-    value = document.getElementById(feature_title).value;
+    feature_title, right_end, left_end, feature_name = GetProfileFeatureData(context[featureIndex]);
+    value = document.getElementById(feature_name).value;
     console.log(value);
-    hiddenInputOfLastFeature = ' <input type="hidden" name="'+ feature_title +'" value="' + value + '">';
+    hiddenInputOfLastFeature = ' <input type="hidden" name="'+ feature_name +'" value="' + value + '">';
   };
   return hiddenInputOfLastFeature;
 }
 
-function GetProfileFeatureData (feature) {
-  feature_title = feature[0];
+function GetProfileFeatureData(feature) {
+  feature_title = feature[3];
   right_end = feature[1];
   left_end = feature[2];
-  return feature_title, right_end, left_end;
-}
+  feature_name = feature[0]
+  return feature_title, right_end, left_end, feature_name;
+};
 
 currentFeature = 0;
 function InitializeProfilePresentation(){
   if(currentFeature < context.length){
     hiddenInputs.innerHTML = hiddenInputs.innerHTML + getHiddenInputOfLastFeature(currentFeature-1);
     feature = context[currentFeature];
-    feature_title, right_end, left_end = GetProfileFeatureData(feature);
-    slidecontainer.innerHTML = InjectProfileDataToHTML(feature_title, right_end, left_end, default_value);
+    feature_title, right_end, left_end, feature_name = GetProfileFeatureData(feature);
+    slidecontainer.innerHTML = InjectProfileDataToHTML(feature_title, right_end, left_end, feature_name, default_value);
     currentFeature += 1;
   } else {
     featuresForm.submit();

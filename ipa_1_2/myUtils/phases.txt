@@ -11,4 +11,6 @@ Pre Get Min Profile
 Get Min Similarity Profile
 Pre Profile Presentation
 During Profile Presentation
-end
+End Screen
+Session End
+Experiment Finished

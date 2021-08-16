@@ -9,6 +9,7 @@ var subjectResonses = document.getElementById("subjectResonses");
 var currentTrial = document.getElementById("trial");
 var responseTimes = document.getElementById("RTs");
 var profilesSides = document.getElementById("profilesSides");
+var profilesList = document.getElementById("profilesList");
 
 var instructionContainer = document.getElementById("instructionContainer");
 var textContainer = document.getElementById("textContainer");
@@ -24,8 +25,8 @@ var left_end = "l"
 var value = "4"
 
 
-function InjectProfileDataToHTML(title, right_end, left_end, value){
-  basicProfileHTMLText = '<h3 id="title">'+ title + '</h3>\
+function InjectProfileDataToHTML(title, right_end, left_end, value, feature_name){
+  basicProfileHTMLText = '<h3 id="title">'+ feature_name + '</h3>\
     <div class="row"> \
       <div class="column side">'+ left_end + '</div> \
       <div class="column middle"> \
@@ -41,7 +42,8 @@ function GetProfileFeatureData (feature) {
   value = feature.value;
   left_end = feature.l;
   right_end = feature.r;
-  return right_end, left_end, value;
+  name = feature.presenting_name;
+  return right_end, left_end, value, name;
 
 }
 
@@ -49,10 +51,10 @@ function GetProfileData(profile, features_list){
   text = ""
   for (i=0; i<features_list.length; i++ ) {
     feature = features_list[i]
-    right_end, left_end, value = GetProfileFeatureData(profile[feature]);
+    right_end, left_end, value, feature_name = GetProfileFeatureData(profile[feature]);
     // check if the property/key is defined in the object itself, not in parent
     if (profile.hasOwnProperty(feature)) {
-      text += InjectProfileDataToHTML(feature, right_end, left_end, value);
+      text += InjectProfileDataToHTML(feature_name, right_end, left_end, value, feature_name);
     }
   }
   return text
@@ -62,7 +64,7 @@ function _getRndInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
-// theese list right-left shoud match each other, and the html table cell sides
+// theese lists right-left shoud match each other, and the html table cell sides
 containers = [right_profile, left_profile];
 buttons = [nextRightButton, nextLeftButton];
 
@@ -96,6 +98,7 @@ function RecordResponses(button){ // From button presss
   currentTrial.value = _getStringFormField(current_profile);
   responseTimes.value += _getStringFormField(rts[current_profile]);
   profilesSides.value += _getStringFormField(profiles_possitions[current_profile]);
+  profilesList.value += _getStringFormField(task_profiles["artificials"][current_profile]["name"]);
   NextTrial(); // increases current_profile
 }
 

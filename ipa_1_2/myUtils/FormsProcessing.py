@@ -6,6 +6,7 @@ class FormsProcessor(object):
         self.phase_to_form_processor = {
             "Consent phase" : self._process_consent_form,
             "Matrix tutorial" : self._process_matrix_tutorial_form,
+            "Identification Task" : self._process_identification_task,
 
         }
 
@@ -19,10 +20,7 @@ class FormsProcessor(object):
     # checks if consent form was filled correctly - returns a list of errors
     def _process_consent_form(self, post_data):
         consent_form_fields = {
-                                "ReadCheckbox" : "You have to read this consent form entirely",
-                                "18Checkbox": "You must be 18 to continue",
-                                "freeWillCheckbox": "Participation is allowed only under free free will",
-                                "privacyPolicy": "You must read the privacy policy and agree to its terms",
+                                "Checkbox" : "יש לענות על כלל התנאים על מנת להשתתף בניסוי",
                                 }
         errors = []
         for field in consent_form_fields.keys():
@@ -40,6 +38,18 @@ class FormsProcessor(object):
                 errors.append(key)
         return errors
 
+    def _process_identification_task(self, post_data):
+        errors = []
+        profilesSides = post_data["profilesSides"][:-1].split(",") # ignoring the last comma
+        responses = post_data["responses"][:-1].split(",") # ignoring the last comma
+        for i in range(len(profilesSides)):
+            if profilesSides[i] != responses[i]:
+                errors.append("error")
+        if len(errors) > 0.2*len(responses):
+            return errors
+        else:
+            return [] # indicating to views.py that there were no errors
+
 
 class PhasesDataSaver(object):
     def __init__(self, FeatureLabels, FeatureValue, MinMaxProfileModel):
@@ -52,7 +62,14 @@ class PhasesDataSaver(object):
             "Get Min Max Similarity" : self._process_min_max_similarity,
             "Get Max Similarity Profile" : self._get_min_max_similarity_profile,
             "Get Min Similarity Profile" : self._get_min_max_similarity_profile,
+            "Identification Task" : self._save_identification_task,
         }
+
+    def _save_identification_task(self, post_data, subject):
+        subject.subject_profile_sides += post_data["profilesSides"]
+        subject.subject_reported_sides += post_data["responses"]
+        subject.identification_rts += post_data["reactionTimes"]
+        subject.identification_profiles += post_data["profilesList"]
 
     def save_posted_data(self, phase_name, post_data, subject):
         if phase_name in self.phase_to_saver_function:
@@ -62,6 +79,9 @@ class PhasesDataSaver(object):
     def _save_trials_data(self, post_data, subject):
         subject.trials_responses_list += post_data["responses"]
         subject.trials_string_list += post_data["profilesList"]
+        subject.profiles_descriptions += post_data["profilesDescriptions"]
+        subject.profiles_response_times += post_data["subjectRTs"]
+        # add time recordings
         subject.save()
 
     # Fills subject model with posted features provided by the subject user (subject profile witg default values already exists)
@@ -82,7 +102,10 @@ class PhasesDataSaver(object):
             profile_name = "Max"
         else:
             profile_name = "Min"
-        profile = self.MinMaxProfileModel(name=profile_name, profile_label_set=subject.profile_label_set, target_subject=subject)
+        min_max_profile_full_name = profile_name+"-Subject-"+str(subject.id)
+        self.MinMaxProfileModel.objects.filter(target_subject=subject, name=min_max_profile_full_name).delete() # first_deleting an existing profile
+        profile = self.MinMaxProfileModel(name=min_max_profile_full_name, profile_label_set=subject.profile_label_set, target_subject=subject)
+        profile.is_MinMax = True
         profile.save()
         feaure_labels = self.FeatureLabels.objects.filter(label_set=subject.profile_label_set).values_list("feature_name", flat=True)
         for feature_name in feaure_labels:

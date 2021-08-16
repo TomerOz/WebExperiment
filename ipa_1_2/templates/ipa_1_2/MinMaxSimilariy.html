@@ -24,7 +24,7 @@
   <div class="container">
     <div id="instructionContainer" class="jumbotron">
       <!-- Here instructions will be inserted -->
-      {{instructions_list}} Place Holder holer holder
+      <!-- {{instructions_list}} Place Holder holer holder -->
     </div>
     {% endif %}
     <!-- Buttons -->
@@ -36,33 +36,42 @@
       <form id="testForm" method="post">
       {% csrf_token %}
         <br/>
-        <p>
-        <center>
-            <h3>הכנס כאן הוראות כלליות</h3>
-        </center>
-        </p>
+
         <br/>
-            <div id="MaxSimilaritySection" class="item"><label for="maxSimilarity"> {{ off_order_instructions_dict.MaxName }}<span> *</span></label>
+            <!-- <div id="MaxSimilaritySection" class="item"><label for="maxSimilarity"> <h3>{{ off_order_instructions_dict.MaxName }}<span> :</span></h3></label> -->
+            <div id="MaxSimilaritySection" class="item">
+              <div id="maxSimilarityQuestion">
+              <label for="maxSimilarity"> <h3>{{ off_order_instructions_dict.askMax }}<span> :</span></h3></label>
               <div class="input-group">
                 <input type="text" id="maxSimilarity" name="maxSimilarityName" min="1" max="50" required>
               </div>
+            </div>
               <div id="MaxSimilarityReportSection" class="row" style="direction:ltr">
+                <p>
+                  <h3 style="direction:rtl" id="beforeReportMax">{{ off_order_instructions_dict.reportMaxSimilarity }}</h3>
+                </p>
                 <canvas id="myCanvas" width="400" height="320"></canvas>
                 <br/>
-                <div class="column side">Very low similarity</div>
+                <div class="column side">{{ off_order_instructions_dict.lowSimilarity }}</div>
                 <div class="column middle">
                   <input type="range" min="0" max="100" value="50" class="slider" id="myRange" name="maxSimilarityValue">
                 </div>
-                <div class="column side">Very high similarity</div>
+                <div class="column side">{{ off_order_instructions_dict.highSimilarity }}</div>
               </div>
               <span class="input-group-btn"><button id="approve_name_1" type="button" href="/">המשך</button></span>
             </div>
 
-            <div id="MinSimilaritySection" class="item"><label for="minSimilarity"> {{ off_order_instructions_dict.MinName }}<span> *</span></label>
-              <div class="input-group">
-                <input type="text" id="minSimilarity" name="minSimilarityName" min="1" max="50" required>
+            <div id="MinSimilaritySection" class="item">
+              <div id="minSimilarityQuestion">
+                <label for="minSimilarity"><h3>{{ off_order_instructions_dict.askMin }}<span> :</span></h3></label>
+                <div class="input-group">
+                  <input type="text" id="minSimilarity" name="minSimilarityName" min="1" max="50" required>
+                </div>
               </div>
               <div id="MinSimilarityReportSection" class="row" style="direction:ltr">
+                <p>
+                  <h3 style="direction:rtl" id="beforeReportMin">{{ off_order_instructions_dict.reportMinSimilarity }}</h3>
+                </p>
                 <canvas id="myCanvas2" width="400" height="320"></canvas>
                 <br/>
                 <div class="column side">Very low similarity</div>

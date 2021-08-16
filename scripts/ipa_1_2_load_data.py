@@ -20,6 +20,8 @@ def run():
             feature_query = FeatureLabels.objects.filter(feature_name=row.feature)
             if len(feature_query) == 0:
                 new_feature = FeatureLabels(feature_name=row.feature, right_end=row.right_end, left_end=row.left_end, label_set=row.set)
+                new_feature.question_heb = row.question_heb
+                new_feature.presenting_name = row.presenting_name
                 new_feature.save()
 
     def create_experiment_instance():
@@ -29,6 +31,9 @@ def run():
             new_exp.save()
 
     def squezze_in_new_phases():
+        ''' adds new phases that were added in the phases.text
+            do not handle deletion of phases'''
+
         experiment = Experiment.objects.get(name=EXPERIMENT_NAME)
         exp_phases = _get_txt_list(os.path.join(CURRENT_APP_NAME,"myUtils", 'phases.txt'), "\n")
         current_phases = ExperimentPhase.objects.all()
@@ -80,6 +85,8 @@ def run():
                 new_instruction = Instruction()
                 new_instruction.int_place = int_place
                 new_instruction.instruction_text = row.text_he
+                new_instruction.instruction_text_male = row.text_he_male
+                new_instruction.instruction_text_female = row.text_he_female
                 new_instruction.str_phase = phase
                 new_instruction.experiment = Experiment.objects.get(name=EXPERIMENT_NAME)
                 new_instruction.off_order_place = off_order_place
@@ -131,16 +138,17 @@ def run():
 
 
     def create_n_pilot_profiles(n):
-        for i in range(n):
-            profile = ProfileModel(name="pilot-"+str(i), profile_label_set="B")
-            profile.save()
-            feaure_labels = FeatureLabels.objects.filter(label_set="B").values_list("feature_name", flat=True)
-            for feature_name in feaure_labels:
-                feature = FeatureLabels.objects.get(feature_name=feature_name)
-                feature_value = random.randint(0,100)
-                profile_feature = FeatureValue(target_profile=profile, target_feature=feature, value=feature_value)
-                profile_feature.save()
-                profile.save(force_update=True)
+        for label in ["A","B","C"]:
+            feaure_labels = FeatureLabels.objects.filter(label_set=label).values_list("feature_name", flat=True)
+            for i in range(n):
+                profile = ProfileModel(name="pilot-"+str(i), profile_label_set=label)
+                profile.save()
+                for feature_name in feaure_labels:
+                    feature = FeatureLabels.objects.get(feature_name=feature_name)
+                    feature_value = random.randint(0,100)
+                    profile_feature = FeatureValue(target_profile=profile, target_feature=feature, value=feature_value)
+                    profile_feature.save()
+                    profile.save(force_update=True)
 
 
 
@@ -156,12 +164,12 @@ def run():
 
     # create_experiment_instance()
     # create_experiment_phases()
-    #create_instructinos()
+    create_instructinos() # deletes all previous instances
     # create_feature_labels(features_df)
     # create_contexts()
     # create_models()
+    # create_n_pilot_profiles(3)
+    # squezze_in_new_phases()
 
-    # create_n_pilot_profiles(4)
-    squezze_in_new_phases()
 
 #py manage.py runscript load_inital_data

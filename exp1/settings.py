@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '(pr0w321w)_4-*p-o7!rl#^ajfi@af0^+@8uc7=zw%)(9%%#*c'
 
 # Things I added:
-AUTH_USER_MODEL  = 'core.User'
+# AUTH_USER_MODEL  = 'core.User'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'profilePresntaion.apps.ProfilepresntaionConfig',
     'ipa_1_2.apps.Ipa12Config',
     'Register.apps.RegisterConfig',
-    'core.apps.CoreConfig',
+    # 'core.apps.CoreConfig',
     'home.apps.HomeConfig',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -17,6 +17,8 @@ class FeatureLabels(models.Model):
     left_end = models.CharField(max_length=200, default="left")
     feature_name = models.CharField(max_length=200, default="Name")
     label_set = models.CharField(max_length=2, default="A") # normal features, blog extracted, or meaningless
+    question_heb = models.CharField(max_length=200, default="Default question?")
+    presenting_name = models.CharField(max_length=200, default="Default Name")
 
     def __str__(self):
         return ("Feature Label" + "-" + self.feature_name)
@@ -74,40 +76,61 @@ class Instruction(models.Model):
     is_in_order = models.BooleanField(default=True)
     off_order_place = models.CharField(max_length=30, default="irrelevant")
 
+    instruction_text_male = models.CharField(max_length=1000, default="") # Which text it contains
+    instruction_text_female = models.CharField(max_length=1000, default="") # Which text it contains
+
     def __str__(self):
         return ("Instruction" + "-" + self.experiment.name + " - " + self.str_phase.name + "-" + str(self.int_place))
 
 # Subject model that stores user responses and behavior as a subject (user - subject connection is encrypted)
 class Subject(ProfileModel):
     is_subject = True
-    trials_string_list = models.CharField(max_length=800, default="-")
-    trials_responses_list = models.CharField(max_length=800, default="-")
+    subject_num = models.CharField(max_length=50, default="not_provided")
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
+    completed_experiments = models.CharField(max_length=300, default="-") # a list-like string of experiment -> "SGS1, SGS2,"
+    subject_session  = models.IntegerField(default=0) # on creation of subject - session is 1, as in first session.
+    context_group = models.CharField(max_length=50, default="trade") # i.e. romance, conflict, friendship and trade
     current_phase = models.ForeignKey(ExperimentPhase, null=True, on_delete=models.SET_NULL)
 
-    subject_session  = models.IntegerField(default=0) # on creation of subject - session is 1, as in first session.
-    completed_experiments = models.CharField(max_length=300, default="-") # a list-like string of experiment -> "SGS1, SGS2,"
-    context_group = models.CharField(max_length=50, default="trade") # i.e. romance, conflict, friendship and trade
-
+    # Min Max profiles similariyt and names:
     max_similarity_value = models.IntegerField(default=999)
     min_similarity_value = models.IntegerField(default=999)
     max_similarity_name = models.CharField(max_length=50, default="not_provided")
     min_similarity_name = models.CharField(max_length=50, default="not_provided")
+
+    # profiles assesment - similarity reports:
+    trials_string_list = models.CharField(max_length=800, default="-")
+    trials_responses_list = models.CharField(max_length=800, default="-")
+    profiles_descriptions = models.TextField(blank=True)
+    profiles_response_times = models.CharField(max_length=800, default="-")
+
+    # identification task:
+    subject_profile_sides = models.CharField(max_length=800, default="-")
+    subject_reported_sides = models.CharField(max_length=800, default="-")
+    identification_rts = models.CharField(max_length=800, default="-")
+    identification_profiles = models.CharField(max_length=800, default="-")
+
+    # Demograpics
+    gender = models.CharField(max_length=20, default="male")
+    age = models.IntegerField(default=999)
+
+
 
     #session_1_ps = models.FloatField(default=0.5)
     #session_2_ps = models.FloatField(default=0.5)
     # session_to_ps = #mapping session to randomly assigned ps
 
     def __str__(self):
-        return ("Subject Model" + "-" + self.name)
+        return ("Subject Model" + "-" + self.subject_num)
 
     def update_subject_session_on_complete(self):
     # a function intended to be called on session end prior to logging out the user.
         if self.subject_session == 1:
             self.subject_session = 2
+            self.current_phase = ExperimentPhase.objects.get(name="Consent phase")
         elif self.subject_session == 2:
             self.completed_experiments = self.completed_experiments + self.experiment.name + ","
-        self.current_phase = "end"
+            self.current_phase = ExperimentPhase.objects.get(name="Experiment Finished")
         self.save()
 
 class ArtificialProfileModel(ProfileModel):
@@ -173,3 +196,26 @@ class GameMatrix(models.Model):
 
     def __str__(self):
         return ("Game Matrix" + "-" + self.game_name + " " + self.context_group.name + ": Ps " + str(self.get_ps_threshold()))
+
+
+from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+class UserToSubject(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    subject_num = models.CharField(max_length=100, default="not provided")
+    features_set = models.CharField(max_length=100, default="A")
+
+    def __str__(self):
+        return (self.user.username + "- Subject-" + self.subject_num)
+
+@receiver(post_save, sender=User)
+def create_user_subject(sender, instance, created, **kwargs):
+    if created:
+        UserToSubject.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_subject(sender, instance, **kwargs):
+    instance.usertosubject.save()

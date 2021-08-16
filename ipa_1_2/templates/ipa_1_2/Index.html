@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="rtl">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, height=device-height initial-scale=1, shrink-to-fit=yes">
@@ -15,23 +15,21 @@
       <div id="instructionContainer" class="jumbotron">
         <img src="{% static 'profilePresntaion/media/images/Romantic.jpg' %}" height="300" width="300" alt="missing">
 
-        <h1>Thank you for participating!</h1>
+        <h1> {{ off_order_instructions_dict.title }}</h1>
 
-        <p>Concent Form:</p>
         <p>{{ single_instructions }}</p>
 
-        <p>By clicking I agree that: </p>
-
+        <p>{{ off_order_instructions_dict.checkboxTitle }}</p>
         <form action=""  method="post">
             {% csrf_token %}
-          <input type="checkbox" id="ReadCheckbox" name="ReadCheckbox" value="yes">
-          <label for="ReadCheckbox">I have read this page</label><br>
-          <input type="checkbox" id="18Checkbox" name="18Checkbox" value="yes">
-          <label for="18Checkbox">I am over 18 years old</label><br>
-          <input type="checkbox" id="freeWillCheckbox" name="freeWillCheckbox" value="yes">
-          <label for="freeWillCheckbox">I participate with my free will</label><br>
-          <input type="checkbox" id="privacyPolicy" name="privacyPolicy" value="yes">
-          <label for="privacyPolicy">I have red the privacy policy and agree to its terms</label><br>
+            <ul>
+              <label for="ReadCheckbox"> * {{ off_order_instructions_dict.read }}</label><br>
+              <label for="18Checkbox"> * {{ off_order_instructions_dict.age }}</label><br>
+              <label for="freeWillCheckbox"> * {{ off_order_instructions_dict.will }}</label><br>
+              <label for="privacyPolicy"> * {{ off_order_instructions_dict.privacy }}</label><br>
+            </ul>
+            <input type="checkbox" id="Checkbox" name="Checkbox" value="yes">
+          <label for="privacyPolicy">{{ off_order_instructions_dict.privacy }}</label><br>
 
         {% if errors %}
 

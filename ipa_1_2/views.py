@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment, MinMaxProfileModel
+from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment, MinMaxProfileModel, ArtificialProfileModel
 from .models import Instruction, GameMatrix, ExperimentPhase, SimilarityContextModel
 from .models import Context
 from django.core import serializers
@@ -27,7 +27,7 @@ phase_to_html_page = {
                         "Pre Profile Presentation":     "instruction",
                         "During Profile Presentation":  "profile",
                         "Report Similariy":  "ReportSimilarity",
-                        "end":                          "endPage",
+                        "End Screen":                          "endPage",
                     }
 
 form_phase = "form_phase"
@@ -35,41 +35,64 @@ form_phase = "form_phase"
 forms_processor = FormsProcessor(GameMatrix)
 phases_data_saver = PhasesDataSaver(FeatureLabels, FeatureValue, MinMaxProfileModel)
 
+EXPERIMENT_NAME = "ipa_1_2"
+EXPERIMENT_FIRST_SESSION = {"ipa_1_2" : 2, "SGS1": 1}
 ## Assistant functions: ###############################################################################################################################################
 # saves subject model with the new phase
-def _update_subject_phase(subject):
-    subject_updated_phase = _get_next_phase(subject)
+def _update_subject_phase(subject, direction=None):
+    subject_updated_phase = _get_next_phase(subject, direction=direction)
     subject.current_phase = subject_updated_phase
     subject.save()
-    if subject_updated_phase == "end":
-        subject.update_subject_session_on_complete()
 
  # return a query set of all phases-model instances associated with this subject's experiment
 def _get_all_subject_phases(subject):
     return subject.experiment.experimentphase_set.all()
 
 # returns the name of next phase of this subject
-def _get_next_phase(subject):
+def _get_next_phase(subject, direction=None):
+    if direction==None:
+        direction=1
     phases = ExperimentPhase.objects.all()
-    if subject.current_phase.name != "end":
-        ipdb.set_trace()
-        next_phase = phases.get(phase_place=subject.current_phase.phase_place+1)
+    if subject.current_phase.name != "Session End":
+        # ipdb.set_trace()
+        next_phase = phases.get(phase_place=subject.current_phase.phase_place+(direction*1))
         return next_phase
     else: # upon ening a session
-        return "session end"
+        return subject.current_phase
 
 # returns a list all instruciton-model instances texts associated with this phase - orderd by order property
-def _get_phases_instructions(phase_name):
+def _get_phases_instructions(phase_name, users_subject, errors):
     instructions_list = []
     instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=True).order_by("int_place")
     for instruction_query in instruction_queryset:
-        instructions_list.append(instruction_query.instruction_text)
+        if users_subject.gender == "male":
+            instructions_list.append(instruction_query.instruction_text_male)
+        elif users_subject.gender == "female":
+            instructions_list.append(instruction_query.instruction_text_female)
+        else:
+            instructions_list.append(instruction_query.instruction_text)
 
     off_order_instructions_dict = {}
     off_order_instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=False)
     for instruction_query in off_order_instruction_queryset:
-        off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text
+        if users_subject.gender == "male":
+            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text_male
+        elif users_subject.gender == "female":
+            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text_female
+        else:
+            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text
 
+    # edding an introduction to current phase with current errors (assuming its an Instruction page, otherwise nothing will be presented if not specified)
+    if len(errors)>0:
+        errors_introduction = []
+        for instruction_query in off_order_instruction_queryset:
+            if instruction_query.off_order_place == "onError":
+                if users_subject.gender == "male":
+                    errors_introduction.append(instruction_query.instruction_text_male)
+                else:
+                    errors_introduction.append(instruction_query.instruction_text_female)
+
+        instructions_list = errors_introduction + instructions_list
     return instructions_list, off_order_instructions_dict
 
 # Returns one of the contexts
@@ -91,20 +114,21 @@ def _create_subject(user):
     new_subject = Subject(experiment=Experiment.objects.get(name="IPA1.2"))
     new_subject.save()
     new_subject.is_subject = True
-    new_subject.name = "Subject-"+str(new_subject.pk)
-    new_subject.subject_session = 1 # on creation subject session is one
+    new_subject.name = "Subject-"+user.usertosubject.subject_num
+    new_subject.subject_session = EXPERIMENT_FIRST_SESSION[EXPERIMENT_NAME] # on creation subject session is one
     new_subject.context_group = _get_random_context()
     #new_subject.session_1_ps, new_subject.session_2_ps = _get_sessions_ps(new_subject.context_group)
     new_subject.current_phase = ExperimentPhase.objects.get(name="Consent phase")
+    new_subject.subject_num = user.usertosubject.subject_num
+    new_subject.profile_label_set = user.usertosubject.features_set
     new_subject.save(force_update=True)
-    user.exp1_enc_num = str(new_subject.pk)
     user.save()
     return new_subject
 
 # return the Subject instance associated with the authenticated user
 def _get_user_subject(user):
     if _check_if_user_have_subject(user):
-        subject = Subject.objects.get(pk=user.exp1_enc_num)
+        subject = Subject.objects.get(subject_num=user.usertosubject.subject_num)
     else: # a need to create a subject..
         subject = _create_subject(user)
     return subject
@@ -112,10 +136,9 @@ def _get_user_subject(user):
 # returns a boolean depending on whether user has an associated Subject instance
 def _check_if_user_have_subject(user):
     context = ""
-    if user.exp1_enc_num != "": # check if not empty
-        if user.exp1_enc_num.isdigit(): # check if its int
-            if Subject.objects.filter(pk=user.exp1_enc_num).exists(): # check if encrypted number represent a valid pk in Subject
-                return True
+    ###################
+    if Subject.objects.filter(subject_num=user.usertosubject.subject_num).exists(): # check if encrypted number represent a valid pk in Subject
+        return True
     return False
 
 # returns a context dictionary withh all the profiles data ready for rendering (a sort od serialiser)
@@ -140,16 +163,17 @@ def _get_profiles_list_context(all_profiles):
                 profiles_data[profile.id]["features"][f_name]["value"] = f.value
                 profiles_data[profile.id]["features"][f_name]["l"] = f.target_feature.left_end
                 profiles_data[profile.id]["features"][f_name]["r"] = f.target_feature.right_end
+                profiles_data[profile.id]["features"][f_name]["name_to_present"] = f.target_feature.presenting_name
             random.shuffle(profiles_data[profile.id]["features_order"])
 
     random.shuffle(profiles_data["profiles_list"])
     return profiles_data
 
 # Preparing context for the a new subject page
-def _get_new_subject_profile_page_context():
+def _get_new_subject_profile_page_context(users_subject):
     features_list = []
-    for fl in FeatureLabels.objects.filter(label_set="B").all():
-        features_list.append([fl.feature_name, fl.right_end, fl.left_end])
+    for fl in FeatureLabels.objects.filter(label_set=users_subject.profile_label_set).all():
+        features_list.append([fl.feature_name, fl.right_end, fl.left_end, fl.question_heb])
     random.shuffle(features_list)
     return {"features_list" : json.dumps(features_list)}
 
@@ -177,15 +201,16 @@ def _get_subject_profile(users_subject):
         user_profile_data["features"][f_name]["value"] = feature.value
         user_profile_data["features"][f_name]["l"] = feature.target_feature.left_end
         user_profile_data["features"][f_name]["r"] = feature.target_feature.right_end
+        user_profile_data["features"][f_name]["presenting_name"] = feature.target_feature.presenting_name
 
     random.shuffle(user_profile_data["features_order"])
     return user_profile_data
 
-def _get_inital_artificial_profile(user_profile_data):
+def _get_inital_artificial_profile(user_profile_data, users_subject, target_similarity):
     profile = copy.deepcopy(user_profile_data)
     random.shuffle(profile["features_order"]) ## Maybe should be in the same order
     profile["is_subject"] = False
-    profile["name"] = "artificial"
+    profile["name"] = "Artificial-" + str(target_similarity) + "-Subject-" + users_subject.subject_num
 
     for f_name in user_profile_data["features"]:
         profile["features"][f_name]
@@ -222,11 +247,23 @@ def _get_min_similarity(model, subject_profile):
 
 def _generate_profile(users_subject, target_similarity):
     sp = _get_subject_profile(users_subject) # subject profile
-    ap = _get_inital_artificial_profile(sp) # artificial profile
+    ap = _get_inital_artificial_profile(sp, users_subject, target_similarity) # artificial profile
     model = SimilarityContextModel.objects.get(context__name=users_subject.context_group)
     min_s = _get_min_similarity(model, sp)
     adapted_target_s = (target_similarity * 100 * (1-min_s)) + min_s
     distances_dict = _get_feature_distance_dict(sp, ap)
+
+    # save this profile
+    ap_instance = ArtificialProfileModel(is_artificial=True, target_subject=users_subject)
+    ap_instance.name = ap["name"]
+    ap_instance.save()
+    feaure_labels = FeatureLabels.objects.filter(label_set=users_subject.profile_label_set).values_list("feature_name", flat=True)
+    for feature_name in feaure_labels:
+        feature = FeatureLabels.objects.get(feature_name=feature_name)
+        feature_value = ap["features"][feature_name]["value"]
+        ap_feature = FeatureValue(target_profile=ap_instance, target_feature=feature, value=feature_value)
+        ap_feature.save()
+        ap_instance.save(force_update=True)
     #ipdb.set_trace()
     return ap
 
@@ -240,7 +277,7 @@ def _generate_profile(users_subject, target_similarity):
 # Updates the generic context on specific phases
 def _update_context_if_necessry(context, current_phase, users_subject):
     if current_phase == "During Get Profile" or current_phase =="Get Max Similarity Profile" or current_phase=="Get Min Similarity Profile":
-        context.update(_get_new_subject_profile_page_context())
+        context.update(_get_new_subject_profile_page_context(users_subject))
 
     elif current_phase == "Matrix tutorial":
         game = _get_game_data(users_subject)
@@ -249,7 +286,7 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         "gameJSON":gameJSON,
                         })
     elif current_phase == "During Profile Presentation":
-        context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.filter(profile_label_set="B").all()))})
+        context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.filter(profile_label_set=users_subject.profile_label_set, is_subject=False, is_MinMax=False).all()))})
         context.update({"maxValue":users_subject.max_similarity_value,
                         "maxName":users_subject.max_similarity_name,
                         "minValue":users_subject.min_similarity_value,
@@ -270,7 +307,13 @@ def _update_context_if_necessry(context, current_phase, users_subject):
     return context # if condition fails, context remain untouched
 
 def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, single_instruction, off_order_instructions):
-    if subject.current_phase.name == "Get Min Max Similarity":
+    if subject.current_phase.name == "Pre Get Max Profile":
+        single_instruction = single_instruction.format(subject.max_similarity_name)
+        phases_instructions[0] = phases_instructions[0].format(subject.max_similarity_name)
+    elif subject.current_phase.name == "Pre Get Min Profile":
+        single_instruction = single_instruction.format(subject.min_similarity_name)
+        phases_instructions[0] = phases_instructions[0].format(subject.min_similarity_name)
+    elif subject.current_phase.name == "Get Min Max Similarity":
         pass
 
     elif subject.current_phase.name == "Matrix tutorial":
@@ -287,6 +330,7 @@ def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, singl
         off_order_instructions["Other_Ab"] = off_order_instructions["other"].format(game.strategy_a, game.strategy_b)
         off_order_instructions["Other_Ba"] = off_order_instructions["other"].format(game.strategy_b, game.strategy_a)
         off_order_instructions["Other_Bb"] = off_order_instructions["other"].format(game.strategy_b, game.strategy_b)
+
     return phases_instructions, single_instruction, off_order_instructions
 
 def _get_game_data(subject):
@@ -318,7 +362,7 @@ def _get_game_dict(game):
 
 ## Experiment Views: ################################################################################################################################################
 def render_next_phase(request, users_subject):
-    errors = None # a place holder for errors
+    errors = [] # a place holder for errors
     if request.method == "POST":
         errors = forms_processor.process_form(users_subject.current_phase.name, request.POST)
         errors = [] if errors == None else errors # making sure errors are provided as list
@@ -326,17 +370,17 @@ def render_next_phase(request, users_subject):
         if (len(errors) == 0) & (request.POST[form_phase] == users_subject.current_phase.name):
             # condition fails on errors or GET (user was sent from home page with a get method) or
             #in case of page refresh request.POST is previous phasewhile users_subject.current_phase.name moved forward
-            _update_subject_phase(users_subject) # updates "users_subject.current_phase.name"
-            if users_subject.current_phase.name == "session end":
-                users_subject.current_phase.name = "Consent phase"
-                users_subject.save()
+            _update_subject_phase(users_subject) # updates "users_subject.current_phase"
+            if users_subject.current_phase.name == "Session End":
+                users_subject.update_subject_session_on_complete()
                 return redirect(reverse('home:home')) # temporary - SHOULD HAVE ITS OWN END PAGE (FEEDBACK)
-    phases_instructions, off_order_instructions = _get_phases_instructions(users_subject.current_phase.name)
+        else: # in case of errorsJSON
+            _update_subject_phase(users_subject, direction=-1) # updates downwards "users_subject.current_phase"
+    phases_instructions, off_order_instructions = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
     phases_instructions, single_instruction, off_order_instructions = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction, off_order_instructions)
     context_to_send = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, errors)
     context_to_send = _update_context_if_necessry(context_to_send, users_subject.current_phase.name, users_subject)
-    # ipdb.set_trace()
     return render(request, 'ipa_1_2/{}.html'.format(phase_to_html_page[users_subject.current_phase.name]), context_to_send)
 
 # A general function that serves as phase decider
@@ -372,3 +416,6 @@ def index(request):
     else: # Rendering consent form "Index.html"
         subject = _get_user_subject(request.user) # Why is this here?
         return render(request, 'profilePresntaion/Index.html', {"subject": subject.pk})
+def polls_detail(request, poll_id, some):
+    pass
+    #ipdb.set_trace()

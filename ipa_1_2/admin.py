@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from .models import ProfileModel, FeatureLabels, FeatureValue, Subject, Experiment, Instruction, ExperimentPhase, GameMatrix
-from .models import Context, FeatureWeight, SimilarityContextModel
+from .models import Context, FeatureWeight, SimilarityContextModel, UserToSubject
 
 
 admin.site.register(ProfileModel)
@@ -16,5 +16,6 @@ admin.site.register(GameMatrix)
 admin.site.register(Context)
 admin.site.register(FeatureWeight)
 admin.site.register(SimilarityContextModel)
+admin.site.register(UserToSubject)
 
 # 13.07.21 - requiers update, currently its a copy of profilePresntaion

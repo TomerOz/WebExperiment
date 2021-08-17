@@ -335,7 +335,7 @@ def _update_context_if_necessry(context, current_phase, users_subject):
         sp = _get_subject_profile(users_subject)
         d2 = {"identification_task" : json.dumps({"subject": sp, "artificials": [ap1, ap2, ap3, ap4, ap5, ap6]})}
         context.update(d2)
-
+    # note
     # ipdb.set_trace()
     return context # if condition fails, context remain untouched
 

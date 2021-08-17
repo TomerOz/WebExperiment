@@ -18,6 +18,7 @@ class FeatureLabels(models.Model):
     feature_name = models.CharField(max_length=200, default="Name")
     label_set = models.CharField(max_length=2, default="A") # normal features, blog extracted, or meaningless
     question_heb = models.CharField(max_length=200, default="Default question?")
+    question_heb_max_min_ideal = models.CharField(max_length=200, default="Default question?")
     presenting_name = models.CharField(max_length=200, default="Default Name")
 
     def __str__(self):
@@ -155,7 +156,7 @@ class MinMaxProfileModel(ProfileModel):
     target_subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
 
     def __str__(self):
-        return (self.name + "ProfileModel Profile Model" + "-" + " - of - " + self.target_subject.name)
+        return (self.name + " - of - " + self.target_subject.name)
 
 class GameMatrix(models.Model):
     game_name = models.CharField(max_length=30, default="no assigned name") # e.g. PD, Chicken

@@ -100,12 +100,15 @@ class PhasesDataSaver(object):
     def _get_min_max_similarity_profile(self, post_data, subject):
         if post_data["form_phase"] == "Get Max Similarity Profile":
             profile_name = "Max"
+        elif post_data["form_phase"] == "Get Ideal Profile":
+            profile_name = "Ideal"
         else:
             profile_name = "Min"
-        min_max_profile_full_name = profile_name+"-Subject-"+str(subject.id)
+        min_max_profile_full_name = profile_name+"-Subject-"+str(subject.subject_num)
         self.MinMaxProfileModel.objects.filter(target_subject=subject, name=min_max_profile_full_name).delete() # first_deleting an existing profile
         profile = self.MinMaxProfileModel(name=min_max_profile_full_name, profile_label_set=subject.profile_label_set, target_subject=subject)
         profile.is_MinMax = True
+        profile.profile_label_set = subject.profile_label_set
         profile.save()
         feaure_labels = self.FeatureLabels.objects.filter(label_set=subject.profile_label_set).values_list("feature_name", flat=True)
         for feature_name in feaure_labels:

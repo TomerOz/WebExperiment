@@ -26,8 +26,10 @@ phase_to_html_page = {
                         "Matrix tutorial":              "MatrixLearnTest",
                         "Pre Profile Presentation":     "instruction",
                         "During Profile Presentation":  "profile",
-                        "Report Similariy":  "ReportSimilarity",
-                        "End Screen":                          "endPage",
+                        "Report Similariy":             "ReportSimilarity",
+                        "End Screen":                   "endPage",
+                        "Pre Get Ideal Profile":         "instruction",
+                        "Get Ideal Profile":   "GetSubject/getSubjectProfile",
                     }
 
 form_phase = "form_phase"
@@ -145,7 +147,6 @@ def _check_if_user_have_subject(user):
 def _get_profiles_list_context(all_profiles):
     profiles_data = {}
     profiles_data["profiles_list"] = [] # This is the list the will be iterated through the experiment
-
     for profile in all_profiles:
         if not profile.is_subject:
             profiles_data[profile.id] = {}
@@ -169,11 +170,23 @@ def _get_profiles_list_context(all_profiles):
     random.shuffle(profiles_data["profiles_list"])
     return profiles_data
 
+def get_profile_question_text(subject, fl):
+    text = ""
+    if subject.current_phase.name == "Get Max Similarity Profile":
+        text = fl.question_heb_max_min_ideal.format(subject.max_similarity_name)
+    elif subject.current_phase.name == "Get Min Similarity Profile":
+        text = fl.question_heb_max_min_ideal.format(subject.min_similarity_name)
+    elif subject.current_phase.name == "Get Ideal Profile":
+        text = fl.question_heb_max_min_ideal.format("העצמי האידאלי שלך")
+    else: # get subject self profile
+        text = fl.question_heb
+    return text
 # Preparing context for the a new subject page
 def _get_new_subject_profile_page_context(users_subject):
     features_list = []
     for fl in FeatureLabels.objects.filter(label_set=users_subject.profile_label_set).all():
-        features_list.append([fl.feature_name, fl.right_end, fl.left_end, fl.question_heb])
+        question_text = get_profile_question_text(users_subject, fl)
+        features_list.append([fl.feature_name, fl.right_end, fl.left_end, question_text])
     random.shuffle(features_list)
     return {"features_list" : json.dumps(features_list)}
 
@@ -210,7 +223,7 @@ def _get_inital_artificial_profile(user_profile_data, users_subject, target_simi
     profile = copy.deepcopy(user_profile_data)
     random.shuffle(profile["features_order"]) ## Maybe should be in the same order
     profile["is_subject"] = False
-    profile["name"] = "Artificial-" + str(target_similarity) + "-Subject-" + users_subject.subject_num
+    profile["name"] = " "
 
     for f_name in user_profile_data["features"]:
         profile["features"][f_name]
@@ -245,7 +258,7 @@ def _get_min_similarity(model, subject_profile):
          similarity += w*distance
     return 1-similarity
 
-def _generate_profile(users_subject, target_similarity):
+def _generate_profile(users_subject, target_similarity, name_instance=""):
     sp = _get_subject_profile(users_subject) # subject profile
     ap = _get_inital_artificial_profile(sp, users_subject, target_similarity) # artificial profile
     model = SimilarityContextModel.objects.get(context__name=users_subject.context_group)
@@ -253,9 +266,13 @@ def _generate_profile(users_subject, target_similarity):
     adapted_target_s = (target_similarity * 100 * (1-min_s)) + min_s
     distances_dict = _get_feature_distance_dict(sp, ap)
 
+    ap_name = "Artificial-" + str(target_similarity) + "-" + name_instance + "-Subject-" + users_subject.subject_num
+    ap["name"] = ap_name
+
     # save this profile
+    ArtificialProfileModel.objects.filter(target_subject=users_subject, name=ap_name).delete() # first_deleting an existing profile
     ap_instance = ArtificialProfileModel(is_artificial=True, target_subject=users_subject)
-    ap_instance.name = ap["name"]
+    ap_instance.name = ap_name
     ap_instance.save()
     feaure_labels = FeatureLabels.objects.filter(label_set=users_subject.profile_label_set).values_list("feature_name", flat=True)
     for feature_name in feaure_labels:
@@ -272,11 +289,25 @@ def _generate_profile(users_subject, target_similarity):
 
     ################## Continue here #############################
     pass
+def _get_list_from_query_set(qset):
+    l = []
+    for i in qset:
+        l.append(i)
+    return l
+def _get_profile_list_for_profiles_presentation_phase(subject):
+    regulars = ProfileModel.objects.filter(profile_label_set=subject.profile_label_set, is_artificial=False, is_subject=False, is_MinMax=False).all()
+    artificials = ArtificialProfileModel.objects.filter(profile_label_set=subject.profile_label_set,target_subject=subject).all()
+    min_max = MinMaxProfileModel.objects.filter(profile_label_set=subject.profile_label_set,target_subject=subject).all()
+    all  = _get_list_from_query_set(min_max) + _get_list_from_query_set(artificials) + _get_list_from_query_set(regulars)
+    return all
 
 
 # Updates the generic context on specific phases
 def _update_context_if_necessry(context, current_phase, users_subject):
-    if current_phase == "During Get Profile" or current_phase =="Get Max Similarity Profile" or current_phase=="Get Min Similarity Profile":
+    if current_phase == "During Get Profile":
+        context.update(_get_new_subject_profile_page_context(users_subject))
+
+    elif current_phase =="Get Max Similarity Profile" or current_phase=="Get Min Similarity Profile" or current_phase=="Get Ideal Profile":
         context.update(_get_new_subject_profile_page_context(users_subject))
 
     elif current_phase == "Matrix tutorial":
@@ -286,7 +317,8 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         "gameJSON":gameJSON,
                         })
     elif current_phase == "During Profile Presentation":
-        context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.filter(profile_label_set=users_subject.profile_label_set, is_subject=False, is_MinMax=False).all()))})
+        peofiles =_get_profile_list_for_profiles_presentation_phase(users_subject)
+        context.update({"context":json.dumps(_get_profiles_list_context(peofiles))})
         context.update({"maxValue":users_subject.max_similarity_value,
                         "maxName":users_subject.max_similarity_name,
                         "minValue":users_subject.min_similarity_value,
@@ -294,13 +326,14 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         })
     elif current_phase == "Identification Task":
         context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
-        ap = _generate_profile(users_subject, 0.2)
-        ap2 = _generate_profile(users_subject, 0.3)
-        ap3 = _generate_profile(users_subject, 0.4)
-        ap4 = _generate_profile(users_subject, 0.5)
-        ap5 = _generate_profile(users_subject, 0.6)
+        ap1 = _generate_profile(users_subject, 0.3, name_instance="1")
+        ap2 = _generate_profile(users_subject, 0.3, name_instance="2")
+        ap3 = _generate_profile(users_subject, 0.6)
+        ap4 = _generate_profile(users_subject, 0.7)
+        ap5 = _generate_profile(users_subject, 0.9, name_instance="1")
+        ap6 = _generate_profile(users_subject, 0.9, name_instance="2")
         sp = _get_subject_profile(users_subject)
-        d2 = {"identification_task" : json.dumps({"subject": sp, "artificials": [ap, ap2, ap3, ap4, ap5]})}
+        d2 = {"identification_task" : json.dumps({"subject": sp, "artificials": [ap1, ap2, ap3, ap4, ap5, ap6]})}
         context.update(d2)
 
     # ipdb.set_trace()

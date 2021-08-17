@@ -64,12 +64,6 @@ function InitializeProfilePresentation(current_profile){
 }
 
 
-
-if(profileDescription.value.split(" ").length < 20) {
-
-}
-
-
 var nextProfileButton = document.getElementById("NextProfileButton");
 nextProfileButton.addEventListener("click",function(){
   if(document.title == "profile"){
@@ -82,9 +76,10 @@ nextProfileButton.addEventListener("click",function(){
       profileDescription.value = "";
       profileDescription.placeholder="יש לכתוב כאן תיאור של האדם המוצג כאן";
       similarity_report.value = 50;
-      document.getElementsByTagName("body")[0].dispatchEvent(event); // Dispatch the event.
       current_profile +=1;
+      document.getElementsByTagName("body")[0].dispatchEvent(event); // Dispatch the event.
       if(current_profile < all_profiles_ids.length){
+        window.scrollTo(0, 0);
         InitializeProfilePresentation(current_profile);
       }
       else { // enf og trials

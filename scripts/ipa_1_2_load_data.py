@@ -21,6 +21,7 @@ def run():
             if len(feature_query) == 0:
                 new_feature = FeatureLabels(feature_name=row.feature, right_end=row.right_end, left_end=row.left_end, label_set=row.set)
                 new_feature.question_heb = row.question_heb
+                new_feature.question_heb_max_min_ideal = row.question_heb_max_min_ideal
                 new_feature.presenting_name = row.presenting_name
                 new_feature.save()
 
@@ -141,7 +142,9 @@ def run():
         for label in ["A","B","C"]:
             feaure_labels = FeatureLabels.objects.filter(label_set=label).values_list("feature_name", flat=True)
             for i in range(n):
-                profile = ProfileModel(name="pilot-"+str(i), profile_label_set=label)
+                name="pilot-"+str(i) + "-feature set-"+label
+                ProfileModel.objects.filter(name=name, profile_label_set=label).all().delete()
+                profile = ProfileModel(name=name, profile_label_set=label)
                 profile.save()
                 for feature_name in feaure_labels:
                     feature = FeatureLabels.objects.get(feature_name=feature_name)
@@ -162,13 +165,14 @@ def run():
     features_df = pd.read_excel(path)
     features_names = features_df.feature.tolist()
 
-    # create_experiment_instance()
-    # create_experiment_phases()
+    create_experiment_instance()
+    create_experiment_phases()
     create_instructinos() # deletes all previous instances
-    # create_feature_labels(features_df)
-    # create_contexts()
-    # create_models()
-    # create_n_pilot_profiles(3)
+    create_feature_labels(features_df)
+    create_contexts()
+    create_models()
+    create_n_pilot_profiles(3)
+
     # squezze_in_new_phases()
 
 

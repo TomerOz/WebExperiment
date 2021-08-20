@@ -64,6 +64,19 @@ class ExperimentPhase(models.Model):
     name = models.CharField(max_length=30, default="")
     phase_place = models.IntegerField()
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE) # To wich experiment it is related
+    n_trials = models.IntegerField(default=999)
+    n_practice_trials = models.IntegerField(default=999)
+    practice_trials_content = models.CharField(max_length=1000, default="0.2, 0.5")
+    trials_content = models.CharField(max_length=1000, default="0.2, 0.5")
+
+    def _get_list_of_floats_from_string(self, string_list):
+        return [float(i) for i in string_list.split(", ")]
+
+    def get_trials_content(self):
+        return self._get_list_of_floats_from_string(self.trials_content)
+
+    def get_practice_trials_content(self):
+        return self._get_list_of_floats_from_string(self.practice_trials_content)
 
     def __str__(self):
         return (self.experiment.name + " " + "phase " + self.name + " - " + str(self.phase_place) + " in flow")
@@ -88,7 +101,7 @@ class Subject(ProfileModel):
     is_subject = True
     subject_num = models.CharField(max_length=50, default="not_provided")
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
-    completed_experiments = models.CharField(max_length=300, default="-") # a list-like string of experiment -> "SGS1, SGS2,"
+    completed_experiments = models.CharField(max_length=500, default="-") # a list-like string of experiment -> "SGS1, SGS2,"
     subject_session  = models.IntegerField(default=0) # on creation of subject - session is 1, as in first session.
     context_group = models.CharField(max_length=50, default="trade") # i.e. romance, conflict, friendship and trade
     current_phase = models.ForeignKey(ExperimentPhase, null=True, on_delete=models.SET_NULL)
@@ -100,16 +113,16 @@ class Subject(ProfileModel):
     min_similarity_name = models.CharField(max_length=50, default="not_provided")
 
     # profiles assesment - similarity reports:
-    trials_string_list = models.CharField(max_length=800, default="-")
-    trials_responses_list = models.CharField(max_length=800, default="-")
+    trials_string_list = models.TextField(default="-")
+    trials_responses_list = models.TextField(default="-")
     profiles_descriptions = models.TextField(blank=True)
-    profiles_response_times = models.CharField(max_length=800, default="-")
+    profiles_response_times = models.TextField(default="-")
 
     # identification task:
-    subject_profile_sides = models.CharField(max_length=800, default="-")
-    subject_reported_sides = models.CharField(max_length=800, default="-")
-    identification_rts = models.CharField(max_length=800, default="-")
-    identification_profiles = models.CharField(max_length=800, default="-")
+    subject_profile_sides = models.TextField(default="-")
+    subject_reported_sides = models.TextField(default="-")
+    identification_rts = models.TextField(default="-")
+    identification_profiles = models.TextField(default="-")
 
     # Demograpics
     gender = models.CharField(max_length=20, default="male")
@@ -142,9 +155,13 @@ class ArtificialProfileModel(ProfileModel):
     '''
     is_artificial = True
     target_subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    target_phase =  models.ForeignKey(ExperimentPhase, on_delete=models.CASCADE, default=None)
 
     def __str__(self):
-        return ("Artificial Profile Model" + "-" + self.name + " - of - " + self.target_subject.name)
+        return (self.name)
+
+    def get_name_pattern(self, target_similarity, name_instance):
+        return "Artificial-" + str(target_similarity) + "-" + name_instance + "-Subject-" + self.target_subject.subject_num
 
 class MinMaxProfileModel(ProfileModel):
     '''

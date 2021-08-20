@@ -22,7 +22,7 @@
     <form id="instructionsForm" class="" method="post">
       {% csrf_token %}
       <input type="hidden" name="form_phase" value="{{ form_phase }}">
-      <button class="btn btn-primary btn-lg" id="NextInstructionButton" type="button" name="button">Next</button>
+      <button class="btn btn-primary btn-lg" id="NextInstructionButton" type="button" name="button">הבא</button>
     </form>
   </div>
     <script>
@@ -30,5 +30,5 @@
     </script>
 
   </body>
-    <script src="{% static 'profilePresntaion/InstructionLogic.js' %}"></script>
+    <script src="{% static 'ipa_1_2/InstructionLogic.js' %}"></script>
 </html>

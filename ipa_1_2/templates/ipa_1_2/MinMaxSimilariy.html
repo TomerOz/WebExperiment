@@ -74,11 +74,11 @@
                 </p>
                 <canvas id="myCanvas2" width="400" height="320"></canvas>
                 <br/>
-                <div class="column side">Very low similarity</div>
+                <div class="column side">{{ off_order_instructions_dict.lowSimilarity }}</div>
                 <div class="column middle">
                   <input type="range" min="0" max="100" value="50" class="slider" id="myRange2" name="minSimilarityValue">
                 </div>
-                <div class="column side">Very high similarity</div>
+                <div class="column side">{{ off_order_instructions_dict.highSimilarity }}</div>
               </div>
                 <span class="input-group-btn"><button id="approve_name_2" type="button" href="/">המשך</button></span>
             </div>
@@ -88,7 +88,7 @@
           <span>One answer or more is incorrect!<span><br>
           {% endif %}
           <input type="hidden" name="form_phase" value="{{ form_phase }}">
-          <button id="submitButton" type="submit" href="/" id"changeButton">Submit</button>
+          <button id="submitButton" type="submit" href="/" id"changeButton">המשך</button>
         </div>
       </form>
     </div>

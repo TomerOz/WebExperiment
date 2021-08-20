@@ -18,18 +18,19 @@
     <br>
       <div class="container text-center">
         <div id="profileDescriptionDiv">
-          <textarea style="direction: rtl; resize: none" id="profileDescription" placeholder="הכנס תיאור כאן" name="profileDescription" cols="40" rows="8"></textarea>
+          <textarea style="direction: rtl; resize: none" id="profileDescription" placeholder="הכנס תיאור כאן" name="profileDescription" cols="80" rows="8"></textarea>
         </div>
+        <button id="showReportButton" class="btn btn-primary btn" type="button" name="button">Show Report</button>
       </div>
 
-      <div class="container text-center">
-        <div id="profileDescriptionDiv" style="direction: rtl">
+      <div id="practiceTrialsInstructions" class="container text-center">
+        <div style="direction: rtl">
           <h3>{{ off_order_instructions_dict.practiceTrialsInstructions }}</h3>
         </div>
       </div>
 
 
-      <div id="MaxSimilarityReportSection" class="row profiles_size" style="direction:ltr">
+      <div id="SimilarityReportSection" class="row profiles_size" style="direction:ltr">
         <br>
         <br>
         <canvas id="myCanvas" width="400" height="320"></canvas>
@@ -41,20 +42,22 @@
         <div class="column side">{{ off_order_instructions_dict.highSimilarity }}</div>
       </div>
 
+      <!-- consider deleting the following -->
       <div class="container">
         <input type="hidden" name="form_phase" value="{{ form_phase }}">
       </div>
-      <div class="container" id="hiddenInputs">
-      </div>
-      <div class="container text-center">
+      <div class="container" id="hiddenInputs"></div>
+      <!-- end deletion consideration -->
+
+      <div id="NextProfileButtonSection"class="container text-center">
         <br>
         <br>
         <br>
         <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">בחר\י והמשיכ\י</button>
+        <br>
+        <br>
+        <br>
       </div>
-      <br>
-      <br>
-      <br>
 
       <div id="maxAnchor" class="box arrow-top">
         <span>{{maxName}}</span>
@@ -89,4 +92,10 @@
   <script src="{% static 'ipa_1_2/SliderLogic.js' %}"></script>
   <script src="{% static 'ipa_1_2/getSimilarity.js' %}"></script>
   <script src="{% static 'ipa_1_2/anchorsLogic.js' %}"></script>
+  <script>
+    // followin have to happen after anchor script
+    document.getElementById("SimilarityReportSection").style.display = "none";
+    document.getElementById("practiceTrialsInstructions").style.display = "none";
+    document.getElementById("NextProfileButtonSection").style.display = "none";
+  </script>
 </html>

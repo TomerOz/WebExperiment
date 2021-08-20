@@ -9,6 +9,7 @@ profilesDescriptions = document.getElementById('profilesDescriptions'); // the h
 profileDescription = document.getElementById('profileDescription'); // the text box elemenet
 
 const event = new Event('NewProfile');
+const event_show_report = new Event('ShowReport');
 
 minwWordsPerDescription = 12;
 
@@ -109,3 +110,30 @@ function InitiateTimeCount() {
 }
 
 InitializeProfilePresentation(current_profile);
+
+profile_report_state = 1;
+function ShowReport(){
+  window.scrollTo(0, 0);
+  if(profile_report_state==0){
+    profile_report_state=1;
+    document.getElementById("practiceTrialsInstructions").style.display = "block";
+    document.getElementById("SimilarityReportSection").style.display = "block";
+    document.getElementById("NextProfileButtonSection").style.display = "block";
+    maxAnchor.style.display = "block";
+    minAnchor.style.display = "block";
+    document.getElementById("slidecontainer").style.display = "none";
+    document.getElementsByTagName("body")[0].dispatchEvent(event_show_report); // Dispatch the event.
+  } else {
+    profile_report_state=0;
+    document.getElementById("practiceTrialsInstructions").style.display = "none";
+    document.getElementById("SimilarityReportSection").style.display = "none";
+    document.getElementById("NextProfileButtonSection").style.display = "none";
+    maxAnchor.style.display = "none";
+    minAnchor.style.display = "none";
+    document.getElementById("slidecontainer").style.display = "block";
+  };
+
+};
+
+var showReportButton = document.getElementById('showReportButton');
+showReportButton.addEventListener("click", ShowReport);

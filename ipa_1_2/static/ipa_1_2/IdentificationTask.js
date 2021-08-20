@@ -70,8 +70,8 @@ buttons = [nextRightButton, nextLeftButton];
 
 // Trials management
 trialCounter = 0;
-firstFastTrial = 4; // trial index of quick phase
-instructionsTrial = 3; // trial to present quick phase instructions
+firstFastTrial = context["n_practice_trials"]+1; // trial index of quick phase --> sync wieh views.py line 346 slow_phase list in function "_update_context_if_necessry"
+instructionsTrial = context["n_practice_trials"]; // trial to present quick phase instructions
 
 // responses
 pressed_button = ""; // right or left

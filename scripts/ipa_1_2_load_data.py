@@ -25,6 +25,16 @@ def run():
                 new_feature.presenting_name = row.presenting_name
                 new_feature.save()
 
+    def create_sham_questions(sham_df):
+        ShamQuestion.objects.all().delete()
+        for index, row in sham_df.iterrows():
+            feature_query = ShamQuestion.objects.filter(sham_name=row.feature)
+            if len(feature_query) == 0:
+                new_feature = ShamQuestion(sham_name=row.feature, right_end=row.right_end, left_end=row.left_end, label_set=row.set)
+                new_feature.question_heb = row.question_heb
+                new_feature.presenting_name = row.presenting_name
+                new_feature.save()
+
     def create_experiment_instance():
         exp_query = Experiment.objects.filter(name=EXPERIMENT_NAME)
         if len(exp_query) == 0:
@@ -57,9 +67,12 @@ def run():
     def _get_trials(phases_trials, phase, col_name):
         trials_list = "---"
         series = phases_trials[phases_trials['phase'] == phase][col_name]
+        n = 0
         if len(series) > 0:
-            trials_list = ", ".join(series.values[0].split(", "))
-        return trials_list
+            values_list = series.values[0].split(", ")
+            trials_list = ", ".join(values_list)
+            n = len(values_list)
+        return trials_list, n
 
     def create_experiment_phases():
         ExperimentPhase.objects.all().delete()
@@ -71,8 +84,12 @@ def run():
             experiment = Experiment.objects.get(name=EXPERIMENT_NAME)
             if len(phase_query) == 0:
                 new_phase = ExperimentPhase(name=phase, phase_place=i+1, experiment=experiment)
-                new_phase.practice_trials_content = _get_trials(phases_trials, phase, "practice_trials_content")
-                new_phase.trials_content = _get_trials(phases_trials, phase, "trials_content")
+                practice_trials_content, n_practice_trials = _get_trials(phases_trials, phase, "practice_trials_content")
+                trials_content, n_trials = _get_trials(phases_trials, phase, "trials_content")
+                new_phase.practice_trials_content = practice_trials_content
+                new_phase.n_practice_trials = n_practice_trials
+                new_phase.trials_content = trials_content
+                new_phase.n_trials = n_trials
                 new_phase.save()
 
 
@@ -106,6 +123,7 @@ def run():
                 new_instruction.str_phase = phase
                 new_instruction.experiment = Experiment.objects.get(name=EXPERIMENT_NAME)
                 new_instruction.off_order_place = off_order_place
+                new_instruction.pitctures_names = row.pitctures_names
                 new_instruction.is_in_order = True if int_place != 999 else False
                 new_instruction.save()
 
@@ -178,12 +196,15 @@ def run():
 
     path = os.path.join(CURRENT_APP_NAME,"myUtils","features.xlsx")
     features_df = pd.read_excel(path)
+    sham_path = os.path.join(CURRENT_APP_NAME,"myUtils","sham_questions.xlsx")
+    sham_questions_df = pd.read_excel(sham_path)
     features_names = features_df.feature.tolist()
 
     create_experiment_instance()
     create_experiment_phases()
     create_instructinos() # deletes all previous instances
     create_feature_labels(features_df)
+    create_sham_questions(sham_questions_df)
     create_contexts()
     create_models()
     create_n_pilot_profiles(3)

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment, MinMaxProfileModel, ArtificialProfileModel
-from .models import Instruction, GameMatrix, ExperimentPhase, SimilarityContextModel
+from .models import Instruction, GameMatrix, ExperimentPhase, SimilarityContextModel, ShamQuestion
 from .models import Context
 from django.core import serializers
 
@@ -11,6 +11,7 @@ import copy
 
 from .myUtils.FormsProcessing import FormsProcessor, PhasesDataSaver
 from .myUtils.ArticialProfile import create_artificial_profile_3
+from .myUtils.SubjectData import SubjectData
 
 phase_to_html_page = {
                         "Consent phase":                "Index",
@@ -28,9 +29,9 @@ phase_to_html_page = {
                         "Pre Profile Presentation":     "instruction",
                         "During Profile Presentation":  "profile",
                         "Report Similariy":             "ReportSimilarity",
-                        "End Screen":                   "endPage",
                         "Pre Get Ideal Profile":        "instruction",
                         "Get Ideal Profile":   "GetSubject/getSubjectProfile",
+                        "End Screen":                   "endPage",
                     }
 
 form_phase = "form_phase"
@@ -60,12 +61,13 @@ def _get_next_phase(subject, direction=None):
         # ipdb.set_trace()
         next_phase = phases.get(phase_place=subject.current_phase.phase_place+(direction*1))
         return next_phase
-    else: # upon ening a session
+    else: # upon ending a session
         return subject.current_phase
 
 # returns a list all instruciton-model instances texts associated with this phase - orderd by order property
 def _get_phases_instructions(phase_name, users_subject, errors):
     instructions_list = []
+    pictures_paths = []
     instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=True).order_by("int_place")
     for instruction_query in instruction_queryset:
         if users_subject.gender == "male":
@@ -74,6 +76,9 @@ def _get_phases_instructions(phase_name, users_subject, errors):
             instructions_list.append(instruction_query.instruction_text_female)
         else:
             instructions_list.append(instruction_query.instruction_text)
+        # adding the pictures paths:
+        for pic_name in instruction_query.pitctures_names.split(", "):
+            pictures_paths.append('ipa_1_2/media/images/' + pic_name)
 
     off_order_instructions_dict = {}
     off_order_instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=False)
@@ -96,7 +101,7 @@ def _get_phases_instructions(phase_name, users_subject, errors):
                     errors_introduction.append(instruction_query.instruction_text_female)
 
         instructions_list = errors_introduction + instructions_list
-    return instructions_list, off_order_instructions_dict
+    return instructions_list, off_order_instructions_dict, pictures_paths
 
 # Returns one of the contexts
 def _get_random_context():
@@ -188,10 +193,18 @@ def _get_new_subject_profile_page_context(users_subject):
         question_text = get_profile_question_text(users_subject, fl)
         features_list.append([fl.feature_name, fl.right_end, fl.left_end, question_text])
     random.shuffle(features_list)
+
+    if users_subject.current_phase.name == "During Get Profile":
+        sham_list = []
+        for sq in ShamQuestion.objects.all():
+            question_text = get_profile_question_text(users_subject, sq)
+            sham_list.append([sq.sham_name, sq.right_end, sq.left_end, question_text])
+        features_list = sham_list + features_list
+
     return {"features_list" : json.dumps(features_list)}
 
 # Builds a generic context that is used in all views (db-html-js context, not manipulated context)
-def _get_context(form_phase, instructions_list, single_instruction_text, off_order_instructions, n_trials, n_practice_trials, errors):
+def _get_context(form_phase, instructions_list, single_instruction_text, off_order_instructions, pictures_paths, n_trials, n_practice_trials, errors):
     context = {
                 "form_phase": form_phase,
                 "instructions_list":  json.dumps(instructions_list),
@@ -201,6 +214,7 @@ def _get_context(form_phase, instructions_list, single_instruction_text, off_ord
                 "n_practice_trials": n_practice_trials,
                 "errors": errors,
                 "errorsJSON": json.dumps(errors),
+                "pictures_paths": pictures_paths,
                 }
     return context
 
@@ -216,7 +230,7 @@ def _get_subject_profile(users_subject):
         user_profile_data["features"][f_name]["value"] = feature.value
         user_profile_data["features"][f_name]["l"] = feature.target_feature.left_end
         user_profile_data["features"][f_name]["r"] = feature.target_feature.right_end
-        user_profile_data["features"][f_name]["presenting_name"] = feature.target_feature.presenting_name
+        user_profile_data["features"][f_name]["name_to_present"] = feature.target_feature.presenting_name
 
     random.shuffle(user_profile_data["features_order"])
     return user_profile_data
@@ -240,11 +254,12 @@ def _get_subject_other_similarity(model, sp, ap):
 
 def _get_min_similarity(model, subject_profile):
     similarity = 0
+    ammount_of_features = len(subject_profile["features"])
     for f_name in subject_profile["features"]:
          value = subject_profile["features"][f_name]["value"]
          distance = (100-value if value<=50 else value)/100
          if len(model.featureweight_set.filter(feature_label__feature_name=f_name)) == 0:
-             w = 1 # In case current feaures set doesnt have an equivalent model
+             w = 1/ammount_of_features # In case current feaures set doesnt have an equivalent model
          else:
              w = model.featureweight_set.get(feature_label__feature_name=f_name).value
          similarity += w*distance
@@ -310,11 +325,11 @@ def _create_subject_artificials_for_this_phase(subject, practice_name="Practice"
     '''Generates subject artificial profiles for the current phase '''
     practice_similarities_levels = subject.current_phase.get_practice_trials_content()
     for slevel in practice_similarities_levels:
-        _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - Practice")
+        _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - " + practice_name)
 
     similarities_levels = subject.current_phase.get_trials_content()
     for slevel in similarities_levels:
-        _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - Trials")
+        _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - " + trials_name)
 
 
 def _get_profile_list_for_profiles_presentation_phase(subject):
@@ -361,10 +376,19 @@ def _update_context_if_necessry(context, current_phase, users_subject):
     elif current_phase == "Identification Task":
         # to delete - context.upadte 20.08.21
         # context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
-        slow_phase, fast_phase = _create_subject_artificials_for_this_phase(users_subject, practice_name="SlowPhase", trials_name="FastPhase")
-        random.shuffle(fast_phase) # randomizing order
+        _create_subject_artificials_for_this_phase(users_subject, practice_name="SlowPhase", trials_name="FastPhase")
+        artificials = ArtificialProfileModel.objects.filter(profile_label_set=users_subject.profile_label_set,target_subject=users_subject, target_phase=users_subject.current_phase).all()
+        slow_phase = _get_list_from_query_set(artificials.filter(name__contains='SlowPhase'))
+        fast_phase = _get_list_from_query_set(artificials.filter(name__contains='FastPhase'))
+
+        practice_context = _get_profiles_list_context(slow_phase)
+        trials_context = _get_profiles_list_context(fast_phase)
+        all_profiles_list = [] + trials_context["profiles_list"]
+        trials_context.update(practice_context) # addint the profiles data -- update deletes current profiles_list and replace it with those of practice_context
+        trials_context["profiles_list"] = trials_context["profiles_list"] + all_profiles_list # putting practice profiles first and adding trials_context profiles_list
+
         sp = _get_subject_profile(users_subject) # getting subject profile
-        d2 = {"identification_task" : json.dumps({"subject": sp, "artificials":slow_phase+fast_phase})}
+        d2 = {"identification_task" : json.dumps({"subject": sp, "artificials":trials_context})}
         context.update(d2)
 
     return context # if condition fails, context remain untouched
@@ -376,9 +400,8 @@ def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, singl
     elif subject.current_phase.name == "Pre Get Min Profile":
         single_instruction = single_instruction.format(subject.min_similarity_name)
         phases_instructions[0] = phases_instructions[0].format(subject.min_similarity_name)
-    elif subject.current_phase.name == "Get Min Max Similarity":
-        pass
-
+    elif subject.current_phase.name == "Pre Get Profile":
+        phases_instructions[0] = phases_instructions[0].format(off_order_instructions[subject.profile_label_set])
     elif subject.current_phase.name == "Matrix tutorial":
         game = _get_game_data(subject)
         a =game.strategy_a
@@ -425,6 +448,13 @@ def _get_game_dict(game):
 def _get_n_trials_and_practice_trials(subject):
     trials = (subject.current_phase.n_trials, subject.current_phase.n_practice_trials)
     return trials
+
+
+
+
+
+
+
 ## Experiment Views: ################################################################################################################################################
 def render_next_phase(request, users_subject):
     errors = [] # a place holder for errors
@@ -438,14 +468,16 @@ def render_next_phase(request, users_subject):
             _update_subject_phase(users_subject) # updates "users_subject.current_phase"
             if users_subject.current_phase.name == "Session End":
                 users_subject.update_subject_session_on_complete()
+                sd = SubjectData()
+                sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel)
                 return redirect(reverse('home:home')) # temporary - SHOULD HAVE ITS OWN END PAGE (FEEDBACK)
         else: # in case of errorsJSON
             _update_subject_phase(users_subject, direction=-1) # updates downwards "users_subject.current_phase"
-    phases_instructions, off_order_instructions = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
+    phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
     n_trials, n_practice_trials = _get_n_trials_and_practice_trials(users_subject)
     phases_instructions, single_instruction, off_order_instructions = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction, off_order_instructions)
-    context_to_send = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, n_trials, n_practice_trials, errors)
+    context_to_send = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, pictures_paths, n_trials, n_practice_trials, errors)
     context_to_send = _update_context_if_necessry(context_to_send, users_subject.current_phase.name, users_subject)
     return render(request, 'ipa_1_2/{}.html'.format(phase_to_html_page[users_subject.current_phase.name]), context_to_send)
 
@@ -456,6 +488,12 @@ def get_phase_page(request):
     # TODO: Make sure subject did not already finished this expperiment
     # TODO: maybe make user subject creation be mediated by a mail an a manual connection (no in DB)
     return render_next_phase(request, users_subject)
+
+
+
+
+
+
 
 ## Development Views: ################################################################################################################################################
 # New subject profile page -- > this view is kept seprately for development purposes, New subject - creating his/her new progile:

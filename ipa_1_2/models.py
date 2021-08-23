@@ -1,4 +1,7 @@
 from django.db import models
+import os
+import pandas as pd
+import ipdb
 
 # Profile properties classes
 class ProfileModel(models.Model):
@@ -23,6 +26,17 @@ class FeatureLabels(models.Model):
 
     def __str__(self):
         return ("Feature Label" + "-" + self.feature_name)
+
+class ShamQuestion(models.Model):
+    right_end = models.CharField(max_length=200, default="right")
+    left_end = models.CharField(max_length=200, default="left")
+    sham_name = models.CharField(max_length=200, default="Name")
+    label_set = models.CharField(max_length=2, default="A") # normal features, blog extracted, or meaningless
+    question_heb = models.CharField(max_length=200, default="Default question?")
+    presenting_name = models.CharField(max_length=200, default="Default Name")
+
+    def __str__(self):
+        return ("Sham Question" + "-" + self.feature_name)
 
 class FeatureValue(models.Model):
     target_profile = models.ForeignKey(ProfileModel, on_delete=models.CASCADE)
@@ -93,6 +107,8 @@ class Instruction(models.Model):
     instruction_text_male = models.CharField(max_length=1000, default="") # Which text it contains
     instruction_text_female = models.CharField(max_length=1000, default="") # Which text it contains
 
+    pitctures_names = models.CharField(max_length=1000, default="")
+
     def __str__(self):
         return ("Instruction" + "-" + self.experiment.name + " - " + self.str_phase.name + "-" + str(self.int_place))
 
@@ -124,11 +140,10 @@ class Subject(ProfileModel):
     identification_rts = models.TextField(default="-")
     identification_profiles = models.TextField(default="-")
 
+
     # Demograpics
     gender = models.CharField(max_length=20, default="male")
     age = models.IntegerField(default=999)
-
-
 
     #session_1_ps = models.FloatField(default=0.5)
     #session_2_ps = models.FloatField(default=0.5)

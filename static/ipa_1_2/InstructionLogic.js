@@ -4,6 +4,7 @@
 var nextButton = document.getElementById("NextInstructionButton");
 var instructionTextContainer = document.getElementById("instructionContainer");
 instructionsForm = document.getElementById('instructionsForm');
+var fullScreenButton = document.getElementById('fullScreenButton');
 
 currentInstruction = 0;
 

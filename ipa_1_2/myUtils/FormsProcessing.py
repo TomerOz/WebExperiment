@@ -62,6 +62,7 @@ class PhasesDataSaver(object):
             "Get Min Max Similarity" : self._process_min_max_similarity,
             "Get Max Similarity Profile" : self._get_min_max_similarity_profile,
             "Get Min Similarity Profile" : self._get_min_max_similarity_profile,
+            "Get Ideal Profile" : self._get_min_max_similarity_profile,
             "Identification Task" : self._save_identification_task,
         }
 

@@ -18,6 +18,13 @@
     </div>
     {% endif %}
 
+      <!-- <img src="{% static 'profilePresntaion/media/images/Romantic.jpg' %}" height="300" width="300" alt="missing"> -->
+      {% if pictures_paths %}
+        {% for path in pictures_paths %}
+          <img style="width: 40%;height: auto;" src="{% static path %}" alt="">
+        {% endfor %}
+      {% endif %}
+
     {{subject}}
     <form id="instructionsForm" class="" method="post">
       {% csrf_token %}

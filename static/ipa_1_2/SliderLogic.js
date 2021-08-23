@@ -3,12 +3,15 @@ var slidecontainer = document.getElementById("slidecontainer");
 var resonsesForm = document.getElementById("subjectResonseForm");
 var profilesList = document.getElementById("profilesList");
 
+var showReportButton = document.getElementById('showReportButton');
+
 similarity_report = document.getElementById('myRange');
 subjectResonses = document.getElementById('subjectResonses');
 profilesDescriptions = document.getElementById('profilesDescriptions'); // the hidden input fiel in the hidden form
 profileDescription = document.getElementById('profileDescription'); // the text box elemenet
 
 const event = new Event('NewProfile');
+const event_show_report = new Event('ShowReport');
 
 minwWordsPerDescription = 12;
 
@@ -64,12 +67,6 @@ function InitializeProfilePresentation(current_profile){
 }
 
 
-
-if(profileDescription.value.split(" ").length < 20) {
-
-}
-
-
 var nextProfileButton = document.getElementById("NextProfileButton");
 nextProfileButton.addEventListener("click",function(){
   if(document.title == "profile"){
@@ -82,9 +79,12 @@ nextProfileButton.addEventListener("click",function(){
       profileDescription.value = "";
       profileDescription.placeholder="יש לכתוב כאן תיאור של האדם המוצג כאן";
       similarity_report.value = 50;
-      document.getElementsByTagName("body")[0].dispatchEvent(event); // Dispatch the event.
       current_profile +=1;
+      document.getElementsByTagName("body")[0].dispatchEvent(event); // Dispatch the event.
       if(current_profile < all_profiles_ids.length){
+        window.scrollTo(0, 0);
+        profile_report_state=1;
+        ShowReport();
         InitializeProfilePresentation(current_profile);
       }
       else { // enf og trials
@@ -114,3 +114,35 @@ function InitiateTimeCount() {
 }
 
 InitializeProfilePresentation(current_profile);
+
+profile_report_state = 0
+// on profile_report_state=0 and ShowReport() -> report section
+// on profile_report_state=1 and ShowReport() -> profile section
+
+function ShowReport(){
+  window.scrollTo(0, 0);
+  if(profile_report_state==0){
+    profile_report_state=1;
+    document.getElementById("practiceTrialsInstructions").style.display = "block";
+    document.getElementById("SimilarityReportSection").style.display = "block";
+    document.getElementById("NextProfileButtonSection").style.display = "block";
+    maxAnchor.style.display = "block";
+    minAnchor.style.display = "block";
+    document.getElementById("slidecontainer").style.display = "none";
+    document.getElementsByTagName("body")[0].dispatchEvent(event_show_report); // Dispatch the event.
+    showReportButton.innerText = "הצגת פרופיל"
+  } else {
+    profile_report_state=0;
+    document.getElementById("practiceTrialsInstructions").style.display = "none";
+    document.getElementById("SimilarityReportSection").style.display = "none";
+    document.getElementById("NextProfileButtonSection").style.display = "none";
+    maxAnchor.style.display = "none";
+    minAnchor.style.display = "none";
+    document.getElementById("slidecontainer").style.display = "block";
+    showReportButton.innerText = "הערכת דמיון"
+  };
+
+};
+
+showReportButton.addEventListener("click", ShowReport);
+showReportButton.innerText = "הערכת דמיון"

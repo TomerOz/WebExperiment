@@ -1,6 +1,7 @@
 from django.db import models
-import os
-import pandas as pd
+from django.utils import timezone
+import datetime
+import pytz
 import ipdb
 
 # Profile properties classes
@@ -14,6 +15,12 @@ class ProfileModel(models.Model):
     def __str__(self):
         return ("Profile Model" + "-" + self.name)
 
+    def get_features_dict(self):
+        features_dictionariy  = {}
+        feature_values = self.featurevalue_set.all()
+        for fval in feature_values:
+            features_dictionariy.setdefault(fval.target_feature.feature_name, fval.value)
+        return features_dictionariy
 
 class FeatureLabels(models.Model):
     right_end = models.CharField(max_length=200, default="right")
@@ -119,7 +126,7 @@ class Subject(ProfileModel):
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     completed_experiments = models.CharField(max_length=500, default="-") # a list-like string of experiment -> "SGS1, SGS2,"
     subject_session  = models.IntegerField(default=0) # on creation of subject - session is 1, as in first session.
-    context_group = models.CharField(max_length=50, default="trade") # i.e. romance, conflict, friendship and trade
+    context_group = models.CharField(max_length=50, default="neutral") # i.e. romance, conflict, friendship and trade
     current_phase = models.ForeignKey(ExperimentPhase, null=True, on_delete=models.SET_NULL)
 
     # Min Max profiles similariyt and names:
@@ -140,10 +147,13 @@ class Subject(ProfileModel):
     identification_rts = models.TextField(default="-")
     identification_profiles = models.TextField(default="-")
 
+    start_time = models.DateTimeField(null=True)
+    end_time = models.DateTimeField(null=True)
 
     # Demograpics
     gender = models.CharField(max_length=20, default="male")
     age = models.IntegerField(default=999)
+    education = models.CharField(max_length=20, default="BA")
 
     #session_1_ps = models.FloatField(default=0.5)
     #session_2_ps = models.FloatField(default=0.5)
@@ -153,6 +163,8 @@ class Subject(ProfileModel):
         return ("Subject Model" + "-" + self.subject_num)
 
     def update_subject_session_on_complete(self):
+        tz = pytz.timezone("Israel")
+        self.end_time = tz.localize(datetime.datetime.now())
     # a function intended to be called on session end prior to logging out the user.
         if self.subject_session == 1:
             self.subject_session = 2
@@ -240,6 +252,8 @@ class UserToSubject(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     subject_num = models.CharField(max_length=100, default="not provided")
     features_set = models.CharField(max_length=100, default="A")
+    education = models.CharField(max_length=100, default="BA")
+    age = models.IntegerField(default=999)
 
     def __str__(self):
         return (self.user.username + "- Subject-" + self.subject_num)

@@ -72,6 +72,7 @@
     <!-- Custom styles for this template -->
     <!-- <link href="album.css" rel="stylesheet"> -->
   </head>
+
   <body>
     <header>
   <div class="collapse bg-dark" id="navbarHeader">
@@ -90,16 +91,15 @@
       </div>
     </div>
   </div>
+
   <div class="navbar navbar-dark bg-dark shadow-sm">
     <div class="container d-flex justify-content-between">
       <a href="#" class="navbar-brand d-flex align-items-center">
         <strong>
           {% if user.is_authenticated %}
-          {% if user.first_name %}
-            Hello {{ user.first_name }} {{ user.last_name}}
+            {{ user.username }} is registered
           {% else %}
-            Hello {{ user.email}}
-          {% endif %}
+            Hello {{ user.name}}
           {% endif %}
         </strong>
       </a>
@@ -108,21 +108,14 @@
       </button>
     </div>
   </div>
-
-
 </head>
 </header>
 
 <main role="main">
-
   <section class="jumbotron text-center">
     <div class="container">
       <h1 class="jumbotron-heading">WebExp - SD&EoC</h1>
       <p class="lead text-muted">In order to monitor experiment participation, users must be loged in before starting an experiment.</p>
-      <p>
-        <!-- Trigger/Open The Modal -->
-        <!-- <button id="myBtn" class="btn btn-primary my-2">Login</button> -->
-        <!-- <a href="#" class="btn btn-primary my-2">Login</a> -->
         <form action=""  method="post">
           {% csrf_token %}
         <a class="btn btn-primary" href="/signin">Login</a>
@@ -130,31 +123,10 @@
           <button type="submit" class="btn btn-secondary red my-3">logout</button>
             <input type="hidden" name="form_phase" value="logout"><!-- Hidden input tells server which form was submitted, form_name should be constant in all forms, just the value shoudl change -->
         </form>
-      </p>
     </div>
   </section>
 
-  <!-- The Modal -->
-  <div id="myModal" class="modal">
-    <!-- Modal content -->
-<div class="modal-content">
-  <div class="modal-header">
-    <h2>Modal Header</h2>
-    <span class="close">&times;</span>
-  </div>
-  <div class="modal-body">
-
-  </div>
-  <div class="modal-footer">
-    <h3>Modal Footer</h3>
-  </div>
-</div>
-
-  </div>
-
-
-
-
+  {% if user.is_superuser %}
   <div class="album py-5 bg-light">
     <div class="container">
 
@@ -211,11 +183,19 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
+  {% else %}
 
+  <section class="jumbotron text-center">
+    <div class="container">
+      <p class="lead text-muted">Contact the lab member in order to start the experimentphase_set</p>
+      <p class="lead text-muted"> Email: _______________________</p>
+    </div>
+  </section>
+
+  {% endif %}
 </main>
 
 <footer class="text-muted">

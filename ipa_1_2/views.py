@@ -3,8 +3,11 @@ from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experime
 from .models import Instruction, GameMatrix, ExperimentPhase, SimilarityContextModel, ShamQuestion
 from .models import Context
 from django.core import serializers
+import datetime
+import pytz
 
 import json
+import os
 import ipdb
 import random
 import copy
@@ -32,6 +35,7 @@ phase_to_html_page = {
                         "Pre Get Ideal Profile":        "instruction",
                         "Get Ideal Profile":   "GetSubject/getSubjectProfile",
                         "End Screen":                   "endPage",
+                        "Session End":                   "endPage",
                     }
 
 form_phase = "form_phase"
@@ -129,6 +133,9 @@ def _create_subject(user):
     new_subject.current_phase = ExperimentPhase.objects.get(name="Consent phase")
     new_subject.subject_num = user.usertosubject.subject_num
     new_subject.profile_label_set = user.usertosubject.features_set
+    new_subject.age = user.usertosubject.age
+    new_subject.education = user.usertosubject.education
+    new_subject.start_time = pytz.timezone("Israel").localize(datetime.datetime.now())
     new_subject.save(force_update=True)
     user.save()
     return new_subject
@@ -466,11 +473,11 @@ def render_next_phase(request, users_subject):
             # condition fails on errors or GET (user was sent from home page with a get method) or
             #in case of page refresh request.POST is previous phasewhile users_subject.current_phase.name moved forward
             _update_subject_phase(users_subject) # updates "users_subject.current_phase"
-            if users_subject.current_phase.name == "Session End":
+            if users_subject.current_phase.name == "End Screen":
                 users_subject.update_subject_session_on_complete()
                 sd = SubjectData()
                 sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel)
-                return redirect(reverse('home:home')) # temporary - SHOULD HAVE ITS OWN END PAGE (FEEDBACK)
+                return render(request, 'ipa_1_2/endPage.html')
         else: # in case of errorsJSON
             _update_subject_phase(users_subject, direction=-1) # updates downwards "users_subject.current_phase"
     phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
@@ -489,6 +496,14 @@ def get_phase_page(request):
     # TODO: maybe make user subject creation be mediated by a mail an a manual connection (no in DB)
     return render_next_phase(request, users_subject)
 
+def get_data_page(request):
+    data_path = "ipa_1_2/static/ipa_1_2/data/"
+    files = os.listdir(data_path)
+    paths = []
+    for file in files:
+        paths.append(os.path.join("ipa_1_2/data/", file))
+    paths_files = zip(paths, files)
+    return render(request, 'ipa_1_2/data.html', {"paths_files": paths_files})
 
 
 

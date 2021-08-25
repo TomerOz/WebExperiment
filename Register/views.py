@@ -17,7 +17,7 @@ def signup(request, targetPage="Home"):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if not request.POST["subject_set"] in ["A","B","C"]:
-            return render(request, 'Register/signup.html', {'errors': "Must choose a lettr", "targetURLAfterLogin": targetPage})        
+            return render(request, 'Register/signup.html', {'errors': "Must choose a lettr", "targetURLAfterLogin": targetPage})
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
@@ -25,6 +25,8 @@ def signup(request, targetPage="Home"):
             user = authenticate(username=username, password=raw_password)
             user.usertosubject.subject_num = request.POST["subject_num"]
             user.usertosubject.features_set = request.POST["subject_set"]
+            user.usertosubject.education = request.POST["education"]
+            user.usertosubject.age = request.POST["age"]
             user.save()
             login(request, user)
             #return redirect(targetPageToURL[targetPage])

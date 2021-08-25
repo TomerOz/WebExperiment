@@ -18,24 +18,24 @@ function placeAnchors(value, id){
   anchor_box.style.top = anchor_y  + "px"
 
   profileDescription = document.getElementById("profileDescription");
-  profileDescription.style.width = (0.75 * slider_range) + "px";
+  // profileDescription.style.width = (0.75 * slider_range) + "px";
 }
 
-// document.addEventListener('DOMContentLoaded', function() {
-//   placeAnchors(maxValue, "maxAnchor");
-//   placeAnchors(minValue, "minAnchor");
-// }, false);
+document.addEventListener('DOMContentLoaded', function() {
+  placeAnchors(maxValue, "maxAnchor");
+  placeAnchors(minValue, "minAnchor");
+}, false);
 
 // window.onresize = function(){
 //   placeAnchors(maxValue, "maxAnchor");
 //   placeAnchors(minValue, "minAnchor");
 // };
 
-body = document.getElementsByTagName("body")[0];
-body.addEventListener("ShowReport", function(){
-  placeAnchors(maxValue, "maxAnchor");
-  placeAnchors(minValue, "minAnchor");
-}); // event NewProfile is defined in Slider logic
+// body = document.getElementsByTagName("body")[0];
+// body.addEventListener("ShowReport", function(){
+//   placeAnchors(maxValue, "maxAnchor");
+//   placeAnchors(minValue, "minAnchor");
+// }); // event NewProfile is defined in Slider logic
 
-maxAnchor.style.display = "none";
-minAnchor.style.display = "none";
+// maxAnchor.style.display = "none";
+// minAnchor.style.display = "none";

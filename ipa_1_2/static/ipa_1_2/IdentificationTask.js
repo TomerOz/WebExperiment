@@ -118,8 +118,8 @@ function InitiateTimeCount() {
 
 function HandelResponseButtons(containers){
   if(trialCounter<instructionsTrial){
-    setTimeout(allowResponse, 2000);
-    setTimeout(function(){responseSignal.style.display = 'block';}, 2000);
+    setTimeout(function(){Next_left.style.display = 'block';}, 2000);
+    setTimeout(function(){Next_right.style.display = 'block';}, 2000);
   } else if(trialCounter===instructionsTrial){
     instructionContainer.style.display = 'block'
     textContainer.innerText = instructionText.preQuickPhase;
@@ -127,14 +127,17 @@ function HandelResponseButtons(containers){
     containers[1].style.display = 'none';
     profiles_possitions.splice(-1)
   } else {
-    setTimeout(allowResponse, 1000);
-    setTimeout(function(){responseSignal.style.display = 'block';}, 1000);
+    setTimeout(function(){Next_left.style.display = 'block';}, 1000);
+    setTimeout(function(){Next_right.style.display = 'block';}, 1000)
+    // setTimeout(function(){responseSignal.style.display = 'block';}, 1000);
   };
 }
 
 function HideAndShowContainers(containers){
   containers[0].style.display = 'none';
   containers[1].style.display = 'none';
+  Next_left.style.display = 'none';
+  Next_right.style.display = 'none';
   responseSignal.style.display = 'none';
   if(trialCounter!=instructionsTrial){
     setTimeout(function() {containers[0].style.display = 'block'}, 1000);
@@ -177,9 +180,9 @@ function NextTrial(){
       subjectResonseForm.submit();
 }};
 
-// to delete: 22.08.21
-//nextLeftButton.addEventListener("click",  function(){RecordResponses(left)})
-//nextRightButton.addEventListener("click",  function(){RecordResponses(right)})
+
+nextLeftButton.addEventListener("click",  function(){RecordResponses(left)})
+nextRightButton.addEventListener("click",  function(){RecordResponses(right)})
 
 
 

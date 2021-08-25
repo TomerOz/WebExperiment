@@ -11,7 +11,7 @@ profilesDescriptions = document.getElementById('profilesDescriptions'); // the h
 profileDescription = document.getElementById('profileDescription'); // the text box elemenet
 
 const event = new Event('NewProfile');
-const event_show_report = new Event('ShowReport');
+// const event_show_report = new Event('ShowReport');
 
 minwWordsPerDescription = 12;
 
@@ -29,13 +29,13 @@ var t1;
 rts = [];
 
 function InjectProfileDataToHTML(title, right_end, left_end, value){
-  basicProfileHTMLText = '<h3 id="title">'+ title + '</h3>\
+  basicProfileHTMLText = '<h4 id="title">'+ title + '</h4>\
     <div class="row"> \
-      <div class="column side">'+ left_end + '</div> \
+      <div class="column side"><h5 class="feature_end">'+ left_end + '</h5></div> \
       <div class="column middle"> \
           <input type="range" min="1" max="100" value='+ value + ' class="slider" id="featureRange" disabled="disabled">\
       </div>\
-      <div class="column side">'+ right_end + '</div>\
+      <div class="column side"><h5 class="feature_end">'+ right_end + '</h5></div>\
   </div>';
 
     return basicProfileHTMLText;
@@ -72,8 +72,8 @@ nextProfileButton.addEventListener("click",function(){
   if(document.title == "profile"){
     if(profileDescription.value.split(" ").length > minwWordsPerDescription){
       RecordTime();
-      profilesList.value = profilesList.value + "," + context[all_profiles_ids[current_profile]].name;
-      subjectResonses.value = subjectResonses.value + "," + similarity_report.value;
+      profilesList.value = profilesList.value + context[all_profiles_ids[current_profile]].name + "," ;
+      subjectResonses.value = subjectResonses.value + similarity_report.value + ",";
       subjectRTs.value = rts.toString();
       profilesDescriptions.value = profilesDescriptions.value + "-**NextProfile**-" + profileDescription.value;
       profileDescription.value = "";
@@ -83,8 +83,8 @@ nextProfileButton.addEventListener("click",function(){
       document.getElementsByTagName("body")[0].dispatchEvent(event); // Dispatch the event.
       if(current_profile < all_profiles_ids.length){
         window.scrollTo(0, 0);
-        profile_report_state=1;
-        ShowReport();
+        // profile_report_state=1;
+        // ShowReport();
         InitializeProfilePresentation(current_profile);
       }
       else { // enf og trials
@@ -115,34 +115,34 @@ function InitiateTimeCount() {
 
 InitializeProfilePresentation(current_profile);
 
-profile_report_state = 0
-// on profile_report_state=0 and ShowReport() -> report section
-// on profile_report_state=1 and ShowReport() -> profile section
-
-function ShowReport(){
-  window.scrollTo(0, 0);
-  if(profile_report_state==0){
-    profile_report_state=1;
-    document.getElementById("practiceTrialsInstructions").style.display = "block";
-    document.getElementById("SimilarityReportSection").style.display = "block";
-    document.getElementById("NextProfileButtonSection").style.display = "block";
-    maxAnchor.style.display = "block";
-    minAnchor.style.display = "block";
-    document.getElementById("slidecontainer").style.display = "none";
-    document.getElementsByTagName("body")[0].dispatchEvent(event_show_report); // Dispatch the event.
-    showReportButton.innerText = "הצגת פרופיל"
-  } else {
-    profile_report_state=0;
-    document.getElementById("practiceTrialsInstructions").style.display = "none";
-    document.getElementById("SimilarityReportSection").style.display = "none";
-    document.getElementById("NextProfileButtonSection").style.display = "none";
-    maxAnchor.style.display = "none";
-    minAnchor.style.display = "none";
-    document.getElementById("slidecontainer").style.display = "block";
-    showReportButton.innerText = "הערכת דמיון"
-  };
-
-};
-
-showReportButton.addEventListener("click", ShowReport);
-showReportButton.innerText = "הערכת דמיון"
+// profile_report_state = 0
+// // on profile_report_state=0 and ShowReport() -> report section
+// // on profile_report_state=1 and ShowReport() -> profile section
+//
+// function ShowReport(){
+//   window.scrollTo(0, 0);
+//   if(profile_report_state==0){
+//     profile_report_state=1;
+//     document.getElementById("practiceTrialsInstructions").style.display = "block";
+//     document.getElementById("SimilarityReportSection").style.display = "block";
+//     document.getElementById("NextProfileButtonSection").style.display = "block";
+//     maxAnchor.style.display = "block";
+//     minAnchor.style.display = "block";
+//     document.getElementById("slidecontainer").style.display = "none";
+//     document.getElementsByTagName("body")[0].dispatchEvent(event_show_report); // Dispatch the event.
+//     showReportButton.innerText = "הצגת פרופיל"
+//   } else {
+//     profile_report_state=0;
+//     document.getElementById("practiceTrialsInstructions").style.display = "none";
+//     document.getElementById("SimilarityReportSection").style.display = "none";
+//     document.getElementById("NextProfileButtonSection").style.display = "none";
+//     maxAnchor.style.display = "none";
+//     minAnchor.style.display = "none";
+//     document.getElementById("slidecontainer").style.display = "block";
+//     showReportButton.innerText = "הערכת דמיון"
+//   };
+//
+// };
+//
+// showReportButton.addEventListener("click", ShowReport);
+// showReportButton.innerText = "הערכת דמיון";

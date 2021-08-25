@@ -16,13 +16,6 @@
 
 </head>
 <body>
-  <!-- <h2>Sign up</h2>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Sign up</button>
-    </form> -->
-
     <div class="main">
         <!-- Sign up form -->
         <section class="signup">
@@ -59,7 +52,7 @@
                                <input type="text" name="subject_num" id="subject_num" placeholder="Enter Subject Number"/>
                            </div>
                            <div class="form-group">
-                             <select name="subject_set" id="subject_num" class="form-select" aria-label="Default select example">
+                             <select name="subject_set" id="subject_set" class="form-select" aria-label="Default select example">
                                <option selected>Select Subject Group Letter</option>
                                <option value="A">A</option>
                                <option value="B">B</option>
@@ -67,6 +60,23 @@
                              </select>
                              <p style="color:red"> {{ errors }} </p>
                             </div>
+
+                            <div class="form-group">
+                              <select name="education" id="education" class="form-select" aria-label="Default select example">
+                                <option selected>Select Subject Education</option>
+                                <option value="HS">High School</option>
+                                <option value="BA">BA</option>
+                                <option value="MA">MA</option>
+                                <option value="PhD">PhD</option>
+                              </select>
+                              <p style="color:red"> {{ errors }} </p>
+                             </div>
+
+                             <div class="form-group">
+                                <label for="age"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input type="number" name="age" id="age" placeholder="Subject Age"/>
+                            </div>
+
                             <div class="form-group form-button">
                                 <input type="submit" name="signup" id="signup" class="form-submit" value="Register Now"/>
                             </div>

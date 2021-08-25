@@ -31,7 +31,7 @@ function SaveReort(){
 
 // circles report code:
 var canvas = document.getElementById("myCanvas");
-canvas.width = slider.getClientRects()[0].width*0.65
+canvas.width = slider.getClientRects()[0].width*0.52
 canvas.height = canvas.width/2
 var ctx = canvas.getContext("2d");
 var y = canvas.height/2;
@@ -90,9 +90,6 @@ if(document.title != "profile"){
 } else if (document.title == "profile"){
   // maxSimilaritySection.classList.add('profiles_size')
 };
-
-
-
 
 
 // Listen for the event.

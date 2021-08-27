@@ -452,6 +452,7 @@ def _get_game_dict(game):
     game_dict["pB_Bb"] = game.pB_Bb
 
     return game_dict
+
 def _get_n_trials_and_practice_trials(subject):
     trials = (subject.current_phase.n_trials, subject.current_phase.n_practice_trials)
     return trials

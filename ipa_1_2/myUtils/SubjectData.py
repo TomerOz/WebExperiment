@@ -18,7 +18,8 @@ class SubjectData(object):
         self.meta_profiles = [subject] + self._get_list_from_query_set(MinMaxProfileModel.objects.filter(target_subject=subject))
         self.add_trials(subject, ProfileModel)
         subject_df = pd.DataFrame(self.subject_data_dictionary)
-        path = os.path.join("ipa_1_2/data/", "Subject-1-Data.xlsx")
+        data_path = "ipa_1_2/static/ipa_1_2/data/"
+        path = os.path.join(data_path, "Subject-1-Data.xlsx")
         subject_df.to_excel(path, index=False)
 
 

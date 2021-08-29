@@ -18,7 +18,7 @@ const event = new Event('NewProfile');
 // const event_show_report = new Event('ShowReport');
 
 var minwWordsPerDescription = 0;
-var milisecondsPerFeature == 2000
+var milisecondsPerFeature = 2000;
 
 var db_features = "features"
 var current_profile = 0

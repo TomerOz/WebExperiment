@@ -74,7 +74,7 @@ def create_artificial_profile_3(subject_profile, target_similarity, relative_sim
     f1_can_towards = _get_bouderies(s_f1_value, f1_value, "towards")
     # f1_can_away = _get_bouderies(subject_profile["features"][feature_1]["value"], artificial_profile["features"][feature_1]["value"], "away")
     # f2_can_towards = _get_bouderies(subject_profile["features"][feature_2]["value"], artificial_profile["features"][feature_2]["value"], "towards")
-    f2_can_away = _get_bouderies(subject_profile["features"][feature_2]["value"], artificial_profile["features"][feature_2]["value"], "away")
+    f2_can_away = _get_bouderies(s_f2_value, f2_value, "away")
     w1 = model.featureweight_set.get(feature_label__feature_name=feature_1).value
     w2 = model.featureweight_set.get(feature_label__feature_name=feature_2).value
 

@@ -27,6 +27,7 @@ def signup(request, targetPage="Home"):
             user.usertosubject.features_set = request.POST["subject_set"]
             user.usertosubject.education = request.POST["education"]
             user.usertosubject.age = request.POST["age"]
+            user.usertosubject.gender = request.POST["gender"]
             user.save()
             login(request, user)
             #return redirect(targetPageToURL[targetPage])

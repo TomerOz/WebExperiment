@@ -135,6 +135,7 @@ def _create_subject(user):
     new_subject.profile_label_set = user.usertosubject.features_set
     new_subject.age = user.usertosubject.age
     new_subject.education = user.usertosubject.education
+    new_subject.gender = user.usertosubject.gender
     new_subject.start_time = pytz.timezone("Israel").localize(datetime.datetime.now())
     new_subject.save(force_update=True)
     user.save()

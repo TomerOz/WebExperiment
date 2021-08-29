@@ -257,6 +257,7 @@ class UserToSubject(models.Model):
     features_set = models.CharField(max_length=100, default="A")
     education = models.CharField(max_length=100, default="BA")
     age = models.IntegerField(default=999)
+    gender = models.CharField(max_length=100, default="female")
 
     def __str__(self):
         return (self.user.username + "- Subject-" + self.subject_num)

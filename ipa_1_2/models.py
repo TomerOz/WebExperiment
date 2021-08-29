@@ -69,6 +69,7 @@ class Context(models.Model):
 
 class SimilarityContextModel(models.Model):
     context = models.ForeignKey(Context, on_delete=models.CASCADE)
+    label_set = models.CharField(max_length=2, default="A") # normal features, blog extracted, or meaningless
 
     def __str__(self):
         return ("Similarity Weights Model of " + self.context.name  + " Context")
@@ -77,6 +78,7 @@ class FeatureWeight(models.Model):
     feature_label = models.ForeignKey(FeatureLabels, on_delete=models.CASCADE)
     model = models.ForeignKey(SimilarityContextModel, on_delete=models.CASCADE)
     value = models.FloatField(default=0.5)
+    label_set = models.CharField(max_length=2, default="A")
 
     def __str__(self):
         return ("W " + self.feature_label.feature_name+ " - " + self.model.context.name)

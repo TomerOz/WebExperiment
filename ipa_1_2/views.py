@@ -290,11 +290,10 @@ def _get_inital_artificial_profile(user_profile_data, users_subject, target_simi
 
 def _generate_profile(users_subject, target_similarity, name_instance=""):
     sp = _get_subject_profile(users_subject) # subject profile
-    model = SimilarityContextModel.objects.get(context__name=users_subject.context_group)
+    model = SimilarityContextModel.objects.get(context__name=users_subject.context_group, label_set=users_subject.profile_label_set)
     min_s = _get_min_similarity(model, sp) # min possible similarity
     relative_similarity_level = (1-min_s)*target_similarity + min_s
     initial_profile = copy.deepcopy(sp)
-    model = SimilarityContextModel.objects.get(context__name=users_subject.context_group)
     ap = create_artificial_profile_3(sp, target_similarity, relative_similarity_level, model, initial_profile, _get_subject_other_similarity)
     random.shuffle(ap["features_order"]) ## Maybe should be in the same order
     ap["is_subject"] = False
@@ -311,6 +310,7 @@ def _generate_profile(users_subject, target_similarity, name_instance=""):
     ap_instance = ArtificialProfileModel(is_artificial=True, target_subject=users_subject)
     ap_instance.name = ap_instance.get_name_pattern(str(target_similarity), name_instance)
     ap_instance.target_phase = users_subject.current_phase
+    ap_instance.profile_label_set = users_subject.profile_label_set
     ap_instance.save()
     feaure_labels = FeatureLabels.objects.filter(label_set=users_subject.profile_label_set).values_list("feature_name", flat=True)
     for feature_name in feaure_labels:
@@ -387,7 +387,6 @@ def _update_context_if_necessry(context, current_phase, users_subject):
         artificials = ArtificialProfileModel.objects.filter(profile_label_set=users_subject.profile_label_set,target_subject=users_subject, target_phase=users_subject.current_phase).all()
         slow_phase = _get_list_from_query_set(artificials.filter(name__contains='SlowPhase'))
         fast_phase = _get_list_from_query_set(artificials.filter(name__contains='FastPhase'))
-
         practice_context = _get_profiles_list_context(slow_phase)
         trials_context = _get_profiles_list_context(fast_phase)
         all_profiles_list = [] + trials_context["profiles_list"]

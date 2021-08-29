@@ -137,15 +137,16 @@ def run():
 
     def create_models():
         models = pd.read_excel(os.path.join(CURRENT_APP_NAME,"myUtils","models.xlsx"))
-        features = [feature.feature_name for feature in FeatureLabels.objects.all()]
         SimilarityContextModel.objects.all().delete()
-        for i, row in models.iterrows():
-            context_model = SimilarityContextModel(context=Context.objects.get(name=row.context))
-            context_model.save()
-            for feature in features:
-                if feature in models.columns:
-                    feature_label = FeatureLabels.objects.get(feature_name=feature)
-                    fw, created = FeatureWeight.objects.get_or_create(feature_label=feature_label, model=context_model, value=row[feature])
+        for label in ["A", "B", "C"]:
+            features = [feature.feature_name for feature in FeatureLabels.objects.filter(label_set=label)]
+            for i, row in models.iterrows():
+                context_model = SimilarityContextModel(context=Context.objects.get(name=row.context), label_set=label)
+                context_model.save()
+                for feature in features:
+                    if feature in models.columns:
+                        feature_label = FeatureLabels.objects.get(feature_name=feature)
+                        fw, created = FeatureWeight.objects.get_or_create(feature_label=feature_label, model=context_model, value=row[feature], label_set=label)
 
     def create_games_matrices():
         contexts = _get_txt_list(os.path.join(CURRENT_APP_NAME,"myUtils",'contexts.txt'), "\n")
@@ -209,5 +210,5 @@ def run():
     create_models()
     create_n_pilot_profiles(3)
     # squezze_in_new_phases()
-    
+
 #py manage.py runscript load_inital_data

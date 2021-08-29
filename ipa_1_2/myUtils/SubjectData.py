@@ -19,7 +19,7 @@ class SubjectData(object):
         self.add_trials(subject, ProfileModel)
         subject_df = pd.DataFrame(self.subject_data_dictionary)
         data_path = "ipa_1_2/static/ipa_1_2/data/"
-        path = os.path.join(data_path, "Subject-1-Data.xlsx")
+        path = os.path.join(data_path, "Subject-{}-Data.xlsx".format(str(subject.subject_num)))
         subject_df.to_excel(path, index=False)
 
 

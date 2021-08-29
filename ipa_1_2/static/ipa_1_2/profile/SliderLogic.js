@@ -102,6 +102,7 @@ nextProfileButton.addEventListener("click",function(){
       profileDescription.value = "";
       profileDescription.placeholder="יש לכתוב כאן תיאור של האדם המוצג כאן";
       similarity_report.value = 50;
+      preProfile = "מיד תחל הצגת פרופיל חדש";
       current_profile +=1;
       document.getElementsByTagName("body")[0].dispatchEvent(event); // Dispatch the event.
       if(current_profile < all_profiles_ids.length){

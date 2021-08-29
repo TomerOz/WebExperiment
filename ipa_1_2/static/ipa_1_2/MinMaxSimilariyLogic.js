@@ -137,37 +137,39 @@ approve_2.addEventListener("click", function(){showCircles("min")})
 
 
 
-
+inputs = {"max": maxSimilarity, "min": minSimilarity}
 function showCircles(circlesName){
-  phase = flowPhases[circlesName];
-  if(circlesName=="max" && phase==0){
-    flowOrder[phase][circlesName].style.display = "block";
-    flowPhases[circlesName] = phase + 1;
-    let result = beforeReportMax.textContent.replaceAll("{}", maxSimilarity.value);
-    beforeReportMax.textContent = result;
-    maxSimilarityQuestion.style.display = "none";
-  }
+  if(inputs[circlesName].value.length>0){
+    phase = flowPhases[circlesName];
+    if(circlesName=="max" && phase==0){
+      flowOrder[phase][circlesName].style.display = "block";
+      flowPhases[circlesName] = phase + 1;
+      let result = beforeReportMax.textContent.replaceAll("{}", maxSimilarity.value);
+      beforeReportMax.textContent = result;
+      maxSimilarityQuestion.style.display = "none";
+    }
 
-  // At the end of max after report
-  if(circlesName=="max" && phase==1){
-    flowPhases[circlesName] = phase + 1;
-    sections["max"].style.display = "none";
-    reportSections["max"].style.display = "none";
-    sections["min"].style.display = "block";
-    minSimilarityQuestion.style.display = "block";
+    // At the end of max after report
+    if(circlesName=="max" && phase==1){
+      flowPhases[circlesName] = phase + 1;
+      sections["max"].style.display = "none";
+      reportSections["max"].style.display = "none";
+      sections["min"].style.display = "block";
+      minSimilarityQuestion.style.display = "block";
 
-    wasCorrect = true;
-    HandleInstructions();
-  }
-  if(circlesName=="min" && phase==0){
-    flowPhases[circlesName] = phase + 1;
-    minSimilarityReportSection.style.display = "block"
-    let result = beforeReportMin.textContent.replaceAll("{}", minSimilarity.value);
-    beforeReportMin.textContent = result;
-    minSimilarityQuestion.style.display = "none";
-    submitButton.style.display = "block";
-    approve_2.style.display = "none";
-  }
+      wasCorrect = true;
+      HandleInstructions();
+    }
+    if(circlesName=="min" && phase==0){
+      flowPhases[circlesName] = phase + 1;
+      minSimilarityReportSection.style.display = "block"
+      let result = beforeReportMin.textContent.replaceAll("{}", minSimilarity.value);
+      beforeReportMin.textContent = result;
+      minSimilarityQuestion.style.display = "none";
+      submitButton.style.display = "block";
+      approve_2.style.display = "none";
+    };
+  };
 };
 
 sections["min"].style.display = "none";

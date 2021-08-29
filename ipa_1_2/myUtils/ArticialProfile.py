@@ -16,6 +16,8 @@ def _get_bouderies(sp_value, ap_value, direction):
             return ap_value
         elif ap_value > sp_value:
             return 100 - ap_value
+        elif ap_value == sp_value:
+            return 0
 
 def _create_fake_prfile(num, subject_profile):
     for feature in subject_profile["features"].keys():

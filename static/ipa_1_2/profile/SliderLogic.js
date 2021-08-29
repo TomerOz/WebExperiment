@@ -9,7 +9,8 @@ similarity_report = document.getElementById('myRange');
 subjectResonses = document.getElementById('subjectResonses');
 profilesDescriptions = document.getElementById('profilesDescriptions'); // the hidden input fiel in the hidden form
 profileDescription = document.getElementById('profileDescription'); // the text box elemenet
-
+similarityReportSection = document.getElementById("SimilarityReportSection");
+nextProfileButtonSection = document.getElementById("NextProfileButtonSection");
 const event = new Event('NewProfile');
 // const event_show_report = new Event('ShowReport');
 
@@ -29,13 +30,13 @@ var t1;
 rts = [];
 
 function InjectProfileDataToHTML(title, right_end, left_end, value){
-  basicProfileHTMLText = '<h4 id="title">'+ title + '</h4>\
+  basicProfileHTMLText = '<h4 id="title">'+ title + '</h4> <br>\
     <div class="row"> \
-      <div class="column side"><h5 class="feature_end">'+ left_end + '</h5></div> \
+      <div class="column side">'+ left_end + '</div> \
       <div class="column middle"> \
           <input type="range" min="1" max="100" value='+ value + ' class="slider" id="featureRange" disabled="disabled">\
       </div>\
-      <div class="column side"><h5 class="feature_end">'+ right_end + '</h5></div>\
+      <div class="column side">'+ right_end + '</div>\
   </div>';
 
     return basicProfileHTMLText;
@@ -46,25 +47,40 @@ function GetProfileFeatureData (feature) {
   left_end = feature.l;
   right_end = feature.r;
   return right_end, left_end, value;
-
 }
 
-// Check new change using features_order
+
 function InitializeProfilePresentation(current_profile){
-  InitiateTimeCount();
+
+  InitiateTimeCount(); // move to the end of the preocess
+
+  profileDescription.style.display = "none";
   var profile_features = context[all_profiles_ids[current_profile]][db_features];
   var features_list = context[all_profiles_ids[current_profile]]["features_order"];
   slidecontainer.innerHTML = "";
-  for (var i=0; i<features_list.length; i++) {
-    feature = profile_features[features_list[i]];
-    right_end, left_end, value = GetProfileFeatureData(feature);
-      // check if the property/key is defined in the object itself, not in parent
-      if (profile_features.hasOwnProperty(features_list[i])) {
-        slidecontainer.innerHTML += InjectProfileDataToHTML(profile_features[features_list[i]].name_to_present, right_end, left_end, value);
-          // console.log(key, profile_features[key]);
-      }
-    }
-}
+
+  feature = profile_features[features_list[feature_presentaion_index]];
+  right_end, left_end, value = GetProfileFeatureData(feature);
+  // check if the property/key is defined in the object itself, not in parent
+  if (profile_features.hasOwnProperty(features_list[feature_presentaion_index])) {
+    slidecontainer.innerHTML = InjectProfileDataToHTML(profile_features[features_list[feature_presentaion_index]].name_to_present, right_end, left_end, value);
+    feature_presentaion_index += 1;
+    if(feature_presentaion_index < features_list.length) {
+        setTimeout(function(){
+        InitializeProfilePresentation(current_profile);
+      }, 50);
+    } else {
+      slidecontainer.innerHTML = "";
+      body = document.getElementsByTagName("body")[0];
+      similarityReportSection.style.display = "block";
+      slider.style.display = "block";
+      draw(); // event NewProfile is defined in Slider logic
+      placeAnchors(maxValue, "maxAnchor");
+      placeAnchors(minValue, "minAnchor");
+      nextProfileButtonSection.style.display = "block";
+    };
+  };
+};
 
 
 var nextProfileButton = document.getElementById("NextProfileButton");
@@ -76,6 +92,7 @@ nextProfileButton.addEventListener("click",function(){
       subjectResonses.value = subjectResonses.value + similarity_report.value + ",";
       subjectRTs.value = rts.toString();
       profilesDescriptions.value = profilesDescriptions.value + "-**NextProfile**-" + profileDescription.value;
+
       profileDescription.value = "";
       profileDescription.placeholder="יש לכתוב כאן תיאור של האדם המוצג כאן";
       similarity_report.value = 50;
@@ -83,8 +100,7 @@ nextProfileButton.addEventListener("click",function(){
       document.getElementsByTagName("body")[0].dispatchEvent(event); // Dispatch the event.
       if(current_profile < all_profiles_ids.length){
         window.scrollTo(0, 0);
-        // profile_report_state=1;
-        // ShowReport();
+        HideReoportSection();
         InitializeProfilePresentation(current_profile);
       }
       else { // enf og trials
@@ -113,36 +129,14 @@ function InitiateTimeCount() {
   t0 = new Date();
 }
 
+feature_presentaion_index = 0;
 InitializeProfilePresentation(current_profile);
 
-// profile_report_state = 0
-// // on profile_report_state=0 and ShowReport() -> report section
-// // on profile_report_state=1 and ShowReport() -> profile section
-//
-// function ShowReport(){
-//   window.scrollTo(0, 0);
-//   if(profile_report_state==0){
-//     profile_report_state=1;
-//     document.getElementById("practiceTrialsInstructions").style.display = "block";
-//     document.getElementById("SimilarityReportSection").style.display = "block";
-//     document.getElementById("NextProfileButtonSection").style.display = "block";
-//     maxAnchor.style.display = "block";
-//     minAnchor.style.display = "block";
-//     document.getElementById("slidecontainer").style.display = "none";
-//     document.getElementsByTagName("body")[0].dispatchEvent(event_show_report); // Dispatch the event.
-//     showReportButton.innerText = "הצגת פרופיל"
-//   } else {
-//     profile_report_state=0;
-//     document.getElementById("practiceTrialsInstructions").style.display = "none";
-//     document.getElementById("SimilarityReportSection").style.display = "none";
-//     document.getElementById("NextProfileButtonSection").style.display = "none";
-//     maxAnchor.style.display = "none";
-//     minAnchor.style.display = "none";
-//     document.getElementById("slidecontainer").style.display = "block";
-//     showReportButton.innerText = "הערכת דמיון"
-//   };
-//
-// };
-//
-// showReportButton.addEventListener("click", ShowReport);
-// showReportButton.innerText = "הערכת דמיון";
+var presentProfileAgainButton = document.getElementById("presentProfileAgainButton");
+function PresentProfileAgain(){
+  console.log("Sdf");
+  feature_presentaion_index = 0;
+  HideReoportSection();
+  InitializeProfilePresentation(current_profile);
+};
+presentProfileAgainButton.addEventListener("click", PresentProfileAgain);

@@ -14,7 +14,7 @@ var default_value = "50"
 function InjectProfileDataToHTML(title, right_end, left_end, feature_name, value){
   // the -"- is used for HTML properties while the
   // -'- encapsulates the hole JS string, as in: '<div class="className"'
-  basicProfileHTMLText = '<h3 id="title" style="direction:rtl">'+ title + '</h3>\
+  basicProfileHTMLText = '<h3 id="title" style="direction:rtl">'+ title + '</h3> <br>\
     <div class="row"> \
       <div class="column side">'+ left_end + '</div> \
       <div class="column middle"> \

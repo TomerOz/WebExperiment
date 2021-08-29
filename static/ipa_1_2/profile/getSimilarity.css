@@ -1,18 +1,6 @@
-.slidecontainer {
-  max-width: 75%; /* Width of the outside container */
-  margin: auto;
-}
-
-/* Following lines define a diferent width for screens smaller the 1366px */
-@media all and (min-width: 1366px) {
-  .slidecontainer {
-    max-width: 60%; /* Width of the outside container */
-    margin: auto;
-  }
-}
 
 /* The slider itself */
-.slider {
+.similaritySlider {
   -webkit-appearance: none;  /* Override default CSS styles */
   appearance: none;
   width: 100%; /* Full-width */
@@ -25,12 +13,12 @@
 }
 
 /* Mouse-over effects */
-.slider:hover {
+.similaritySlider:hover {
   opacity: 1; /* Fully shown on mouse-over */
 }
 
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-.slider::-webkit-slider-thumb {
+.similaritySlider::-webkit-slider-thumb {
   -webkit-appearance: none; /* Override default look */
   appearance: none;
   width: 20px; /* Set a specific slider handle width */
@@ -39,7 +27,7 @@
   cursor: pointer; /* Cursor on hover */
 }
 
-.slider::-moz-range-thumb {
+.similaritySlider::-moz-range-thumb {
   width: 25px; /* Set a specific slider handle width */
   height: 25px; /* Slider handle height */
   background: #af4c50; /* Green background */
@@ -51,11 +39,11 @@
   text-align: center;
 }
 
-.side {
+.reportSide {
   width: 15%;
 }
 
-.middle {
+.reportMiddle {
   width: 70%;
 }
 /* Clear floats after the columns */
@@ -82,15 +70,6 @@ canvas {
   padding-right: 10%;
 }
 
-#title{
-  font-size: 14px;
-  text-align: center;
-  margin: 0px;
-}
 textarea {
   width: auto;
 }
-
-/* #profileDescription {
-  width: 500px;
-} */

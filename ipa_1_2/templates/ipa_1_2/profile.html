@@ -7,11 +7,12 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     {% load static %}
-    <!-- <link rel="stylesheet" href="{% static 'ipa_1_2/SliderStyle.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'ipa_1_2/profile/SliderStyle.css' %}">
     <link rel="stylesheet" href="{% static 'ipa_1_2/profile/getSimilarity.css' %}">
     <link rel="stylesheet" href="{% static 'ipa_1_2/profile/anchorsStyle.css' %}">
   </head>
   <body id="body">
+    <br>
     <br>
     <div class="slidecontainer text-center" id="slidecontainer">
     </div>
@@ -27,29 +28,31 @@
           <h3>{{ off_order_instructions_dict.practiceTrialsInstructions }}</h3>
         </div>
       </div> -->
+
       <div id="SimilarityReportSection" class="row profiles_size" style="direction:ltr">
+        <br>
+        <div id="presentProfileAgainButtonSection"class="container text-center">
+          <br>
+          <br>
+          <button id="presentProfileAgainButton" class="btn btn-primary btn" type="button" name="button">הצג שוב</button>
+          <br>
+          <br>
+        </div>
         <br>
         <canvas id="myCanvas" width="400" height="320"></canvas>
         <br/>
-        <div class="column side">{{ off_order_instructions_dict.lowSimilarity }}</div>
-        <div class="column middle">
-          <input type="range" min="0" max="100" value="50" class="slider" id="myRange" name="maxSimilarityValue">
+        <div class="column reportSide">{{ off_order_instructions_dict.lowSimilarity }}</div>
+        <div class="column reportMiddle">
+          <input type="range" min="0" max="100" value="50" class="similaritySlider" id="myRange" name="maxSimilarityValue">
         </div>
-        <div class="column side">{{ off_order_instructions_dict.highSimilarity }}</div>
+        <div class="column reportSide">{{ off_order_instructions_dict.highSimilarity }}</div>
       </div>
-
       <!-- consider deleting the following -->
       <div class="container">
         <input type="hidden" name="form_phase" value="{{ form_phase }}">
       </div>
       <div class="container" id="hiddenInputs"></div>
       <!-- end deletion consideration -->
-
-      <!-- <div id="NextProfileButtonSection"class="container text-center"> -->
-        <br>
-        <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">בחר\י והמשיכ\י</button>
-        <br>
-      <!-- </div> -->
 
       <div id="maxAnchor" class="box arrow-top">
         <span>{{maxName}}</span>
@@ -58,6 +61,16 @@
     <div id="minAnchor" class="box arrow-top">
       <span>{{minName}}</span>
     </div>
+
+      <br>
+      <br>
+      <div id="NextProfileButtonSection"class="container text-center">
+        <br>
+        <br>
+        <br>
+        <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">בחר\י והמשיכ\י</button>
+        <br>
+      </div>
       <script>
         var b = document.getElementsByTagName("body")[0];
         b.style.width = window.screen.height
@@ -76,6 +89,7 @@
       <input id="profilesDescriptions" type="hidden" name="profilesDescriptions" value="">
       <input id="subjectRTs" type="hidden" name="subjectRTs" value="">
       <input id="trial" type="hidden" name="currentTrial" value="">
+      <input id="trialFeatureOrder" type="hidden" name="trialFeatureOrder" value="">
     </form>
   </body>
 
@@ -84,7 +98,7 @@
   integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
   crossorigin="anonymous"></script>
 
-  <script src="{% static 'ipa_1_2/SliderLogic.js' %}"></script>
+  <script src="{% static 'ipa_1_2/profile/SliderLogic.js' %}"></script>
   <script src="{% static 'ipa_1_2/profile/getSimilarity.js' %}"></script>
   <script src="{% static 'ipa_1_2/profile/anchorsLogic.js' %}"></script>
 </html>

@@ -14,6 +14,7 @@ function HandleInstructions() {
       currentInstruction += 1;
   } else {
     // instructionTextContainer.textContent  = ""
+    nextButton.disabled = true;
     instructionsForm.submit();
   };
 };

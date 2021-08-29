@@ -7,25 +7,27 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     {% load static %}
-    <link rel="stylesheet" href="{% static 'profilePresntaion/GetSubject/SubjectSliderStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'ipa_1_2/GetSubject/SubjectSliderStyle.css' %}">
   </head>
   <body>
 
 <form action ="" method="post" id="featuresForm">
   {% csrf_token %}
-    <div class="slidecontainer" id="slidecontainer">
-      <!-- <input type="range" min="1" max="100" value="50" class="slider" id="myRange", disabled="Disabled"> -->
-    </div>
-    <br>
-    <div class="container">
-      <input type="hidden" name="form_phase" value="{{ form_phase }}">
-    </div>
-      <div class="container" id="hiddenInputs">
-    </div>
-  </form>
-  <div class="container">
-    <button class="btn btn-primary btn" id="nextFeatureButton" name="button">הבא</button>
+  <br>
+  <br>
+  <div class="slidecontainer" id="slidecontainer">
+    <!-- <input type="range" min="1" max="100" value="50" class="slider" id="myRange", disabled="Disabled"> -->
   </div>
+  <br>
+  <div class="container">
+    <input type="hidden" name="form_phase" value="{{ form_phase }}">
+  </div>
+    <div class="container" id="hiddenInputs">
+  </div>
+</form>
+<div class="container">
+  <button class="btn btn-primary btn" id="nextFeatureButton" name="button">הבא</button>
+</div>
 
       <script>
        var context = {{features_list|safe}}

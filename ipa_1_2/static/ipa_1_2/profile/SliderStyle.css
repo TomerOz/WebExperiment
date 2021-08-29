@@ -1,9 +1,8 @@
 .slidecontainer {
-  max-width: 75%; /* Width of the outside container */
+  width: 85%; /* Width of the outside container */
   margin: auto;
 }
 
-/* Following lines define a diferent width for screens smaller the 1366px */
 @media all and (min-width: 1366px) {
   .slidecontainer {
     max-width: 60%; /* Width of the outside container */
@@ -11,12 +10,15 @@
   }
 }
 
+.container {
+  width: 100%;
+}
 
 /* The slider itself */
 .slider {
   -webkit-appearance: none;  /* Override default CSS styles */
   appearance: none;
-  width: 100%; /* Full-width */
+  width: 75%; /* Full-width */
   height: 25px; /* Specified height */
   background: #d3d3d3; /* Grey background */
   outline: none; /* Remove outline */
@@ -36,14 +38,14 @@
   appearance: none;
   width: 25px; /* Set a specific slider handle width */
   height: 25px; /* Slider handle height */
-  background: #af4c50; /* Green background */
+  background: #4CAF50; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
 
 .slider::-moz-range-thumb {
   width: 25px; /* Set a specific slider handle width */
   height: 25px; /* Slider handle height */
-  background: #af4c50; /* Green background */
+  background: #4CAF50; /* Green background */
   cursor: pointer; /* Cursor on hover */
 }
 
@@ -53,12 +55,12 @@
 }
 
 .side {
-  width: 20%;
+  width: 25%;
   font-size: 18px;
 }
 
 .middle {
-  width: 60%;
+  width: 50%;
 }
 /* Clear floats after the columns */
 .row:after {
@@ -66,6 +68,10 @@
   display: table;
   clear: both;
 }
- #title {
-   font-size: 22px;
- }
+
+
+#title{
+  font-size: 22px;
+  text-align: center;
+  margin: 0px;
+}

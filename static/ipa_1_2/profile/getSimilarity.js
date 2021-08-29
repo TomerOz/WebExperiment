@@ -84,14 +84,10 @@ function checkKey(e) {
   }
 };
 
-drawBall();
+// drawBall();
+
 if(document.title != "profile"){
   reportSections["max"].style.display = "none";
 } else if (document.title == "profile"){
   // maxSimilaritySection.classList.add('profiles_size')
 };
-
-
-// Listen for the event.
-body = document.getElementsByTagName("body")[0];
-body.addEventListener("NewProfile", function(){draw()}); // event NewProfile is defined in Slider logic

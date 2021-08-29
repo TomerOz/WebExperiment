@@ -66,6 +66,7 @@ class SubjectData(object):
         self.subject_data_dictionary["response_value"] = self.subject_data_dictionary["response_value"] + identification_response
         self.subject_data_dictionary["response_time"] = self.subject_data_dictionary["response_time"] + identification_rts
         self.subject_data_dictionary["trial_profile"] = self.subject_data_dictionary["trial_profile"] + identification_p_name
+        self.subject_data_dictionary["trial_features_order"] = self.subject_data_dictionary["trial_features_order"] + " " # not relevant to this phase
         self.subject_data_dictionary["profile_info(sides_or_description)"] = self.subject_data_dictionary["profile_info(sides_or_description)"] + identification_info
         self._add_meta_data(subject, "identification", identification_response)
 
@@ -74,10 +75,12 @@ class SubjectData(object):
         profiles_rts = self.trials_to_list(subject.profiles_response_times, end="") # rt
         profiles_p_name = self.trials_to_list(subject.trials_string_list) # profile name
         profiles_info = self.trials_to_list(subject.profiles_descriptions, seperator="-**NextProfile**-", initial="-**NextProfile**-", end="") # info
+        features_order = self.trials_to_list(subject.trial_features_order, seperator="-**NextProfile**-", end="-**NextProfile**-") # info
 
         self.subject_data_dictionary["response_value"] = self.subject_data_dictionary["response_value"] + profiles_response
         self.subject_data_dictionary["response_time"] = self.subject_data_dictionary["response_time"] + profiles_rts
         self.subject_data_dictionary["trial_profile"] = self.subject_data_dictionary["trial_profile"] + profiles_p_name
+        self.subject_data_dictionary["trial_features_order"] = self.subject_data_dictionary["trial_features_order"] + features_order
         self.subject_data_dictionary["profile_info(sides_or_description)"] = self.subject_data_dictionary["profile_info(sides_or_description)"] + profiles_info
         self._add_meta_data(subject, "profiles", profiles_response)
 

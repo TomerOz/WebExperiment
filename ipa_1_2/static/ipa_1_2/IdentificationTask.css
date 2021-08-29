@@ -1,11 +1,11 @@
 .slidecontainer {
-  width: 85%; /* Width of the outside container */
-  margin: auto;
+  /* width: 95%; /* Width of the outside container */ */
+  /* margin: atuto; */
 }
 
 @media all and (min-width: 1366px) {
   .slidecontainer {
-    max-width: 60%; /* Width of the outside container */
+    max-width: 90%; /* Width of the outside container */
     margin: auto;
   }
 }
@@ -87,7 +87,7 @@ table{
 }
 
 td {
-  width: 65vw;
+  width: 75vw;
 }
 
 button {

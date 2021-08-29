@@ -82,6 +82,7 @@ class PhasesDataSaver(object):
         subject.trials_string_list += post_data["profilesList"]
         subject.profiles_descriptions += post_data["profilesDescriptions"]
         subject.profiles_response_times += post_data["subjectRTs"]
+        subject.trial_features_order += post_data["trialFeatureOrder"]
         # add time recordings
         subject.save()
 

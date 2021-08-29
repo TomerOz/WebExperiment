@@ -55,12 +55,12 @@
 }
 
 .side {
-  width: 20%;
-  font-size: 13px;
+  width: 25%;
+  font-size: 18px;
 }
 
 .middle {
-  width: 60%;
+  width: 50%;
 }
 /* Clear floats after the columns */
 .row:after {
@@ -69,12 +69,9 @@
   clear: both;
 }
 
+
 #title{
-  font-size: 13px;
+  font-size: 22px;
   text-align: center;
   margin: 0px;
-}
-
-.feature_end{
-  font-size: 11px;
 }

@@ -17,7 +17,8 @@ var presentProfileAgainButton = document.getElementById("presentProfileAgainButt
 const event = new Event('NewProfile');
 // const event_show_report = new Event('ShowReport');
 
-minwWordsPerDescription = 0;
+var minwWordsPerDescription = 0;
+var milisecondsPerFeature == 2000
 
 var db_features = "features"
 var current_profile = 0
@@ -71,7 +72,7 @@ function InitializeProfilePresentation(current_profile){
     if(feature_presentaion_index < features_list.length) {
         setTimeout(function(){
         InitializeProfilePresentation(current_profile);
-      }, 50);
+      }, milisecondsPerFeature);
     } else {
       slidecontainer.innerHTML = "";
       body = document.getElementsByTagName("body")[0];

@@ -83,7 +83,6 @@ class PhasesDataSaver(object):
         subject.profiles_descriptions += post_data["profilesDescriptions"]
         subject.profiles_response_times += post_data["subjectRTs"]
         subject.trial_features_order += post_data["trialFeatureOrder"]
-        # add time recordings
         subject.save()
 
     # Fills subject model with posted features provided by the subject user (subject profile witg default values already exists)

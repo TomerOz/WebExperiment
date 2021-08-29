@@ -142,12 +142,13 @@ var texts_pre_profile = [preProfile, 3,2,1]
 var pre_profile_counter = 0
 var feature_presentaion_index;
 
+countDownMiliSeconds = 1500;
 function ProfileCountDown() {
   if(pre_profile_counter < texts_pre_profile.length) {
     slidecontainer.innerHTML = texts_pre_profile[pre_profile_counter];
     pre_profile_counter +=1;
     profileDescription.style.display = "none";
-    setTimeout(function(){ProfileCountDown()}, 1500);
+    setTimeout(function(){ProfileCountDown()}, countDownMiliSeconds);
   } else {
     feature_presentaion_index = 0;
     HideReoportSection();

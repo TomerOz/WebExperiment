@@ -66,7 +66,7 @@ class SubjectData(object):
         self.subject_data_dictionary["response_value"] = self.subject_data_dictionary["response_value"] + identification_response
         self.subject_data_dictionary["response_time"] = self.subject_data_dictionary["response_time"] + identification_rts
         self.subject_data_dictionary["trial_profile"] = self.subject_data_dictionary["trial_profile"] + identification_p_name
-        self.subject_data_dictionary["trial_features_order"] = self.subject_data_dictionary["trial_features_order"] + [" "] # not relevant to this phase
+        self.subject_data_dictionary["trial_features_order"] = self.subject_data_dictionary["trial_features_order"] + [" "]*len(identification_response) # not relevant to this phase
         self.subject_data_dictionary["profile_info(sides_or_description)"] = self.subject_data_dictionary["profile_info(sides_or_description)"] + identification_info
         self._add_meta_data(subject, "identification", identification_response)
 

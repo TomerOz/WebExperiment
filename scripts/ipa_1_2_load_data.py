@@ -208,8 +208,6 @@ def run():
     create_contexts()
     create_models()
     create_n_pilot_profiles(3)
-
     # squezze_in_new_phases()
-
-
+    
 #py manage.py runscript load_inital_data

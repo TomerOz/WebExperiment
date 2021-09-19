@@ -382,19 +382,19 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         "minName":users_subject.min_similarity_name,
                         })
     elif current_phase == "Identification Task":
-        # to delete - context.upadte 20.08.21
-        # context.update({"context":json.dumps(_get_profiles_list_context(ProfileModel.objects.all()))})
-        _create_subject_artificials_for_this_phase(users_subject, practice_name="SlowPhase", trials_name="FastPhase")
+        _create_subject_artificials_for_this_phase(users_subject, practice_name="---", trials_name="SlowPhase")
         artificials = ArtificialProfileModel.objects.filter(profile_label_set=users_subject.profile_label_set,target_subject=users_subject, target_phase=users_subject.current_phase).all()
         slow_phase = _get_list_from_query_set(artificials.filter(name__contains='SlowPhase'))
-        fast_phase = _get_list_from_query_set(artificials.filter(name__contains='FastPhase'))
-        practice_context = _get_profiles_list_context(slow_phase)
-        trials_context = _get_profiles_list_context(fast_phase)
-        all_profiles_list = [] + trials_context["profiles_list"]
-        trials_context.update(practice_context) # addint the profiles data -- update deletes current profiles_list and replace it with those of practice_context
-        trials_context["profiles_list"] = trials_context["profiles_list"] + all_profiles_list # putting practice profiles first and adding trials_context profiles_list
-
+        trials_context = _get_profiles_list_context(slow_phase)
+        trials_context.update(trials_context) # addint the profiles data -- update deletes current profiles_list and replace it with those of practice_context
         sp = _get_subject_profile(users_subject) # getting subject profile
+
+        none_of_the_above
+        trials_nta_indexes = random.sample(range(len(trials_context["profiles_list"])), 4)
+        similarity_levels = [0.4, 0.5, 0.6, 0.7]
+        for i, trial in enumerate(trials_nta_indexes):
+            _generate_profile(sp, similarity_levels[i], name_instance=subject.current_phase.name+" - " + "SlowPhase-No_One-1")
+            _generate_profile(sp, similarity_levels[i], name_instance=subject.current_phase.name+" - " + "SlowPhase-No_One-2")
         d2 = {"identification_task" : json.dumps({"subject": sp, "artificials":trials_context})}
         context.update(d2)
 

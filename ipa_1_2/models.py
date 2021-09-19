@@ -93,7 +93,10 @@ class ExperimentPhase(models.Model):
     trials_content = models.CharField(max_length=1000, default="0.2, 0.5")
 
     def _get_list_of_floats_from_string(self, string_list):
-        return [float(i) for i in string_list.split(", ")]
+        if len(string_list) > 0:
+            return [float(i) for i in string_list.split(", ")]
+        else:
+            return []
 
     def get_trials_content(self):
         return self._get_list_of_floats_from_string(self.trials_content)

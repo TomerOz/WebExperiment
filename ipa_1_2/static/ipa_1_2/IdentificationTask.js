@@ -5,7 +5,6 @@ var nextLeftButton = document.getElementById("Next_left");
 var nextRightButton = document.getElementById("Next_right");
 var noneOfThemButton = document.getElementById("NoneOfThem");
 var subjectResonseForm = document.getElementById("subjectResonseForm");
-var responseSignal = document.getElementById("responseSignal");
 var subjectResonses = document.getElementById("subjectResonses");
 var currentTrial = document.getElementById("trial");
 var responseTimes = document.getElementById("RTs");
@@ -15,13 +14,13 @@ var instructionContainer = document.getElementById("instructionContainer");
 var textContainer = document.getElementById("textContainer");
 var nextInstructionButton = document.getElementById("NextInstructionButton");
 
-var PeofileWaitTime = 15000; // 15 seconds until button appears
-var BetweenProfilesInterval = 1000; // 1 seconds between profiles
+var PeofileWaitTime = 200// 15000; // 15 seconds until button appears
+var BetweenProfilesInterval = 100// 1000; // 1 seconds between profiles
 
 var db_features = "features";
 var current_profile = 0;
 var all_profiles_ids = task_profiles["artificials"]["profiles_list"];
-
+var no_one_counter = 0;
 var title = "Title new";
 var right_end = "r";
 var left_end = "l";
@@ -65,7 +64,7 @@ function _getRndInteger(min, max) {
 }
 
 // theese lists right-left shoud match each other, and the html table cell sides
-containers = [right_profile, left_profile];
+containers = [left_profile, right_profile];
 // buttons = [nextRightButton, nextLeftButton]; to delete 22.08.21
 
 // Trials management
@@ -80,7 +79,7 @@ rts = [];
 left = "left";
 right = "right";
 noneOfThemValue = "no one"
-sides = [right, left]
+sides = [left, right]
 
 var t0;
 var t1;
@@ -92,13 +91,18 @@ function _getStringFormField(val){
 function RecordResponses(button){ // From button presss
   RecordTime();
   profile_id = task_profiles["artificials"]["profiles_list"][current_profile]
+  profilesGroup = "artificials";
+  if(profile_id=="no_one"){
+    profile_id = task_profiles["no_one_pairs_indexes"][no_one_counter][0];
+    profilesGroup = "no_one_profiles";
+  }
   buttons_presses.push(button);
   pressed_button = button;
   subjectResonses.value += _getStringFormField(buttons_presses[current_profile]);
   currentTrial.value = _getStringFormField(current_profile);
   responseTimes.value += _getStringFormField(rts[current_profile]);
   profilesSides.value += _getStringFormField(profiles_possitions[current_profile]);
-  profilesList.value += _getStringFormField(task_profiles["artificials"][profile_id]["name"]);
+  profilesList.value += _getStringFormField(task_profiles[profilesGroup][profile_id]["name"]);
   NextTrial(); // increases current_profile
 }
 
@@ -112,6 +116,7 @@ function InitiateTimeCount() {
 
 function HandelResponseButtons(containers){
   setTimeout(function(){Next_left.style.display = 'block';}, PeofileWaitTime);
+  setTimeout(function(){NoneOfThem.style.display = 'block';}, PeofileWaitTime);
   setTimeout(function(){Next_right.style.display = 'block';}, PeofileWaitTime);
 }
 
@@ -120,23 +125,43 @@ function HideAndShowContainers(containers){
   containers[1].style.display = 'none';
   Next_left.style.display = 'none';
   Next_right.style.display = 'none';
-  responseSignal.style.display = 'none';
+  NoneOfThem.style.display = 'none';
   setTimeout(function() {containers[0].style.display = 'block'}, BetweenProfilesInterval);
   setTimeout(function() {containers[1].style.display = 'block'}, BetweenProfilesInterval);
 };
 
 function InitializeProfilePresentation(current_profile){
   profile_id = task_profiles["artificials"]["profiles_list"][current_profile]
-  var features_list = task_profiles["artificials"][profile_id]["features_order"];
-  var profile_features = task_profiles["subject"][db_features];
-  subject_profile_text = GetProfileData(profile_features, features_list);
-  var profile_features = task_profiles["artificials"][profile_id][db_features];
-  artificial_profile_text = GetProfileData(profile_features, features_list);;
-  subject_side = _getRndInteger(0,1)
-  other_side = (subject_side - 1) * -1
-  containers[subject_side].innerHTML = subject_profile_text
-  profiles_possitions.push(sides[subject_side])
-  containers[other_side].innerHTML = artificial_profile_text
+  if(profile_id == "no_one"){
+    no_one_profile_id_1 = task_profiles["no_one_pairs_indexes"][no_one_counter][0];
+    no_one_profile_id_2 = task_profiles["no_one_pairs_indexes"][no_one_counter][1];
+    profile_features_1 = task_profiles["no_one_profiles"][no_one_profile_id_1][db_features];
+    profile_features_2 = task_profiles["no_one_profiles"][no_one_profile_id_2][db_features];
+    name_1 = task_profiles["no_one_profiles"][no_one_profile_id_1]["name"]
+    name_2 = task_profiles["no_one_profiles"][no_one_profile_id_2]["name"]
+    var features_list = task_profiles["no_one_profiles"][no_one_profile_id_1]["features_order"];
+  }  else {
+    var profile_features_1 = task_profiles["subject"][db_features];
+    var profile_features_2 = task_profiles["artificials"][profile_id][db_features];
+    name_1 = task_profiles["subject"]["name"]
+    name_2 = task_profiles["artificials"][profile_id]["name"]
+    var features_list = task_profiles["artificials"][profile_id]["features_order"];
+  };
+
+
+  text_1 = GetProfileData(profile_features_1, features_list);
+  text_2 = GetProfileData(profile_features_2, features_list);;
+
+  subject_side = _getRndInteger(0,1);
+  other_side = (subject_side - 1) * -1;
+
+  positions_temp = ["Left = ", "Right = "];
+  positions_temp[subject_side] = positions_temp[subject_side] + name_1;
+  positions_temp[other_side] = positions_temp[other_side] + name_2;
+  containers[subject_side].innerHTML = text_1;
+  containers[other_side].innerHTML = text_2;
+  profiles_possitions.push(positions_temp.toString().replace(",", "//"));
+
   HideAndShowContainers(containers);
   HandelResponseButtons(containers);
   InitiateTimeCount();
@@ -144,6 +169,9 @@ function InitializeProfilePresentation(current_profile){
 
 
 function NextTrial(){
+  if(task_profiles["artificials"]["profiles_list"][current_profile]=="no_one"){
+    no_one_counter += 1;
+  };
   current_profile +=1;
   trialCounter +=1;
   if(current_profile < all_profiles_ids.length){

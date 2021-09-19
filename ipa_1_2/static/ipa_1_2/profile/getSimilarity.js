@@ -1,6 +1,6 @@
-
 var nextFeatureButton = document.getElementById("nextFeatureButton");
 var slider = document.getElementById("myRange");
+var similarityValue = document.getElementById("similarityValue");
 
 var mouseDown = 0;
 document.body.onmousedown = function() {
@@ -11,35 +11,21 @@ document.body.onmouseup = function() {
 }
 
 function changeCircles(){
-  if(mouseDown){
-    draw();
-  };
-};
-
-function changeOnClickCircles(){
-  draw();
-};
-
-slider.onmousemove = function(){changeCircles()};
-slider.onmouseover = function(){changeCircles()};
-slider.onclick = function(){changeOnClickCircles()};
-
-function SaveReort(){
-  // Code here should save report and change profile
-  // ...
+  DrawAgain();
 };
 
 // circles report code:
 var canvas = document.getElementById("myCanvas");
-canvas.width = slider.getClientRects()[0].width*0.52
-canvas.height = canvas.width/2
+// canvas.width = slider.getClientRects()[0].width*0.52
+// canvas.height = canvas.width/2
 var ctx = canvas.getContext("2d");
 var y = canvas.height/2;
 r=canvas.width/4
-var x1 = r/2 + canvas.width/2 + (50-(slider.value))
-var x2 = canvas.width/ 2 - r/2 - (50-(slider.value))
+var x1 = r/2 + canvas.width/2 + (50-(similarityInput.value))
+var x2 = canvas.width/ 2 - r/2 - (50-(similarityInput.value))
 
 function drawBall() {
+  // circle 1:
   ctx.beginPath();
   ctx.fillStyle = "#af4c50";
   ctx.arc(x1, y, r, 0, Math.PI*2, 0);
@@ -49,6 +35,7 @@ function drawBall() {
   ctx.fill();
   ctx.closePath();
 
+  // circle 2:
   ctx.beginPath();
   ctx.fillStyle = "#af4c50";
   ctx.arc(x2, y, r, 0, Math.PI*2, 4);
@@ -59,32 +46,13 @@ function drawBall() {
   ctx.closePath();
 }
 
-function draw(direction) {
+function DrawAgain(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    x1 = r/2 + canvas.width/2 + (50-(slider.value))/100 * canvas.width/4
-    x2 = canvas.width/ 2 - r/2 - (50-(slider.value))/100 * canvas.width/4
+    x1 = r/2 + canvas.width/2 + (50-(similarityInput.value))/100 * canvas.width/4
+    x2 = canvas.width/ 2 - r/2 - (50-(similarityInput.value))/100 * canvas.width/4
     drawBall();
-}
-
-function checkKey(e) {
-  e = e || window.event;
-  if (e.keyCode == '38') {
-    // up arrow
-  }
-  else if (e.keyCode == '40') {
-    // down arrow
-  }
-  else if (e.keyCode == '37') {
-    // left arrow
-    draw(-1)
-  }
-  else if (e.keyCode == '39') {
-    // right arrow
-    draw(1)
-  }
 };
 
-// drawBall();
 
 if(document.title != "profile"){
   reportSections["max"].style.display = "none";

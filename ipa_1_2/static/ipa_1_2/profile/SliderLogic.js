@@ -1,37 +1,34 @@
-
 var slidecontainer = document.getElementById("slidecontainer");
 var resonsesForm = document.getElementById("subjectResonseForm");
 var profilesList = document.getElementById("profilesList");
-
 var showReportButton = document.getElementById('showReportButton');
-
+var moreSimilarity = document.getElementById('moreSimilarity');
+var lessSimilarity = document.getElementById('lessSimilarity');
 similarity_report = document.getElementById('myRange');
+similarityInput = document.getElementById('similarityInput');
 subjectResonses = document.getElementById('subjectResonses');
 profilesDescriptions = document.getElementById('profilesDescriptions'); // the hidden input fiel in the hidden form
 profileDescription = document.getElementById('profileDescription'); // the text box elemenet
 similarityReportSection = document.getElementById("SimilarityReportSection");
 nextProfileButtonSection = document.getElementById("NextProfileButtonSection");
 trialFeatureOrder = document.getElementById("trialFeatureOrder");
-
 var presentProfileAgainButton = document.getElementById("presentProfileAgainButton");
-const event = new Event('NewProfile');
-// const event_show_report = new Event('ShowReport');
 
 var minwWordsPerDescription = 0;
-var milisecondsPerFeature = 2000;
-
+var milisecondsPerFeature = 10; //2000;
+var countDownMiliSeconds = 10; //1500;
 var db_features = "features"
-var current_profile = 0
+var current_profile = 0;
 var all_profiles_ids = context["profiles_list"]
-
 var title = "Title new"
 var right_end = "r"
 var left_end = "l"
 var value = "4"
-
 var t0;
 var t1;
-rts = [];
+var rts = [];
+
+const event = new Event('NewProfile');
 
 function InjectProfileDataToHTML(title, right_end, left_end, value){
   basicProfileHTMLText = '<h4 id="title">'+ title + '</h4> <br>\
@@ -78,9 +75,7 @@ function InitializeProfilePresentation(current_profile){
       body = document.getElementsByTagName("body")[0];
       similarityReportSection.style.display = "block";
       slider.style.display = "block";
-      draw(); // event NewProfile is defined in Slider logic
-      placeAnchors(maxValue, "maxAnchor");
-      placeAnchors(minValue, "minAnchor");
+      DrawAgain(); // event NewProfile is defined in Slider logic
       nextProfileButtonSection.style.display = "block";
     };
   };
@@ -142,7 +137,7 @@ var texts_pre_profile = [preProfile, 3,2,1]
 var pre_profile_counter = 0
 var feature_presentaion_index;
 
-countDownMiliSeconds = 1500;
+
 function ProfileCountDown() {
   if(pre_profile_counter < texts_pre_profile.length) {
     slidecontainer.innerHTML = texts_pre_profile[pre_profile_counter];
@@ -167,5 +162,42 @@ function PresentProfileAgain(){
   ProfileCountDown();
 };
 presentProfileAgainButton.addEventListener("click", PresentProfileAgain);
+
+var lessClicked = false;
+var intervalID;
+var cangeRate = 100;
+function ChagngeSimilarityValue(direction){
+  if (direction == "+"){
+    similarityInput.value = Math.min(parseInt(similarityInput.value)+1, 100);
+  }
+  else if ( direction == "-") {
+    similarityInput.value = Math.max(parseInt(similarityInput.value)-1, 0);
+  };
+};
+moreSimilarity.addEventListener("mousedown", function(){
+  lessClicked = true;
+  intervalID = setInterval(function(){
+  if(lessClicked==true){
+    ChagngeSimilarityValue("+")
+    changeCircles();
+  }}, cangeRate);
+});
+moreSimilarity.addEventListener("mouseup", function(){
+  clearInterval(intervalID);
+  lessClicked = false
+});
+
+lessSimilarity.addEventListener("mousedown", function(){
+  lessClicked = true;
+  intervalID = setInterval(function(){
+  if(lessClicked==true){
+    ChagngeSimilarityValue("-")
+    changeCircles();
+  }}, cangeRate);
+});
+lessSimilarity.addEventListener("mouseup", function(){
+  clearInterval(intervalID);
+  lessClicked = false
+});
 
 ProfileCountDown();

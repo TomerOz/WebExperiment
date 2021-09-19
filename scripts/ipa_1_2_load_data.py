@@ -67,19 +67,21 @@ def run():
     def _is_sereis_empty(series):
         if len(series) == 0:
             return True
-        elif len(series)==1 and series.isna()[0]==True:
+        elif len(series)==1 and series.isna().values[0]==True:
             return True
         return False
-        
+
     def _get_trials(phases_trials, phase, col_name):
         trials_list = "---"
         series = phases_trials[phases_trials['phase'] == phase][col_name]
         n = 0
         trials_list = ""
+        
         if not _is_sereis_empty(series):
             values_list = series.values[0].split(", ")
             trials_list = ", ".join(values_list)
             n = len(values_list)
+
         return trials_list, n
 
     def create_experiment_phases():
@@ -94,7 +96,6 @@ def run():
                 new_phase = ExperimentPhase(name=phase, phase_place=i+1, experiment=experiment)
                 practice_trials_content, n_practice_trials = _get_trials(phases_trials, phase, "practice_trials_content")
                 trials_content, n_trials = _get_trials(phases_trials, phase, "trials_content")
-                if n_practice_trials
                 new_phase.n_practice_trials = n_practice_trials
                 new_phase.practice_trials_content = practice_trials_content
                 new_phase.trials_content = trials_content

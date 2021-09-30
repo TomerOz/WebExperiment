@@ -82,5 +82,19 @@ table{
 }
 
 td {
-  /* width: 75vw; */
+  width: 85vw;
+}
+
+.thirdScreen {
+  height: 25vh;
+  width: 85vw;
+}
+
+.buttonMoreLess{
+  margin: auto;
+  text-align: center;
+}
+
+#nextFeatureButton{
+  margin: auto;
 }

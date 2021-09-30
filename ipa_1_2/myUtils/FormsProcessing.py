@@ -40,12 +40,22 @@ class FormsProcessor(object):
 
     def _process_identification_task(self, post_data):
         errors = []
+        ALLOWED_MISTAKES_PROPORTION = 0.2
         profilesSides = post_data["profilesSides"][:-1].split(",") # ignoring the last comma
         responses = post_data["responses"][:-1].split(",") # ignoring the last comma
         for i in range(len(profilesSides)):
-            if profilesSides[i] != responses[i]:
-                errors.append("error")
-        if len(errors) > 0.2*len(responses):
+            left,right = tuple(profilesSides[i].split("//"))
+            if "Artificial" in left and "Artificial" in right:
+                if responses[i] != "no one":
+                    errors.append("error")
+            elif "Artificial" in left:
+                if responses[i] == "left":
+                    errors.append("error")
+            elif "Artificial" in right:
+                if responses[i] == "right":
+                    errors.append("error")
+
+        if len(errors) > ALLOWED_MISTAKES_PROPORTION*len(responses):
             return errors
         else:
             return [] # indicating to views.py that there were no errors
@@ -121,7 +131,7 @@ class PhasesDataSaver(object):
 
     def _process_min_max_similarity(self, post_data, subject):
         subject.max_similarity_name = post_data["maxSimilarityName"]
-        subject.max_similarity_value = post_data["maxSimilarityValue"]
+        subject.max_similarity_value = post_data["similarityInputMax"]
         subject.min_similarity_name = post_data["minSimilarityName"]
-        subject.min_similarity_value = post_data["minSimilarityValue"]
+        subject.min_similarity_value = post_data["similarityInputMin"]
         subject.save()

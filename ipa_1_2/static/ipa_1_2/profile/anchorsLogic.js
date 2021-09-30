@@ -20,13 +20,3 @@ function placeAnchors(value, id){
   profileDescription = document.getElementById("profileDescription");
   // profileDescription.style.width = (0.75 * slider_range) + "px";
 }
-
-function HideReoportSection(){
-  maxAnchor.style.display = "none";
-  minAnchor.style.display = "none";
-  slider.style.display = "none";
-  similarityReportSection.style.display = "none";
-  nextProfileButtonSection.style.display = "none";
-};
-
-HideReoportSection();

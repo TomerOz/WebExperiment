@@ -4,9 +4,11 @@ import os
 import random
 
 from ipa_1_2.models import *
-CURRENT_APP_NAME = "ipa_1_2"
 
+CURRENT_APP_NAME = "ipa_1_2"
 EXPERIMENT_NAME = "IPA1.2"
+IS_UPDATE = True
+
 def run():
     def _get_txt_list(path_and_file, splitter):
         with open(path_and_file,'r') as f:
@@ -15,15 +17,21 @@ def run():
         return list
 
     def create_feature_labels(features_df):
-        FeatureLabels.objects.all().delete()
+        global IS_UPDATE
+        if not IS_UPDATE:
+            FeatureLabels.objects.all().delete()
         for index, row in features_df.iterrows():
-            feature_query = FeatureLabels.objects.filter(feature_name=row.feature)
-            if len(feature_query) == 0:
-                new_feature = FeatureLabels(feature_name=row.feature, right_end=row.right_end, left_end=row.left_end, label_set=row.set)
-                new_feature.question_heb = row.question_heb
-                new_feature.question_heb_max_min_ideal = row.question_heb_max_min_ideal
-                new_feature.presenting_name = row.presenting_name
-                new_feature.save()
+            if not IS_UPDATE:
+                new_feature = FeatureLabels(feature_name=row.feature)
+            else:
+                new_feature = FeatureLabels.objects.get(feature_name=row.feature)
+            new_feature.right_end=row.right_end
+            new_feature.left_end=row.left_end
+            new_feature.label_set=row.set
+            new_feature.question_heb = row.question_heb
+            new_feature.question_heb_max_min_ideal = row.question_heb_max_min_ideal
+            new_feature.presenting_name = row.presenting_name
+            new_feature.save()
 
     def create_sham_questions(sham_df):
         ShamQuestion.objects.all().delete()
@@ -76,7 +84,7 @@ def run():
         series = phases_trials[phases_trials['phase'] == phase][col_name]
         n = 0
         trials_list = ""
-        
+
         if not _is_sereis_empty(series):
             values_list = series.values[0].split(", ")
             trials_list = ", ".join(values_list)
@@ -85,26 +93,27 @@ def run():
         return trials_list, n
 
     def create_experiment_phases():
-        ExperimentPhase.objects.all().delete()
+        global IS_UPDATE
+        if not IS_UPDATE:
+            ExperimentPhase.objects.all().delete()
         exp_phases = _get_txt_list(os.path.join(CURRENT_APP_NAME,"myUtils", 'phases.txt'), "\n")
         path = os.path.join(CURRENT_APP_NAME,"myUtils","phases trials.xlsx")
         phases_trials = pd.read_excel(path)
         for i, phase in enumerate(exp_phases):
-            phase_query = ExperimentPhase.objects.filter(name=phase)
             experiment = Experiment.objects.get(name=EXPERIMENT_NAME)
-            if len(phase_query) == 0:
+            if not IS_UPDATE:
                 new_phase = ExperimentPhase(name=phase, phase_place=i+1, experiment=experiment)
-                practice_trials_content, n_practice_trials = _get_trials(phases_trials, phase, "practice_trials_content")
-                trials_content, n_trials = _get_trials(phases_trials, phase, "trials_content")
-                new_phase.n_practice_trials = n_practice_trials
-                new_phase.practice_trials_content = practice_trials_content
-                new_phase.trials_content = trials_content
-                new_phase.n_trials = n_trials
-                new_phase.save()
-
-
-        # n_trials = models.IntegerField(default=999)
-        # n_practice_trials = models.IntegerField(default=999)
+            else:
+                new_phase = ExperimentPhase.objects.get(name=phase)
+            new_phase.phase_place = i+1
+            new_phase.experiment = experiment
+            practice_trials_content, n_practice_trials = _get_trials(phases_trials, phase, "practice_trials_content")
+            trials_content, n_trials = _get_trials(phases_trials, phase, "trials_content")
+            new_phase.n_practice_trials = n_practice_trials
+            new_phase.practice_trials_content = practice_trials_content
+            new_phase.trials_content = trials_content
+            new_phase.n_trials = n_trials
+            new_phase.save()
 
     def create_instructinos(): # Depends on an existing "Experiment" instance of SGS1
         Instruction.objects.all().delete()
@@ -147,12 +156,17 @@ def run():
 
     def create_models():
         models = pd.read_excel(os.path.join(CURRENT_APP_NAME,"myUtils","models.xlsx"))
-        SimilarityContextModel.objects.all().delete()
+        global IS_UPDATE
+        if not IS_UPDATE:
+            SimilarityContextModel.objects.all().delete()
         for label in ["A", "B", "C"]:
             features = [feature.feature_name for feature in FeatureLabels.objects.filter(label_set=label)]
             for i, row in models.iterrows():
-                context_model = SimilarityContextModel(context=Context.objects.get(name=row.context), label_set=label)
-                context_model.save()
+                if not IS_UPDATE:
+                    context_model = SimilarityContextModel(context=Context.objects.get(name=row.context), label_set=label)
+                    context_model.save()
+                else:
+                    context_model = SimilarityContextModel.objects.get(context=Context.objects.get(name=row.context), label_set=label)
                 for feature in features:
                     if feature in models.columns:
                         feature_label = FeatureLabels.objects.get(feature_name=feature)
@@ -212,12 +226,12 @@ def run():
     features_names = features_df.feature.tolist()
 
     create_experiment_instance()
-    create_experiment_phases()
+    create_experiment_phases() # updte sensitive
     create_instructinos() # deletes all previous instances
-    create_feature_labels(features_df)
+    create_feature_labels(features_df) # updte sensitive
     create_sham_questions(sham_questions_df)
     create_contexts()
-    create_models()
+    create_models() # updte sensitive
     create_n_pilot_profiles(3)
     # squezze_in_new_phases()
 

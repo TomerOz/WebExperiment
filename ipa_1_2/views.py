@@ -213,7 +213,7 @@ def _get_new_subject_profile_page_context(users_subject):
     return {"features_list" : json.dumps(features_list)}
 
 # Builds a generic context that is used in all views (db-html-js context, not manipulated context)
-def _get_context(form_phase, instructions_list, single_instruction_text, off_order_instructions, pictures_paths, n_trials, n_practice_trials, errors):
+def _get_context(form_phase, instructions_list, single_instruction_text, off_order_instructions, words_to_highlight, pictures_paths, n_trials, n_practice_trials, errors):
     context = {
                 "form_phase": form_phase,
                 "instructions_list":  json.dumps(instructions_list),
@@ -224,6 +224,7 @@ def _get_context(form_phase, instructions_list, single_instruction_text, off_ord
                 "errors": errors,
                 "errorsJSON": json.dumps(errors),
                 "pictures_paths": pictures_paths,
+                "words_to_highlight": json.dumps(words_to_highlight),
                 }
     return context
 
@@ -274,22 +275,6 @@ def _get_min_similarity(model, subject_profile):
          similarity += w*distance
     return 1-similarity
 
-def _get_inital_artificial_profile(user_profile_data, users_subject, target_similarity, relative_similarity_level, model):
-    profile = copy.deepcopy(user_profile_data)
-    model = SimilarityContextModel.objects.get(context__name=users_subject.context_group)
-    create_artificial_profile_3(target_similarity, target_similarity, relative_similarity_level, model, profile, )
-    ipdb.set_trace()
-
-    random.shuffle(profile["features_order"]) ## Maybe should be in the same order
-    profile["is_subject"] = False
-    profile["name"] = " "
-
-    for f_name in user_profile_data["features"]:
-        profile["features"][f_name]
-        profile["features"][f_name]["value"] = random.randint(0,100)
-
-    return profile
-
 def _generate_profile(users_subject, target_similarity, name_instance=""):
     sp = _get_subject_profile(users_subject) # subject profile
     model = SimilarityContextModel.objects.get(context__name=users_subject.context_group, label_set=users_subject.profile_label_set)
@@ -302,10 +287,6 @@ def _generate_profile(users_subject, target_similarity, name_instance=""):
 
     ap_name = "Artificial-" + str(target_similarity) + "-" + name_instance + "-Subject-" + users_subject.subject_num
     ap["name"] = ap_name
-
-    # to delet: ++ delete the "_get_feature_distance_dict" and "_get_inital_artificial_profile" functions
-    # distances_dict = _get_feature_distance_dict(sp, ap)
-    # ap = _get_inital_artificial_profile(sp, users_subject, target_similarity, relative_similarity_level, model) # artificial profile
 
     # save this profile
     ArtificialProfileModel.objects.filter(target_subject=users_subject, name=ap_name).delete() # first_deleting an existing profile
@@ -350,11 +331,12 @@ def _get_profile_list_for_profiles_presentation_phase(subject):
     practice = artificials.filter(name__contains='Practice')
     trials = artificials.filter(name__contains='Trials')
 
+    NUMBER_OF_DUBLICATED_ARTICIAL_PROFILES = 4
     all  = _get_list_from_query_set(min_max) + _get_list_from_query_set(regulars) + _get_list_from_query_set(sp_model) \
-     + _get_list_from_query_set(trials)
+     + _get_list_from_query_set(trials) + random.sample(_get_list_from_query_set(trials), NUMBER_OF_DUBLICATED_ARTICIAL_PROFILES)
 
-    practice_context = _get_profiles_list_context(practice)
-    regulars_min_max_trials_subject = _get_profiles_list_context(all)
+    practice_context = _get_profiles_list_context(practice) # _get_profiles_list_context also shuffles trials order
+    regulars_min_max_trials_subject = _get_profiles_list_context(all) # _get_profiles_list_context also shuffles trials order
     all_profiles_list = [] + regulars_min_max_trials_subject["profiles_list"]
     regulars_min_max_trials_subject.update(practice_context) # addint the profiles data
     regulars_min_max_trials_subject["profiles_list"] = practice_context["profiles_list"] + all_profiles_list # putting practice profiles first
@@ -378,9 +360,9 @@ def _update_context_if_necessry(context, current_phase, users_subject):
         peofiles = _get_profile_list_for_profiles_presentation_phase(users_subject)
         context.update({"context":json.dumps(peofiles)})
         context.update({"maxValue":users_subject.max_similarity_value,
-                        "maxName":users_subject.max_similarity_name,
+                        "maxName": json.dumps(users_subject.max_similarity_name),
                         "minValue":users_subject.min_similarity_value,
-                        "minName":users_subject.min_similarity_name,
+                        "minName": json.dumps(users_subject.min_similarity_name),
                         })
     elif current_phase == "Identification Task":
         _create_subject_artificials_for_this_phase(users_subject, practice_name="---", trials_name="SlowPhase")
@@ -415,11 +397,16 @@ def _update_context_if_necessry(context, current_phase, users_subject):
     return context # if condition fails, context remain untouched
 
 def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, single_instruction, off_order_instructions):
-    if subject.current_phase.name == "Pre Get Max Profile":
+    words_to_highlight = []
+    if subject.current_phase.name == "Get Min Max Similarity":
+        words_to_highlight = words_to_highlight + ["הדומה לך ביותר", "הכי פחות", "כדומה לך ביותר"]
+    elif subject.current_phase.name == "Pre Get Max Profile":
         single_instruction = single_instruction.format(subject.max_similarity_name)
+        words_to_highlight = words_to_highlight+ [subject.max_similarity_name, "כדומה לך ביותר"]
         phases_instructions[0] = phases_instructions[0].format(subject.max_similarity_name)
     elif subject.current_phase.name == "Pre Get Min Profile":
         single_instruction = single_instruction.format(subject.min_similarity_name)
+        words_to_highlight = words_to_highlight+ [subject.min_similarity_name,"כהכי פחות דומה לך"]
         phases_instructions[0] = phases_instructions[0].format(subject.min_similarity_name)
     elif subject.current_phase.name == "Pre Get Profile":
         phases_instructions[0] = phases_instructions[0].format(off_order_instructions[subject.profile_label_set])
@@ -438,7 +425,7 @@ def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, singl
         off_order_instructions["Other_Ba"] = off_order_instructions["other"].format(game.strategy_b, game.strategy_a)
         off_order_instructions["Other_Bb"] = off_order_instructions["other"].format(game.strategy_b, game.strategy_b)
 
-    return phases_instructions, single_instruction, off_order_instructions
+    return phases_instructions, single_instruction, off_order_instructions, words_to_highlight
 
 def _get_game_data(subject):
     # How it will look once models are updaed:
@@ -498,8 +485,8 @@ def render_next_phase(request, users_subject):
     phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
     n_trials, n_practice_trials = _get_n_trials_and_practice_trials(users_subject)
-    phases_instructions, single_instruction, off_order_instructions = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction, off_order_instructions)
-    context_to_send = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, pictures_paths, n_trials, n_practice_trials, errors)
+    phases_instructions, single_instruction, off_order_instructions, words_to_highlight = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction, off_order_instructions)
+    context_to_send = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, words_to_highlight, pictures_paths, n_trials, n_practice_trials, errors)
     context_to_send = _update_context_if_necessry(context_to_send, users_subject.current_phase.name, users_subject)
     return render(request, 'ipa_1_2/{}.html'.format(phase_to_html_page[users_subject.current_phase.name]), context_to_send)
 

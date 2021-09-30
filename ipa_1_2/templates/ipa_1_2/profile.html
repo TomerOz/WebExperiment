@@ -11,67 +11,59 @@
     <link rel="stylesheet" href="{% static 'ipa_1_2/profile/getSimilarity.css' %}">
     <link rel="stylesheet" href="{% static 'ipa_1_2/profile/anchorsStyle.css' %}">
   </head>
+  <br>
   <body id="body">
-    <br>
-    <br>
-    <div class="slidecontainer text-center" id="slidecontainer">
+    <div id="featuresTable">
+      <table>
+        <tr class="thirdScreen">
+          <td></td>
+        </tr>
+        <tr class="thirdScreen">
+          <td>
+            <div class="slidecontainer text-center" id="slidecontainer"></div>
+            <div class="buttonMoreLess">
+              <br><br><button id="nextFeatureButton" class="btn btn-primary btn" type="button" name="button">הבא</button>
+            </div>
+            <div id="inTaskInstructions" class="buttonMoreLess">
+              <p id="inTaskInstructionsText"></p>
+              <br><br><button id="nextFromInstructions" class="btn btn-primary btn" type="button" name="button">התחל מטלה</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="thirdScreen">
+          <td></td>
+        </tr>
+      </table>
     </div>
-    <br>
-      <div class="container text-center">
-        <div id="profileDescriptionDiv">
-          <textarea style="direction: rtl; resize: none" id="profileDescription" placeholder="הכנס תיאור כאן" name="profileDescription" cols=100 rows="4"></textarea>
-        </div>
-      </div>
-
-      <div id="SimilarityReportSection" class="row profiles_size" style="direction:ltr">
-        <br>
-        <div id="presentProfileAgainButtonSection"class="container text-center">
-          <br>
-          <br>
-          <button id="presentProfileAgainButton" class="btn btn-primary btn" type="button" name="button">הצג שוב</button>
-          <br>
-          <br>
-        </div>
-        <br>
-        <canvas id="myCanvas" width="400" height="320"></canvas>
-        <br/>
-        <div class="column reportSide">{{ off_order_instructions_dict.lowSimilarity }}</div>
-        <div class="column reportMiddle">
-          <input type="range" min="0" max="100" value="50" class="similaritySlider" id="myRange" name="maxSimilarityValue">
-          <input type="hidden" name="" id="similarityInput" value=100>
-        </div>
-        <div class="column reportSide">{{ off_order_instructions_dict.highSimilarity }}</div>
-      </div>
+    <div class="text-center" id="instrucion" style="direction:rtl">{{off_order_instructions_dict.report_instructions}}<br></div>
+    <div id="SimilarityReportSection" class="row profiles_size" style="direction:ltr">
+      <br><br>
+      <canvas id="CanvasMax" width="300" height="150"></canvas>
+      <canvas id="myCanvas" width="400" height="250"></canvas>
+      <canvas id="CanvasMin" width="300" height="150"></canvas>
+      <input type="hidden" name="" id="similarityInput" value=0>
+    </div>
       <!-- consider deleting the following -->
       <div class="container">
         <input type="hidden" name="form_phase" value="{{ form_phase }}">
       </div>
       <div class="container" id="hiddenInputs"></div>
       <!-- end deletion consideration -->
-
-      <div id="maxAnchor" class="box arrow-top">
-        <span>{{maxName}}</span>
-    </div>
-
-    <div id="minAnchor" class="box arrow-top">
-      <span>{{minName}}</span>
-    </div>
-
       <br>
       <br>
       <div id="NextProfileButtonSection"class="container text-center">
-        <table>
-          <tr>
-            <td><button id="lessSimilarity" class="btn btn-primary btn" type="button" name="button">פחות</button></td>
-            <td><button id="moreSimilarity" class="btn btn-primary btn" type="button" name="button">יותר</button></td>
-          </tr>
-        </table>
-        <br>
-        <br>
-        <br>
-        <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">בחר\י והמשיכ\י</button>
+        <div class="buttonMoreLess">
+          <button id="lessSimilarity" class="btn btn-primary btn" type="button" name="button">פחות</button>
+          <button id="moreSimilarity" class="btn btn-primary btn" type="button" name="button">יותר</button>
+        </div>
+        <div id="presentProfileAgainButtonSection"class="container text-center">
+          <br><br>
+          <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">בחר\י והמשיכ\י</button>
+          <button id="presentProfileAgainButton" class="btn btn-primary btn" type="button" name="button">הצג שוב</button>
+        </div>
         <br>
       </div>
+
       <script>
         var b = document.getElementsByTagName("body")[0];
         b.style.width = window.screen.height
@@ -79,6 +71,8 @@
        var context = {{context|safe}}
        var maxValue = {{maxValue|safe}}
        var minValue = {{minValue|safe}}
+       var maxName = {{maxName|safe}}
+       var minName = {{minName|safe}}
       // working with the variable context
       </script>
     </div>
@@ -101,5 +95,4 @@
 
   <script src="{% static 'ipa_1_2/profile/SliderLogic.js' %}"></script>
   <script src="{% static 'ipa_1_2/profile/getSimilarity.js' %}"></script>
-  <script src="{% static 'ipa_1_2/profile/anchorsLogic.js' %}"></script>
 </html>

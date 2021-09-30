@@ -73,3 +73,14 @@ canvas {
 textarea {
   width: auto;
 }
+
+#instrucion{
+  font-size: 18px;
+  margin-left: 10%;
+  margin-right: 10%;
+  background:#af4c50;
+  color: white;
+  text-align: center;
+  padding: 5px;
+  border-radius: 5px;
+}

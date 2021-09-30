@@ -47,16 +47,24 @@ function GetProfileFeatureData(feature) {
 
 currentFeature = 0;
 function InitializeProfilePresentation(){
+  nextFeatureButton.disabled = true;
+  setTimeout(setEngagementTrue, engagementTime)
   if(currentFeature < context.length){
     hiddenInputs.innerHTML = hiddenInputs.innerHTML + getHiddenInputOfLastFeature(currentFeature-1);
     feature = context[currentFeature];
     feature_title, right_end, left_end, feature_name = GetProfileFeatureData(feature);
     slidecontainer.innerHTML = InjectProfileDataToHTML(feature_title, right_end, left_end, feature_name, default_value);
+    feature_slider = document.getElementById(feature_name);
+    feature_slider.addEventListener("mousedown",setEngagementTrue);
     currentFeature += 1;
   } else {
     featuresForm.submit();
 }};
 
-InitializeProfilePresentation();
+var engagementTime = 30000;
+function setEngagementTrue(){
+  nextFeatureButton.disabled = false;
+}
 
+InitializeProfilePresentation();
 nextFeatureButton.addEventListener('click', InitializeProfilePresentation);

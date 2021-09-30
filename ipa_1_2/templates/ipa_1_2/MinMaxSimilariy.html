@@ -40,29 +40,29 @@
             <!-- <div id="MaxSimilaritySection" class="item"><label for="maxSimilarity"> <h3>{{ off_order_instructions_dict.MaxName }}<span> :</span></h3></label> -->
             <div id="MaxSimilaritySection" class="item">
               <div id="maxSimilarityQuestion">
-              <label for="maxSimilarity"> <h3>{{ off_order_instructions_dict.askMax }}<span> :</span></h3></label>
-              <div class="input-group">
-                <input type="text" id="maxSimilarity" name="maxSimilarityName" min="1" max="50" required>
+                <label id="maxSimilarityQuestionText" for="maxSimilarity"> <h3>{{ off_order_instructions_dict.askMax }}<span> :</span></h3></label>
+                <div class="input-group">
+                  <input type="text" id="maxSimilarity" name="maxSimilarityName" min="1" max="50" required>
+                </div>
               </div>
-            </div>
               <div id="MaxSimilarityReportSection" class="row" style="direction:ltr">
                 <p>
                   <h3 style="direction:rtl" id="beforeReportMax">{{ off_order_instructions_dict.reportMaxSimilarity }}</h3>
                 </p>
                 <canvas id="myCanvas" width="400" height="320"></canvas>
                 <br/>
-                <div class="column side">{{ off_order_instructions_dict.lowSimilarity }}</div>
-                <div class="column middle">
-                  <input type="range" min="0" max="100" value="50" class="slider" id="myRange" name="maxSimilarityValue">
+                <div class="buttonMoreLess">
+                  <button id="lessSimilarityMax" class="btn btn-primary btn" type="button" name="button">פחות</button>
+                  <button id="moreSimilarityMax" class="btn btn-primary btn" type="button" name="button">יותר</button>
+                  <input type="hidden" name="similarityInputMax" id="similarityInputMax" value=0>
                 </div>
-                <div class="column side">{{ off_order_instructions_dict.highSimilarity }}</div>
               </div>
-              <span class="input-group-btn"><button id="approve_name_1" type="button" href="/">המשך</button></span>
+                <span class="input-group-btn"><button id="approve_name_1" type="button" href="/">המשך</button></span>
             </div>
 
             <div id="MinSimilaritySection" class="item">
               <div id="minSimilarityQuestion">
-                <label for="minSimilarity"><h3>{{ off_order_instructions_dict.askMin }}<span> :</span></h3></label>
+                <label id="minSimilarityQuestionText" for="minSimilarity"><h3>{{ off_order_instructions_dict.askMin }}<span> :</span></h3></label>
                 <div class="input-group">
                   <input type="text" id="minSimilarity" name="minSimilarityName" min="1" max="50" required>
                 </div>
@@ -73,11 +73,11 @@
                 </p>
                 <canvas id="myCanvas2" width="400" height="320"></canvas>
                 <br/>
-                <div class="column side">{{ off_order_instructions_dict.lowSimilarity }}</div>
-                <div class="column middle">
-                  <input type="range" min="0" max="100" value="50" class="slider" id="myRange2" name="minSimilarityValue">
+                <div class="buttonMoreLess">
+                  <button id="lessSimilarityMin" class="btn btn-primary btn" type="button" name="button">פחות</button>
+                  <button id="moreSimilarityMin" class="btn btn-primary btn" type="button" name="button">יותר</button>
+                  <input type="hidden" name="similarityInputMin" id="similarityInputMin" value=0>
                 </div>
-                <div class="column side">{{ off_order_instructions_dict.highSimilarity }}</div>
               </div>
                 <span class="input-group-btn"><button id="approve_name_2" type="button" href="/">המשך</button></span>
             </div>
@@ -95,6 +95,7 @@
     <script>
      var instructions_list = {{instructions_list|safe}}
      var errorsJSON = {{errorsJSON|safe}}
+     var wordsToHighlight = {{words_to_highlight|safe}}
     // working with the variable context
     </script>
     </div>

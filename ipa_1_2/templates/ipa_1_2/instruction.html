@@ -9,21 +9,21 @@
   </head>
   <body>
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'profilePresntaion/IndexStyle.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'ipa_1_2/IndexStyle.css' %}">
     {% if instructions_list %}
     <br>
     <br>
-  <div class="container">
+    <div class="container">
     <div id="instructionContainer" class="jumbotron">
-      <!-- Here instructions will be inserted -->
-      {{instructions_list}} Place Holder holer holder
     </div>
     {% endif %}
 
       <!-- <img src="{% static 'profilePresntaion/media/images/Romantic.jpg' %}" height="300" width="300" alt="missing"> -->
       {% if pictures_paths %}
         {% for path in pictures_paths %}
-          <img style="width: 40%;height: auto;" src="{% static path %}" alt="">
+        <div class="container">
+          <img style="width: 80%;height: auto;" src="{% static path %}" alt="">
+        </div>
         {% endfor %}
       {% endif %}
 
@@ -36,6 +36,8 @@
   </div>
     <script>
      var instructions_list = {{instructions_list|safe}}
+     var wordsToHighlight = {{words_to_highlight|safe}}
+
     </script>
 
   </body>

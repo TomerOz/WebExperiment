@@ -10,7 +10,7 @@ currentInstruction = 0;
 
 function HandleInstructions() {
   if(currentInstruction < instructions_list.length) {
-      instructionTextContainer.textContent = instructions_list[currentInstruction];
+      instructionTextContainer.innerHTML = instructions_list[currentInstruction];
       currentInstruction += 1;
   } else {
     // instructionTextContainer.textContent  = ""
@@ -19,4 +19,8 @@ function HandleInstructions() {
   };
 };
 HandleInstructions()
+
+for (var i = 0; i < wordsToHighlight.length; i++) {
+  instructionTextContainer.innerHTML = instructionTextContainer.innerHTML.replace(wordsToHighlight[i],"<strong>" + wordsToHighlight[i] + "</strong>")
+}
 nextButton.addEventListener("click", HandleInstructions);

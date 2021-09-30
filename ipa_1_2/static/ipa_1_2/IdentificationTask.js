@@ -14,8 +14,8 @@ var instructionContainer = document.getElementById("instructionContainer");
 var textContainer = document.getElementById("textContainer");
 var nextInstructionButton = document.getElementById("NextInstructionButton");
 
-var PeofileWaitTime = 200// 15000; // 15 seconds until button appears
-var BetweenProfilesInterval = 100// 1000; // 1 seconds between profiles
+var PeofileWaitTime = 3000 // 15000; // 15 seconds until button appears
+var BetweenProfilesInterval = 1000// 1000; // 1 seconds between profiles
 
 var db_features = "features";
 var current_profile = 0;

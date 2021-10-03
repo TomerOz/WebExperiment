@@ -25,8 +25,8 @@ var rMax = canvasMax.width/4
 var x1Max = r/2 + canvasMax.width/2 + (50-(90))
 var x2Max = canvasMax.width/ 2 - r/2 - (50-(90))
 var reportColor = '#af4c50';
-var reportColorMin = '#af4c9a';
-var reportColorMax = '#af4c9a';
+var reportColorMin = '#CAB7A1';
+var reportColorMax = '#B29576';
 
 function drawBall(ctx, x1, x2, y, r, reportColor) {
   // circle 1:
@@ -49,13 +49,23 @@ function drawBall(ctx, x1, x2, y, r, reportColor) {
   ctx.fill();
   ctx.closePath();
 }
-function DrawAgain(canvas, ctx, x1, x2, y, r, reportColor, similarityValue){
+// function DrawAgain(canvas, ctx, x1, x2, y, r, reportColor, similarityValue){
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+//     x1 = r/2 + canvas.width/2 + (50-(similarityValue))/100 * canvas.width/4
+//     x2 = canvas.width/ 2 - r/2 - (50-(similarityValue))/100 * canvas.width/4
+//     drawBall(ctx, x1, x2, y, r, reportColor);
+// };
+
+function DrawAgain(canvas, ctx, y, r, reportColor, similarityValue){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    x1 = r/2 + canvas.width/2 + (50-(similarityValue))/100 * canvas.width/4
-    x2 = canvas.width/ 2 - r/2 - (50-(similarityValue))/100 * canvas.width/4
+    x1 =  canvas.width/2 - (100 - similarityValue)*r/100
+    x2 = canvas.width/2 + (100 - similarityValue)*r/100
     drawBall(ctx, x1, x2, y, r, reportColor);
 };
 
+function ClearCircles(canvas, ctx){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+};
 
 var mouseDown = 0;
 document.body.onmousedown = function() {
@@ -66,21 +76,33 @@ document.body.onmouseup = function() {
 }
 
 function changeCircles(){
-  if(similarityInput.value == minValue){
-    reportColor = reportColorMin;
-  } else if (similarityInput.value == maxValue){
-    reportColor = reportColorMax;
-  } else {
-    reportColor = '#af4c50';
-  }
-  DrawAgain(canvas, ctx, x1, x2, y, r, reportColor, similarityInput.value);
+  if(current_profile < nPracticeTrials){
+    if(similarityInput.value == minValue){
+      reportColor = reportColorMin;
+    } else if (similarityInput.value == maxValue){
+      reportColor = reportColorMax;
+    } else {
+      reportColor = '#af4c50';
+    }
+  };
+  DrawAgain(canvas, ctx, y, r, reportColor, similarityInput.value);
 };
 
 function PresentAllCircles(){
-  reportColor = '#af4c50';
-  DrawAgain(canvasMax, ctxMax, x1Max, x2Max, yMax, rMax, reportColorMax, maxValue);
-  DrawAgain(canvas, ctx, x1, x2, y, r, reportColor, similarityInput.value);
-  DrawAgain(canvasMin, ctxMin, x1Min, x2Min, yMax, rMin, reportColorMin, minValue);
+  if(current_profile < nPracticeTrials){
+    reportColor = '#af4c50';
+    DrawAgain(canvasMax, ctxMax, yMax, rMax, reportColorMax, maxValue);
+    DrawAgain(canvas, ctx, y, r, reportColor, similarityInput.value);
+    DrawAgain(canvasMin, ctxMin, yMax, rMin, reportColorMin, minValue);
+    AddMinMaxNames();
+  } else {
+    reportColor = '#767676';
+    ClearCircles(canvasMax, ctxMax);
+    ClearCircles(canvasMin, ctxMin);
+    canvasMax.style.display = "none";
+    canvasMin.style.display = "none";
+    DrawAgain(canvas, ctx, y, r, reportColor, similarityInput.value);
+  }
 };
 
 function AddMinMaxNames(){

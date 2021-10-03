@@ -75,3 +75,26 @@
   text-align: center;
   margin: 0px;
 }
+
+table{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+td {
+  width: 85vw;
+}
+
+.thirdScreen {
+  height: 25vh;
+  width: 85vw;
+}
+
+.buttonMoreLess{
+  margin: auto;
+  text-align: center;
+}
+
+#nextFeatureButton{
+  margin: auto;
+}

@@ -123,8 +123,8 @@ function drawBall2() {
 
 function drawAgain2(direction) {
     ctx2_2.clearRect(0, 0, canvas2.width, canvas2.height);
-    x1_2 = r2/2 + canvas2.width/2 + (50-(similarityInputMin.value))/100 * canvas2.width/4
-    x2_2 = canvas2.width/ 2 - r2/2 - (50-(similarityInputMin.value))/100 * canvas2.width/4
+    x1_2 =  canvas.width/2 - (100 - similarityInputMin.value)*r/100
+    x2_2 = canvas.width/2 + (100 - similarityInputMin.value)*r/100
     drawBall2();
 };
 
@@ -158,8 +158,8 @@ function drawBall() {
 
 function drawAgain(direction) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    x1 = r/2 + canvas.width/2 + (50-(similarityInputMax.value))/100 * canvas.width/4
-    x2 = canvas.width/ 2 - r/2 - (50-(similarityInputMax.value))/100 * canvas.width/4
+    x1 =  canvas.width/2 - (100 - similarityInputMax.value)*r/100
+    x2 = canvas.width/2 + (100 - similarityInputMax.value)*r/100
     drawBall();
 }
 

@@ -72,13 +72,15 @@ class SubjectData(object):
 
         # profiles responses
         profiles_response = self.trials_to_list(subject.trials_responses_list) # respons
-        profiles_rts = self.trials_to_list(subject.profiles_response_times, end="") # rt
+        features_rts = self.trials_to_list(subject.feature_response_times, seperator="-**NextProfile**-", end="-**NextProfile**-") # rt
+        profiles_rts = self.trials_to_list(subject.profiles_response_times, seperator=",", end="") # rt
         profiles_p_name = self.trials_to_list(subject.trials_string_list) # profile name
         profiles_info = self.trials_to_list(subject.profiles_descriptions, seperator="-**NextProfile**-", initial="-**NextProfile**-", end="") # info
         features_order = self.trials_to_list(subject.trial_features_order, seperator="-**NextProfile**-", end="-**NextProfile**-") # info
 
         self.subject_data_dictionary["response_value"] = self.subject_data_dictionary["response_value"] + profiles_response
-        self.subject_data_dictionary["response_time"] = self.subject_data_dictionary["response_time"] + profiles_rts
+        self.subject_data_dictionary["response_time_profiles"] = self.subject_data_dictionary["response_time_profiles"] + profiles_rts
+        self.subject_data_dictionary["response_time_features"] = self.subject_data_dictionary["response_time_features"] + features_rts
         self.subject_data_dictionary["trial_profile"] = self.subject_data_dictionary["trial_profile"] + profiles_p_name
         self.subject_data_dictionary["trial_features_order"] = self.subject_data_dictionary["trial_features_order"] + features_order
         self.subject_data_dictionary["profile_info(sides_or_description)"] = self.subject_data_dictionary["profile_info(sides_or_description)"] + profiles_info
@@ -117,9 +119,6 @@ class SubjectData(object):
         for f in profile_features:
             subject_data_key = prefix+f
             self.subject_data_dictionary[subject_data_key].append(profile_features[f])
-
-
-
         # features names:
         '''
                 "way_of_speech"

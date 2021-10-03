@@ -73,6 +73,7 @@
        var minValue = {{minValue|safe}}
        var maxName = {{maxName|safe}}
        var minName = {{minName|safe}}
+       var n_practice_trials = {{n_practice_trials|safe}}
       // working with the variable context
       </script>
     </div>
@@ -82,7 +83,8 @@
       <input id="subjectResonses" type="hidden" name="responses" value="">
       <input id="profilesList" type="hidden" name="profilesList" value="">
       <input id="profilesDescriptions" type="hidden" name="profilesDescriptions" value="">
-      <input id="subjectRTs" type="hidden" name="subjectRTs" value="">
+      <input id="subjectRTs" type="hidden" name="subjectRTs" value=""> <!-- each feature rt-->
+      <input id="profileRTs" type="hidden" name="profileRTs" value=""> <!-- each profile rt-->
       <input id="trial" type="hidden" name="currentTrial" value="">
       <input id="trialFeatureOrder" type="hidden" name="trialFeatureOrder" value="">
     </form>

@@ -47,7 +47,7 @@ def _create_profile_at_realtive_similarity_same_feature_pattern(subject_profile,
     return artificial_profile
 
 def _get_two_random_features(feature_names):
-    features_indexes = list(range(len(feature_names)-1))
+    features_indexes = list(range(len(feature_names)))
     random.shuffle(features_indexes)
     feature_1 = feature_names[features_indexes[0]]
     feature_2 = feature_names[features_indexes[1]]
@@ -62,43 +62,42 @@ def create_artificial_profile_3(subject_profile, target_similarity, relative_sim
     similarity = get_simialrity_function(model, subject_profile, artificial_profile)
     artificial_profile = _create_profile_at_realtive_similarity_same_feature_pattern(subject_profile, artificial_profile, target_similarity, model)
     similarity2 = get_simialrity_function(model, subject_profile, artificial_profile)
-    # print(similarity2, relative_similarity_level, target_similarity)
-    sampled = []
 
     feature_names = list(artificial_profile["features"].keys())
-    feature_1, feature_2 = _get_two_random_features(feature_names)
-    sampled = sampled + [feature_1, feature_2]
+    for i in range(30):
+        feature_1, feature_2 = _get_two_random_features(feature_names)
+        sampled = []
+        sampled = sampled + [feature_1, feature_2]
 
-    s_f1_value = subject_profile["features"][feature_1]["value"]
-    f1_value = artificial_profile["features"][feature_1]["value"]
-    s_f2_value = subject_profile["features"][feature_2]["value"]
-    f2_value = artificial_profile["features"][feature_2]["value"]
-    f1_can_towards = _get_bouderies(s_f1_value, f1_value, "towards")
-    # f1_can_away = _get_bouderies(subject_profile["features"][feature_1]["value"], artificial_profile["features"][feature_1]["value"], "away")
-    # f2_can_towards = _get_bouderies(subject_profile["features"][feature_2]["value"], artificial_profile["features"][feature_2]["value"], "towards")
-    f2_can_away = _get_bouderies(s_f2_value, f2_value, "away")
-    w1 = model.featureweight_set.get(feature_label__feature_name=feature_1).value
-    w2 = model.featureweight_set.get(feature_label__feature_name=feature_2).value
+        s_f1_value = subject_profile["features"][feature_1]["value"] # subject value in feature 1
+        f1_value = artificial_profile["features"][feature_1]["value"] # profile value in feature 1
+        s_f2_value = subject_profile["features"][feature_2]["value"]
+        f2_value = artificial_profile["features"][feature_2]["value"]
+        f1_can_towards = _get_bouderies(s_f1_value, f1_value, "towards") # how much feature 1 can come towards original value
+        # f1_can_away = _get_bouderies(subject_profile["features"][feature_1]["value"], artificial_profile["features"][feature_1]["value"], "away")
+        # f2_can_towards = _get_bouderies(subject_profile["features"][feature_2]["value"], artificial_profile["features"][feature_2]["value"], "towards")
+        f2_can_away = _get_bouderies(s_f2_value, f2_value, "away") # how much feature 1 can go away from original value
+        w1 = model.featureweight_set.get(feature_label__feature_name=feature_1).value
+        w2 = model.featureweight_set.get(feature_label__feature_name=feature_2).value
+        ws = [w1, w2]
+        fs = [feature_1, feature_2]
 
-    ws = [w1, w2]
-    fs = [feature_1, feature_2]
+        small_i = ws.index(min(ws))
+        big_i = 1-small_i
+        max_movement = int(min(f1_can_towards, f2_can_away))
+        ratio = ws[small_i]/ws[big_i]
+        f_small_move = random.randint(0, max_movement)
+        f_big_move = f_small_move*ratio
 
-    small_i = ws.index(min(ws))
-    big_i = 1-small_i
-    max_movement = int(min(f1_can_towards, f2_can_away))
-    ratio = ws[small_i]/ws[big_i]
-    f_small_move = random.randint(0, max_movement)
-    f_big_move = f_small_move*ratio
+        f1_towards_direction = 1 if s_f1_value >= f1_value else -1
+        f2_away_direction = -1 if s_f2_value >= f2_value else 1
 
-    f1_towards_direction = 1 if s_f1_value >= f1_value else -1
-    f2_away_direction = -1 if s_f2_value >= f2_value else 1
+        values_profile = [f1_value, f2_value]
+        directions = [f1_towards_direction, f2_away_direction]
+        nf_big_w_value = values_profile[big_i] + directions[big_i]*f_big_move
+        nf_small_w_value = values_profile[small_i] + directions[small_i]*f_small_move
 
-    values_profile = [f1_value, f2_value]
-    directions = [f1_towards_direction, f2_away_direction]
-    nf_big_w_value = values_profile[big_i] + directions[big_i]*f_big_move
-    nf_small_w_value = values_profile[small_i] + directions[small_i]*f_small_move
-
-    artificial_profile["features"][fs[big_i]]["value"] = nf_big_w_value
-    artificial_profile["features"][fs[small_i]]["value"] = nf_small_w_value
+        artificial_profile["features"][fs[big_i]]["value"] = nf_big_w_value
+        artificial_profile["features"][fs[small_i]]["value"] = nf_small_w_value
 
     return artificial_profile

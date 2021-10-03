@@ -145,6 +145,7 @@ class Subject(ProfileModel):
     trials_responses_list = models.TextField(default="-")
     profiles_descriptions = models.TextField(blank=True)
     profiles_response_times = models.TextField(default="-")
+    feature_response_times = models.TextField(default="-")
     trial_features_order = models.TextField(default="-")
 
     # identification task:

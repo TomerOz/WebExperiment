@@ -91,7 +91,8 @@ class PhasesDataSaver(object):
         subject.trials_responses_list += post_data["responses"]
         subject.trials_string_list += post_data["profilesList"]
         subject.profiles_descriptions += post_data["profilesDescriptions"]
-        subject.profiles_response_times += post_data["subjectRTs"]
+        subject.profiles_response_times += post_data["profileRTs"]
+        subject.feature_response_times += post_data["subjectRTs"]
         subject.trial_features_order += post_data["trialFeatureOrder"]
         subject.save()
 

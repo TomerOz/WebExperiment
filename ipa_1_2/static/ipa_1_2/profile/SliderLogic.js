@@ -4,13 +4,13 @@ var profilesList = document.getElementById("profilesList");
 var showReportButton = document.getElementById('showReportButton');
 var moreSimilarity = document.getElementById('moreSimilarity');
 var lessSimilarity = document.getElementById('lessSimilarity');
-similarityInput = document.getElementById('similarityInput');
-subjectResonses = document.getElementById('subjectResonses');
-profilesDescriptions = document.getElementById('profilesDescriptions'); // the hidden input fiel in the hidden form
-similarityReportSection = document.getElementById("SimilarityReportSection");
+var similarityInput = document.getElementById('similarityInput');
+var subjectResonses = document.getElementById('subjectResonses');
+var profilesDescriptions = document.getElementById('profilesDescriptions'); // the hidden input fiel in the hidden form
+var similarityReportSection = document.getElementById("SimilarityReportSection");
 var instrucionSection = document.getElementById("instrucion");
-nextProfileButtonSection = document.getElementById("NextProfileButtonSection");
-trialFeatureOrder = document.getElementById("trialFeatureOrder");
+var nextProfileButtonSection = document.getElementById("NextProfileButtonSection");
+var trialFeatureOrder = document.getElementById("trialFeatureOrder");
 var presentProfileAgainButton = document.getElementById("presentProfileAgainButton");
 var featuresTable = document.getElementById("featuresTable");
 var nextFeatureButton = document.getElementById("nextFeatureButton");
@@ -18,6 +18,8 @@ var inTaskInstructions = document.getElementById("inTaskInstructions");
 var inTaskInstructionsText = document.getElementById("inTaskInstructionsText");
 var nextFromInstructionsButton = document.getElementById("nextFromInstructions");
 var nextProfileButton = document.getElementById("NextProfileButton");
+
+const event = new Event('NewProfile');
 
 var minwWordsPerDescription = 0;
 var milisecondsPerFeature = 1000; //2000;
@@ -35,10 +37,24 @@ var left_end = "l"
 var value = "4"
 var t0;
 var t1;
+var reportT0
+var reportT1
 var rts = [];
+var pRts = [];
 var featuresOrderOfPresentation = [];
-
-const event = new Event('NewProfile');
+var preProfile = "מיד תחל הצגת פרופיל חדש"
+var texts_pre_profile = [preProfile, 3,2,1]
+var pre_profile_counter = 0
+var feature_presentaion_index;
+var buttonClicked = false;
+var intervalID;
+var changeRate = 25;
+var contiousDelay = 500;
+var direction;
+var sim_value = parseInt(similarityInput.value);
+var nPracticeTrials = n_practice_trials // n_practice_trials comes from views
+var instructionEndOfPracticePresnted = false;
+var timeOutIntervalIDs = [];
 
 function shuffle(array) {
   let currentIndex = array.length,  randomIndex;
@@ -98,31 +114,33 @@ function GetProfileFeatureData (feature) {
 };
 
 function startReportPhase(){
+  if(reportT0 == null){
+    reportT0 = new Date();
+  }
   featuresTable.style.display = "none";
   slidecontainer.innerHTML = "";
   body = document.getElementsByTagName("body")[0];
   instrucionSection.style.display = "block";
   similarityReportSection.style.display = "block";
   PresentAllCircles(); // event NewProfile is defined in Slider logic
-  AddMinMaxNames();
   nextProfileButtonSection.style.display = "block";
 };
 
-
 function InitializeProfilePresentation(current_profile){
+  RecordTime();
   var profile_features = context[all_profiles_ids[current_profile]][db_features];
   var features_list = context[all_profiles_ids[current_profile]]["features_order"];
   slidecontainer.innerHTML = "";
   if(feature_presentaion_index < features_list.length-1) {
     delayActivateButton();
     feature_presentaion_index += 1;
-    InitiateTimeCount(); // move to the end of the preocess
     feature = profile_features[features_list[feature_presentaion_index]];
     right_end, left_end, value = GetProfileFeatureData(feature);
     // check if the property/key is defined in the object itself, not in parent
     if (profile_features.hasOwnProperty(features_list[feature_presentaion_index])) {
       slidecontainer.innerHTML = InjectProfileDataToHTML(profile_features[features_list[feature_presentaion_index]].name_to_present, right_end, left_end, value);
       featuresOrderOfPresentation.push(context[all_profiles_ids[current_profile]]["features_order"][feature_presentaion_index])
+      InitiateTimeCount();
     };
   } else if(featuresPresentaionNumber < presentationNumber) {
     feature_presentaion_index = -1;
@@ -130,13 +148,14 @@ function InitializeProfilePresentation(current_profile){
     getShuffledNoReppetition(context[all_profiles_ids[current_profile]]["features_order"]);
     InitializeProfilePresentation(current_profile);
   } else {
+      t0 = null; // reseting the time
       startReportPhase();
   };
 };
 
 // Next Trial - New profile:
 function startNextTrial(){
-  if(current_profile == 1 && instructionEndOfPracticePresnted == false){
+  if(current_profile == nPracticeTrials-1 && instructionEndOfPracticePresnted == false){
     HideReoportSection();
     featuresTable.style.display = "block";
     instructionEndOfPracticePresnted = true;
@@ -146,13 +165,17 @@ function startNextTrial(){
   } else {
     inTaskInstructions.style.display = "none";
     if(document.title == "profile"){
-      RecordTime();
+      reportT1 = new Date();
+      pRts.push(reportT1-reportT0);
+      reportT0 = null; // reseting reportT0 to null
+
       profile_dictionary = context[all_profiles_ids[current_profile]];
       profilesList.value = profilesList.value + profile_dictionary.name + "," ;
       subjectResonses.value = subjectResonses.value + similarityInput.value + ",";
       trialFeatureOrder.value = trialFeatureOrder.value + featuresOrderOfPresentation.toString() + "-**NextProfile**-";
       featuresOrderOfPresentation = []; // emptying the list after data was saved
-      subjectRTs.value = rts.toString();
+      subjectRTs.value = subjectRTs.value + rts.toString(); + + "-**NextProfile**-"
+      profileRTs.value = pRts.toString();
       similarityInput.value = 0;
       sim_value = parseInt(similarityInput.value);
       preProfile = "מיד תחל הצגת פרופיל חדש";
@@ -183,17 +206,14 @@ function startNextTrial(){
 
 function RecordTime() {
   t1 = new Date();
-  rts.push(t1-t0);
+  if(t0 != null){
+    rts.push(t1-t0);
+  }
 }
+
 function InitiateTimeCount() {
   t0 = new Date();
 }
-
-var preProfile = "מיד תחל הצגת פרופיל חדש"
-var texts_pre_profile = [preProfile, 3,2,1]
-var pre_profile_counter = 0
-var feature_presentaion_index;
-
 
 function ProfileCountDown() {
   nextFeatureButton.style.display = "none";
@@ -210,7 +230,6 @@ function ProfileCountDown() {
   };
 };
 
-
 function PresentProfileAgain(){
   preProfile = "מיד תחל הצגה מחודשת של פרופיל זה"
   texts_pre_profile[0] = preProfile;
@@ -223,13 +242,6 @@ function PresentProfileAgain(){
   HideReoportSection();
   ProfileCountDown();
 };
-
-var buttonClicked = false;
-var intervalID;
-var changeRate = 25;
-var contiousDelay = 500;
-var direction;
-var sim_value = parseInt(similarityInput.value);
 
 function ChagngeSimilarityValue(direction){
   if (direction == "+"){
@@ -244,46 +256,12 @@ function ChagngeSimilarityValue(direction){
 
 function ContinuousPressChange(direction){
   if(buttonClicked==true){
-    setTimeout(function(){ContinuousPressChange(direction)}, changeRate);
+    idTO = setTimeout(function(){ContinuousPressChange(direction)}, changeRate);
+    timeOutIntervalIDs.push(idTO);
     ChagngeSimilarityValue(direction)
     changeCircles();
   };
 };
-
-moreSimilarity.addEventListener("mousedown", function(){
-  buttonClicked = true;
-  direction = "+";
-  ChagngeSimilarityValue(direction)
-  changeCircles();
-  setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
-});
-
-moreSimilarity.addEventListener("mouseup", function(){
-  clearInterval(intervalID);
-  buttonClicked = false;
-});
-
-lessSimilarity.addEventListener("mousedown", function(){
-  buttonClicked = true;
-  direction = "-";
-  ChagngeSimilarityValue(direction)
-  changeCircles();
-  setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
-});
-
-lessSimilarity.addEventListener("mouseup", function(){
-  clearInterval(intervalID);
-  buttonClicked = false;
-});
-
-var instructionEndOfPracticePresnted = false;
-
-nextFeatureButton.addEventListener("click", function() {InitializeProfilePresentation(current_profile)});
-nextFromInstructionsButton.addEventListener("click", startNextTrial);
-nextProfileButton.addEventListener("click",startNextTrial);
-presentProfileAgainButton.addEventListener("click", PresentProfileAgain);
-
-nextFeatureButton.disabled = true;
 
 function delayActivateButton(){
   nextFeatureButton.disabled = true;
@@ -292,5 +270,47 @@ function delayActivateButton(){
   }, buttonActivationDelay)
 
 }
-inTaskInstructions.style.display = "none"
+
+moreSimilarity.addEventListener("mousedown", function(){
+  buttonClicked = true;
+  direction = "+";
+  ChagngeSimilarityValue(direction)
+  changeCircles();
+  idTO = setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
+  timeOutIntervalIDs.push(idTO);
+});
+
+moreSimilarity.addEventListener("mouseup", function(){
+  for (var i = 0; i < timeOutIntervalIDs.length; i++) {
+    clearInterval(timeOutIntervalIDs[i]);
+  }
+  timeOutIntervalIDs = [];
+  buttonClicked = false;
+});
+
+lessSimilarity.addEventListener("mousedown", function(){
+  buttonClicked = true;
+  direction = "-";
+  ChagngeSimilarityValue(direction)
+  changeCircles();
+  idTO = setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
+  timeOutIntervalIDs.push(idTO);
+});
+
+lessSimilarity.addEventListener("mouseup", function(){
+  for (var i = 0; i < timeOutIntervalIDs.length; i++) {
+    clearInterval(timeOutIntervalIDs[i]);
+  }
+  timeOutIntervalIDs = [];
+  buttonClicked = false;
+});
+
+nextFeatureButton.disabled = true;
+nextFeatureButton.addEventListener("click", function() {InitializeProfilePresentation(current_profile)});
+nextFromInstructionsButton.addEventListener("click", startNextTrial);
+nextProfileButton.addEventListener("click",startNextTrial);
+presentProfileAgainButton.addEventListener("click", PresentProfileAgain);
+
+inTaskInstructions.style.display = "none";
+
 ProfileCountDown();

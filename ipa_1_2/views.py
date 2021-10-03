@@ -275,16 +275,21 @@ def _get_min_similarity(model, subject_profile):
          similarity += w*distance
     return 1-similarity
 
+def print_profile_debug(model, ap, sp):
+    print(_get_subject_other_similarity(model, ap, sp))
+    for feature in ap["features_order"]:
+        print(feature + " - " + str(ap["features"][feature]["value"]))
+
 def _generate_profile(users_subject, target_similarity, name_instance=""):
     sp = _get_subject_profile(users_subject) # subject profile
     model = SimilarityContextModel.objects.get(context__name=users_subject.context_group, label_set=users_subject.profile_label_set)
     min_s = _get_min_similarity(model, sp) # min possible similarity
     relative_similarity_level = (1-min_s)*target_similarity + min_s
     initial_profile = copy.deepcopy(sp)
+
     ap = create_artificial_profile_3(sp, target_similarity, relative_similarity_level, model, initial_profile, _get_subject_other_similarity)
     random.shuffle(ap["features_order"]) ## Maybe should be in the same order
     ap["is_subject"] = False
-
     ap_name = "Artificial-" + str(target_similarity) + "-" + name_instance + "-Subject-" + users_subject.subject_num
     ap["name"] = ap_name
 
@@ -302,7 +307,7 @@ def _generate_profile(users_subject, target_similarity, name_instance=""):
         ap_feature = FeatureValue(target_profile=ap_instance, target_feature=feature, value=feature_value)
         ap_feature.save()
         ap_instance.save(force_update=True)
-    #ipdb.set_trace()
+    
     return ap
 
 def _get_list_from_query_set(qset):
@@ -314,6 +319,7 @@ def _get_list_from_query_set(qset):
 def _create_subject_artificials_for_this_phase(subject, practice_name="Practice", trials_name="Trials"):
     '''Generates subject artificial profiles for the current phase '''
     practice_similarities_levels = subject.current_phase.get_practice_trials_content()
+
     for slevel in practice_similarities_levels:
         _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - " + practice_name)
 
@@ -340,6 +346,7 @@ def _get_profile_list_for_profiles_presentation_phase(subject):
     all_profiles_list = [] + regulars_min_max_trials_subject["profiles_list"]
     regulars_min_max_trials_subject.update(practice_context) # addint the profiles data
     regulars_min_max_trials_subject["profiles_list"] = practice_context["profiles_list"] + all_profiles_list # putting practice profiles first
+    regulars_min_max_trials_subject["profiles_list"] = regulars_min_max_trials_subject["profiles_list"][0:2]
     return regulars_min_max_trials_subject
 
 # Updates the generic context on specific phases

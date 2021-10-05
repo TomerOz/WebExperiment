@@ -8,12 +8,11 @@ var changeButton = document.getElementById('changeButton');
 var beforeReportMax = document.getElementById('beforeReportMax');
 var beforeReportMin = document.getElementById('beforeReportMin');
 var nextFeatureButton = document.getElementById("nextFeatureButton");
-
 var moreSimilarityMax = document.getElementById('moreSimilarityMax');
 var lessSimilarityMax = document.getElementById('lessSimilarityMax');
-
 var moreSimilarityMin = document.getElementById('moreSimilarityMin');
 var lessSimilarityMin = document.getElementById('lessSimilarityMin');
+var timeOutIntervalIDs = [];
 
 // circles report code 1 - Max:
 var similarityInputMax = document.getElementById('similarityInputMax');
@@ -123,8 +122,8 @@ function drawBall2() {
 
 function drawAgain2(direction) {
     ctx2_2.clearRect(0, 0, canvas2.width, canvas2.height);
-    x1_2 = r2/2 + canvas2.width/2 + (50-(similarityInputMin.value))/100 * canvas2.width/4
-    x2_2 = canvas2.width/ 2 - r2/2 - (50-(similarityInputMin.value))/100 * canvas2.width/4
+    x1_2 =  canvas.width/2 - (100 - similarityInputMin.value)*r/100
+    x2_2 = canvas.width/2 + (100 - similarityInputMin.value)*r/100
     drawBall2();
 };
 
@@ -158,8 +157,8 @@ function drawBall() {
 
 function drawAgain(direction) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    x1 = r/2 + canvas.width/2 + (50-(similarityInputMax.value))/100 * canvas.width/4
-    x2 = canvas.width/ 2 - r/2 - (50-(similarityInputMax.value))/100 * canvas.width/4
+    x1 =  canvas.width/2 - (100 - similarityInputMax.value)*r/100
+    x2 = canvas.width/2 + (100 - similarityInputMax.value)*r/100
     drawBall();
 }
 
@@ -233,6 +232,12 @@ var direction;
 var sim_valueMax = parseInt(similarityInputMax.value);
 var sim_valueMin = parseInt(similarityInputMax.value);
 
+function clearAllIntervals(){
+  for (var i = 0; i < timeOutIntervalIDs.length; i++) {
+    clearInterval(timeOutIntervalIDs[i])};
+  timeOutIntervalIDs = [];
+};
+
 function ChagngeSimilarityValue(direction){
   if (direction == "+"){
      sim_valueMax = Math.min(sim_valueMax+1, 100);
@@ -245,7 +250,8 @@ function ChagngeSimilarityValue(direction){
 };
 function ContinuousPressChange(direction){
   if(buttonClicked==true){
-    setTimeout(function(){ContinuousPressChange(direction)}, changeRate);
+    idTO = setTimeout(function(){ContinuousPressChange(direction)}, changeRate);
+    timeOutIntervalIDs.push(idTO);
     ChagngeSimilarityValue(direction)
     changeCircles();
   };
@@ -256,10 +262,11 @@ moreSimilarityMax.addEventListener("mousedown", function(){
   direction = "+";
   ChagngeSimilarityValue(direction)
   changeCircles();
-  setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
+  idTO = setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
+  timeOutIntervalIDs.push(idTO);
 });
 moreSimilarityMax.addEventListener("mouseup", function(){
-  clearInterval(intervalID);
+  clearAllIntervals();
   buttonClicked = false;
 });
 lessSimilarityMax.addEventListener("mousedown", function(){
@@ -267,10 +274,11 @@ lessSimilarityMax.addEventListener("mousedown", function(){
   direction = "-";
   ChagngeSimilarityValue(direction)
   changeCircles();
-  setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
+  idTO = setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
+  timeOutIntervalIDs.push(idTO);
 });
 lessSimilarityMax.addEventListener("mouseup", function(){
-  clearInterval(intervalID);
+  clearAllIntervals();
   buttonClicked = false;
 });
 
@@ -286,7 +294,8 @@ function ChagngeSimilarityValue2(direction){
 };
 function ContinuousPressChange2(direction){
   if(buttonClicked==true){
-    setTimeout(function(){ContinuousPressChange2(direction)}, changeRate);
+    idTO = setTimeout(function(){ContinuousPressChange2(direction)}, changeRate);
+    timeOutIntervalIDs.push(idTO);
     ChagngeSimilarityValue2(direction)
     changeCircles2();
   };
@@ -297,10 +306,11 @@ moreSimilarityMin.addEventListener("mousedown", function(){
   direction = "+";
   ChagngeSimilarityValue2(direction)
   changeCircles2();
-  setTimeout(function(){ContinuousPressChange2(direction)}, contiousDelay);
+  idTO = setTimeout(function(){ContinuousPressChange2(direction)}, contiousDelay);
+  timeOutIntervalIDs.push(idTO);
 });
 moreSimilarityMin.addEventListener("mouseup", function(){
-  clearInterval(intervalID);
+  clearAllIntervals();
   buttonClicked = false;
 });
 lessSimilarityMin.addEventListener("mousedown", function(){
@@ -308,9 +318,10 @@ lessSimilarityMin.addEventListener("mousedown", function(){
   direction = "-";
   ChagngeSimilarityValue2(direction)
   changeCircles2();
-  setTimeout(function(){ContinuousPressChange2(direction)}, contiousDelay);
+  idTO = setTimeout(function(){ContinuousPressChange2(direction)}, contiousDelay);
+  timeOutIntervalIDs.push(idTO);
 });
 lessSimilarityMin.addEventListener("mouseup", function(){
-  clearInterval(intervalID);
+  clearAllIntervals();
   buttonClicked = false;
 });

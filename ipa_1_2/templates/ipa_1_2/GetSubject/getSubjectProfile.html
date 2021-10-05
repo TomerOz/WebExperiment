@@ -15,19 +15,32 @@
   {% csrf_token %}
   <br>
   <br>
-  <div class="slidecontainer" id="slidecontainer">
-    <!-- <input type="range" min="1" max="100" value="50" class="slider" id="myRange", disabled="Disabled"> -->
+  <div id="featuresTable">
+    <table>
+      <tr class="thirdScreen">
+        <td></td>
+      </tr>
+      <tr class="thirdScreen">
+        <td>
+          <div class="slidecontainer text-center" id="slidecontainer"></div>
+          <div class="buttonMoreLess">
+            <br><br><button id="nextFeatureButton" class="btn btn-primary btn" type="button" name="button">הבא</button>
+          </div>
+          <div id="inTaskInstructions" class="buttonMoreLess"></div>
+        </td>
+      </tr>
+      <tr class="thirdScreen">
+        <td></td>
+      </tr>
+    </table>
   </div>
-  <br>
+
   <div class="container">
     <input type="hidden" name="form_phase" value="{{ form_phase }}">
   </div>
     <div class="container" id="hiddenInputs">
   </div>
 </form>
-<div class="container">
-  <button class="btn btn-primary btn" id="nextFeatureButton" name="button">הבא</button>
-</div>
 
       <script>
        var context = {{features_list|safe}}

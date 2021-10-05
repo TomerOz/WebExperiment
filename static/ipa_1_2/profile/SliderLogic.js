@@ -174,8 +174,9 @@ function startNextTrial(){
       subjectResonses.value = subjectResonses.value + similarityInput.value + ",";
       trialFeatureOrder.value = trialFeatureOrder.value + featuresOrderOfPresentation.toString() + "-**NextProfile**-";
       featuresOrderOfPresentation = []; // emptying the list after data was saved
-      subjectRTs.value = subjectRTs.value + rts.toString(); + + "-**NextProfile**-"
-      profileRTs.value = pRts.toString();
+      subjectRTs.value = subjectRTs.value + rts.toString() + "-**NextProfile**-"
+      rts = []; // needs to be reseted between trials
+      profileRTs.value = pRts.toString(); // updates it self between trials
       similarityInput.value = 0;
       sim_value = parseInt(similarityInput.value);
       preProfile = "מיד תחל הצגת פרופיל חדש";

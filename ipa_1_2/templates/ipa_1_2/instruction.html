@@ -4,30 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, height=device-height initial-scale=1, shrink-to-fit=yes">
     <title>IPA 2020 - Instructions</title>
+    {% load static %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'ipa_1_2/instructionStyle.css' %}">
 
   </head>
   <body>
-    {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'ipa_1_2/IndexStyle.css' %}">
     {% if instructions_list %}
     <br>
     <br>
     <div class="container">
-    <div id="instructionContainer" class="jumbotron">
-    </div>
+    <div id="instructionContainer" class="jumbotron"></div>
     {% endif %}
 
-      <!-- <img src="{% static 'profilePresntaion/media/images/Romantic.jpg' %}" height="300" width="300" alt="missing"> -->
-      {% if pictures_paths %}
-        {% for path in pictures_paths %}
-        <div class="container">
-          <img style="width: 80%;height: auto;" src="{% static path %}" alt="">
-        </div>
-        {% endfor %}
-      {% endif %}
+    <div class="container" id="picturesContainer"></div>
 
-    {{subject}}
     <form id="instructionsForm" class="" method="post">
       {% csrf_token %}
       <input type="hidden" name="form_phase" value="{{ form_phase }}">
@@ -37,6 +29,7 @@
     <script>
      var instructions_list = {{instructions_list|safe}}
      var wordsToHighlight = {{words_to_highlight|safe}}
+     var picturesPaths = {{pictures_paths|safe}}
 
     </script>
 

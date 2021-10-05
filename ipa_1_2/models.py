@@ -27,8 +27,10 @@ class FeatureLabels(models.Model):
     left_end = models.CharField(max_length=200, default="left")
     feature_name = models.CharField(max_length=200, default="Name")
     label_set = models.CharField(max_length=2, default="A") # normal features, blog extracted, or meaningless
-    question_heb = models.CharField(max_length=200, default="Default question?")
-    question_heb_max_min_ideal = models.CharField(max_length=200, default="Default question?")
+    question_heb_male = models.CharField(max_length=200, default="Default question?")
+    question_heb_female = models.CharField(max_length=200, default="Default question?")
+    question_heb_max_min_ideal_male = models.CharField(max_length=200, default="Default question?")
+    question_heb_max_min_ideal_female = models.CharField(max_length=200, default="Default question?")
     presenting_name = models.CharField(max_length=200, default="Default Name")
 
     def __str__(self):
@@ -39,7 +41,8 @@ class ShamQuestion(models.Model):
     left_end = models.CharField(max_length=200, default="left")
     sham_name = models.CharField(max_length=200, default="Name")
     label_set = models.CharField(max_length=2, default="A") # normal features, blog extracted, or meaningless
-    question_heb = models.CharField(max_length=200, default="Default question?")
+    question_heb_male = models.CharField(max_length=200, default="Default question?")
+    question_heb_female = models.CharField(max_length=200, default="Default question?")
     presenting_name = models.CharField(max_length=200, default="Default Name")
 
     def __str__(self):
@@ -143,7 +146,6 @@ class Subject(ProfileModel):
     # profiles assesment - similarity reports:
     trials_string_list = models.TextField(default="-")
     trials_responses_list = models.TextField(default="-")
-    profiles_descriptions = models.TextField(blank=True)
     profiles_response_times = models.TextField(default="-")
     feature_response_times = models.TextField(default="-")
     trial_features_order = models.TextField(default="-")

@@ -28,8 +28,10 @@ def run():
             new_feature.right_end=row.right_end
             new_feature.left_end=row.left_end
             new_feature.label_set=row.set
-            new_feature.question_heb = row.question_heb
-            new_feature.question_heb_max_min_ideal = row.question_heb_max_min_ideal
+            new_feature.question_heb_male = row.question_heb_male
+            new_feature.question_heb_female = row.question_heb_female
+            new_feature.question_heb_max_min_ideal_male = row.question_heb_max_min_ideal_male
+            new_feature.question_heb_max_min_ideal_female = row.question_heb_max_min_ideal_female
             new_feature.presenting_name = row.presenting_name
             new_feature.save()
 
@@ -39,7 +41,8 @@ def run():
             feature_query = ShamQuestion.objects.filter(sham_name=row.feature)
             if len(feature_query) == 0:
                 new_feature = ShamQuestion(sham_name=row.feature, right_end=row.right_end, left_end=row.left_end, label_set=row.set)
-                new_feature.question_heb = row.question_heb
+                new_feature.question_heb_female = row.question_heb_female
+                new_feature.question_heb_male = row.question_heb_male
                 new_feature.presenting_name = row.presenting_name
                 new_feature.save()
 

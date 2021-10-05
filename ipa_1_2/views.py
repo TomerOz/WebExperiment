@@ -83,7 +83,12 @@ def _get_phases_instructions(phase_name, users_subject, errors):
             instructions_list.append(instruction_query.instruction_text)
         # adding the pictures paths:
         for pic_name in instruction_query.pitctures_names.split(", "):
-            pictures_paths.append('ipa_1_2/media/images/' + pic_name)
+            if pic_name=="nan":
+                pictures_paths.append(pic_name)
+            else:
+                pictures_paths.append(r'/static/ipa_1_2/media/images/' + pic_name)
+
+
 
     off_order_instructions_dict = {}
     off_order_instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=False)
@@ -187,13 +192,44 @@ def _get_profiles_list_context(all_profiles):
 def get_profile_question_text(subject, fl):
     text = ""
     if subject.current_phase.name == "Get Max Similarity Profile":
-        text = fl.question_heb_max_min_ideal.format(subject.max_similarity_name)
+        if subject.gender == "male":
+            if fl.feature_name =="c3":
+                text = fl.question_heb_max_min_ideal_male.format(subject.max_similarity_name, "{}")
+            else:
+                text = fl.question_heb_max_min_ideal_male.format(subject.max_similarity_name)
+        else:
+            if fl.feature_name =="c3":
+                text = fl.question_heb_max_min_ideal_female.format(subject.max_similarity_name, "{}")
+            else:
+                text = fl.question_heb_max_min_ideal_female.format(subject.max_similarity_name)
     elif subject.current_phase.name == "Get Min Similarity Profile":
-        text = fl.question_heb_max_min_ideal.format(subject.min_similarity_name)
+        if subject.gender == "male":
+            if fl.feature_name =="c3":
+                text = fl.question_heb_max_min_ideal_male.format(subject.min_similarity_name, "{}")
+            else:
+                text = fl.question_heb_max_min_ideal_male.format(subject.min_similarity_name)
+        else:
+            if fl.feature_name =="c3":
+                text = fl.question_heb_max_min_ideal_female.format(subject.min_similarity_name, "{}")
+            else:
+                text = fl.question_heb_max_min_ideal_female.format(subject.min_similarity_name)
     elif subject.current_phase.name == "Get Ideal Profile":
-        text = fl.question_heb_max_min_ideal.format("העצמי האידאלי שלך")
+        if subject.gender == "male":
+            if fl.feature_name =="c3":
+                text = fl.question_heb_max_min_ideal_male.format("העצמי האידאלי שלך", "{}")
+            else:
+                text = fl.question_heb_max_min_ideal_male.format("העצמי האידאלי שלך")
+        else:
+            if fl.feature_name =="c3":
+                text = fl.question_heb_max_min_ideal_female.format("העצמי האידאלי שלך", "{}")
+            else:
+                text = fl.question_heb_max_min_ideal_female.format("העצמי האידאלי שלך")
+
     else: # get subject self profile
-        text = fl.question_heb
+        if subject.gender == "male":
+            text = fl.question_heb_male
+        else:
+            text = fl.question_heb_female
     return text
 # Preparing context for the a new subject page
 def _get_new_subject_profile_page_context(users_subject):
@@ -307,7 +343,7 @@ def _generate_profile(users_subject, target_similarity, name_instance=""):
         ap_feature = FeatureValue(target_profile=ap_instance, target_feature=feature, value=feature_value)
         ap_feature.save()
         ap_instance.save(force_update=True)
-    
+
     return ap
 
 def _get_list_from_query_set(qset):
@@ -346,7 +382,7 @@ def _get_profile_list_for_profiles_presentation_phase(subject):
     all_profiles_list = [] + regulars_min_max_trials_subject["profiles_list"]
     regulars_min_max_trials_subject.update(practice_context) # addint the profiles data
     regulars_min_max_trials_subject["profiles_list"] = practice_context["profiles_list"] + all_profiles_list # putting practice profiles first
-    regulars_min_max_trials_subject["profiles_list"] = regulars_min_max_trials_subject["profiles_list"][0:2]
+    regulars_min_max_trials_subject["profiles_list"] = regulars_min_max_trials_subject["profiles_list"]
     return regulars_min_max_trials_subject
 
 # Updates the generic context on specific phases
@@ -408,13 +444,13 @@ def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, singl
     if subject.current_phase.name == "Get Min Max Similarity":
         words_to_highlight = words_to_highlight + ["הדומה לך ביותר", "הכי פחות", "כדומה לך ביותר"]
     elif subject.current_phase.name == "Pre Get Max Profile":
-        single_instruction = single_instruction.format(subject.max_similarity_name)
+        single_instruction = single_instruction.format(subject.max_similarity_name, subject.max_similarity_name)
         words_to_highlight = words_to_highlight+ [subject.max_similarity_name, "כדומה לך ביותר"]
-        phases_instructions[0] = phases_instructions[0].format(subject.max_similarity_name)
+        phases_instructions[0] = phases_instructions[0].format(subject.max_similarity_name, subject.max_similarity_name)
     elif subject.current_phase.name == "Pre Get Min Profile":
-        single_instruction = single_instruction.format(subject.min_similarity_name)
+        single_instruction = single_instruction.format(subject.min_similarity_name, subject.min_similarity_name)
         words_to_highlight = words_to_highlight+ [subject.min_similarity_name,"כהכי פחות דומה לך"]
-        phases_instructions[0] = phases_instructions[0].format(subject.min_similarity_name)
+        phases_instructions[0] = phases_instructions[0].format(subject.min_similarity_name, subject.min_similarity_name)
     elif subject.current_phase.name == "Pre Get Profile":
         phases_instructions[0] = phases_instructions[0].format(off_order_instructions[subject.profile_label_set])
     elif subject.current_phase.name == "Matrix tutorial":
@@ -514,8 +550,11 @@ def get_data_page(request):
     paths_files = zip(paths, files)
     return render(request, 'ipa_1_2/data.html', {"paths_files": paths_files})
 
-
-
+def save_try(request):
+    users_subject = _get_user_subject(request.user)
+    sd = SubjectData()
+    sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel)
+    return render(request, 'ipa_1_2/endPage.html')
 
 
 

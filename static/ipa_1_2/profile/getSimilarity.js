@@ -49,10 +49,17 @@ function drawBall(ctx, x1, x2, y, r, reportColor) {
   ctx.fill();
   ctx.closePath();
 }
-function DrawAgain(canvas, ctx, x1, x2, y, r, reportColor, similarityValue){
+// function DrawAgain(canvas, ctx, x1, x2, y, r, reportColor, similarityValue){
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+//     x1 = r/2 + canvas.width/2 + (50-(similarityValue))/100 * canvas.width/4
+//     x2 = canvas.width/ 2 - r/2 - (50-(similarityValue))/100 * canvas.width/4
+//     drawBall(ctx, x1, x2, y, r, reportColor);
+// };
+
+function DrawAgain(canvas, ctx, y, r, reportColor, similarityValue){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    x1 = r/2 + canvas.width/2 + (50-(similarityValue))/100 * canvas.width/4
-    x2 = canvas.width/ 2 - r/2 - (50-(similarityValue))/100 * canvas.width/4
+    x1 =  canvas.width/2 - (100 - similarityValue)*r/100
+    x2 = canvas.width/2 + (100 - similarityValue)*r/100
     drawBall(ctx, x1, x2, y, r, reportColor);
 };
 
@@ -78,15 +85,15 @@ function changeCircles(){
       reportColor = '#af4c50';
     }
   };
-  DrawAgain(canvas, ctx, x1, x2, y, r, reportColor, similarityInput.value);
+  DrawAgain(canvas, ctx, y, r, reportColor, similarityInput.value);
 };
 
 function PresentAllCircles(){
   if(current_profile < nPracticeTrials){
     reportColor = '#af4c50';
-    DrawAgain(canvasMax, ctxMax, x1Max, x2Max, yMax, rMax, reportColorMax, maxValue);
-    DrawAgain(canvas, ctx, x1, x2, y, r, reportColor, similarityInput.value);
-    DrawAgain(canvasMin, ctxMin, x1Min, x2Min, yMax, rMin, reportColorMin, minValue);
+    DrawAgain(canvasMax, ctxMax, yMax, rMax, reportColorMax, maxValue);
+    DrawAgain(canvas, ctx, y, r, reportColor, similarityInput.value);
+    DrawAgain(canvasMin, ctxMin, yMax, rMin, reportColorMin, minValue);
     AddMinMaxNames();
   } else {
     reportColor = '#767676';
@@ -94,7 +101,7 @@ function PresentAllCircles(){
     ClearCircles(canvasMin, ctxMin);
     canvasMax.style.display = "none";
     canvasMin.style.display = "none";
-    DrawAgain(canvas, ctx, x1, x2, y, r, reportColor, similarityInput.value);
+    DrawAgain(canvas, ctx, y, r, reportColor, similarityInput.value);
   }
 };
 

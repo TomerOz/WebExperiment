@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{% static 'ipa_1_2/profile/anchorsStyle.css' %}">
   </head>
   <body id="body">
-    <br>
+    <div id="layerHide" style="margin:auto;text-align:center;"><textarea rows="40"columns="40"></textarea></div>
     <div id="featuresTable">
       <table>
         <tr class="thirdScreen">
@@ -28,12 +28,13 @@
             </div>
             <div id="amplitudeDiv" class="amplitudeDiv">
               <button id="ampLess" class="btn btn-primary btn" type="button" name="button">-</button>
-              <canvas id="amplitudeCanvas" onMouseOver="overColor();"  onMouseOut="leaveColor();" width="200" height="50"></canvas>
+              <canvas id="amplitudeCanvas" onMouseOver="overColor();"  onMouseOut="leaveColor();" width="200" height="120"></canvas>
               <button id="ampMore" class="btn btn-primary btn" type="button" name="button">+</button>
             </div>
             <div id="inTaskInstructions" class="buttonMoreLess">
               <div id="instructionContainer" class="jumbotron">
-                <p id="inTaskInstructionsText">{{ off_order_instructions_dict.practiceTrialsInstructions }}</p>
+                <br><br>
+                <p id="inTaskInstructionsText"></p>
               </div>
               <br><br><button id="nextFromInstructions" class="btn btn-primary btn" type="button" name="button">התחל מטלה</button>
             </div>
@@ -62,8 +63,8 @@
       <br>
       <div id="NextProfileButtonSection"class="container text-center">
         <div class="buttonMoreLess">
-          <button id="lessSimilarity" class="btn btn-primary btn" type="button" name="button">+</button>
-          <button id="moreSimilarity" class="btn btn-primary btn" type="button" name="button">-</button>
+          <button id="lessSimilarity" class="btn btn-primary btn" type="button" name="button">-</button>
+          <button id="moreSimilarity" class="btn btn-primary btn" type="button" name="button">+</button>
         </div>
         <div id="presentProfileAgainButtonSection"class="container text-center">
           <br><br>
@@ -75,6 +76,7 @@
 
       <p style="display:none" id="beforeNewProfile">{{off_order_instructions_dict.beforeNewProfile}}</p>
       <p style="display:none" id="presentAgain">{{off_order_instructions_dict.presentAgain}}</p>
+      <p style="display:none" id="postTrainingInstructions">{{off_order_instructions_dict.practiceTrialsInstructions}}</p>
       <script>
         var b = document.getElementsByTagName("body")[0];
         b.style.width = window.screen.height
@@ -87,7 +89,7 @@
        var n_practice_trials = {{n_practice_trials|safe}}
        var beforeNewProfileText = beforeNewProfile.textContent
        var presentAgainText = presentAgain.textContent
-       var inTaskInstructionsTextVar = inTaskInstructionsText.textContent
+       var postTrainingInstructionsText = postTrainingInstructions.textContent
       // working with the variable context
       </script>
     </div>

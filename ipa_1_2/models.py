@@ -60,6 +60,7 @@ class FeatureValue(models.Model):
 class Experiment(models.Model):
     name = models.CharField(max_length=30, default="")
     phases = models.CharField(max_length=30, default="pre task, post task")
+    n_identification_rounds_allowed = models.IntegerField(default=2)
 
     def __str__(self):
         return (self.name)
@@ -163,6 +164,8 @@ class Subject(ProfileModel):
     gender = models.CharField(max_length=20, default="male")
     age = models.IntegerField(default=999)
     education = models.CharField(max_length=20, default="BA")
+
+    n_identification_task_rounds = models.IntegerField(default=0)
 
     #session_1_ps = models.FloatField(default=0.5)
     #session_2_ps = models.FloatField(default=0.5)

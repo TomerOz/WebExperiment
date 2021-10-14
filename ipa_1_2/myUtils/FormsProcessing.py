@@ -49,10 +49,10 @@ class FormsProcessor(object):
                 if responses[i] != "no one":
                     errors.append("error")
             elif "Artificial" in left:
-                if responses[i] == "left":
+                if responses[i] != "right":
                     errors.append("error")
             elif "Artificial" in right:
-                if responses[i] == "right":
+                if responses[i] != "left":
                     errors.append("error")
 
         if len(errors) > ALLOWED_MISTAKES_PROPORTION*len(responses):

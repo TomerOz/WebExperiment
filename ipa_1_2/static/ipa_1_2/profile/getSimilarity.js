@@ -49,12 +49,6 @@ function drawBall(ctx, x1, x2, y, r, reportColor) {
   ctx.fill();
   ctx.closePath();
 }
-// function DrawAgain(canvas, ctx, x1, x2, y, r, reportColor, similarityValue){
-//     ctx.clearRect(0, 0, canvas.width, canvas.height);
-//     x1 = r/2 + canvas.width/2 + (50-(similarityValue))/100 * canvas.width/4
-//     x2 = canvas.width/ 2 - r/2 - (50-(similarityValue))/100 * canvas.width/4
-//     drawBall(ctx, x1, x2, y, r, reportColor);
-// };
 
 function DrawAgain(canvas, ctx, y, r, reportColor, similarityValue){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -120,16 +114,16 @@ function AddMinMaxNames(){
 };
 
 
+function HideReoportSection(){
+  similarityReportSection.style.display = "none";
+  instrucionSection.style.display = "none";
+  nextProfileButtonSection.style.display = "none";
+};
+
+HideReoportSection();
+
 if(document.title != "profile"){
   reportSections["max"].style.display = "none";
 } else if (document.title == "profile"){
   // maxSimilaritySection.classList.add('profiles_size')
 };
-
-function HideReoportSection(){
-  similarityReportSection.style.display = "none";
-  nextProfileButtonSection.style.display = "none";
-  instrucionSection.style.display = "none";
-};
-
-HideReoportSection();

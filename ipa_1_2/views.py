@@ -142,7 +142,10 @@ def _create_subject(user):
     new_subject.age = user.usertosubject.age
     new_subject.education = user.usertosubject.education
     new_subject.gender = user.usertosubject.gender
-    new_subject.start_time = pytz.timezone("Israel").localize(datetime.datetime.now())
+    # new_subject.start_time = pytz.timezone("Israel").localize(datetime.datetime.now())
+    # tz = pytz.timezone("Israel")
+    # new_subject.start_time = tz.localize(datetime.datetime.now())
+    new_subject.start_time = datetime.datetime.now()
     new_subject.save(force_update=True)
     user.save()
     return new_subject
@@ -524,7 +527,16 @@ def render_next_phase(request, users_subject):
                 sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel)
                 return render(request, 'ipa_1_2/endPage.html')
         else: # in case of errorsJSON
+            if users_subject.current_phase.name == "Identification Task":
+                users_subject.n_identification_task_rounds += 1 # saving an occurance of mistkes in identification task
+                users_subject.save()
+            if users_subject.n_identification_task_rounds > users_subject.experiment.n_identification_rounds_allowed:
+                users_subject.update_subject_session_on_complete()
+                sd = SubjectData()
+                sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel, partial_save=True)
+                return render(request, 'ipa_1_2/endPage.html')
             _update_subject_phase(users_subject, direction=-1) # updates downwards "users_subject.current_phase"
+
     phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
     n_trials, n_practice_trials = _get_n_trials_and_practice_trials(users_subject)

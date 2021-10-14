@@ -8,7 +8,7 @@ class SubjectData(object):
         for k in data_dict.keys():
             print(k +"-" +  str(len(data_dict[k])))
 
-    def save_subject_data(self, subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel):
+    def save_subject_data(self, subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel, partial_save=False):
         CURRENT_APP_NAME = 'ipa_1_2'
         path_to_empty_session_df = os.path.join(CURRENT_APP_NAME,"myUtils","empty_session_df.xlsx")
         self.empty_session_df = pd.read_excel(path_to_empty_session_df)
@@ -21,15 +21,15 @@ class SubjectData(object):
 
         subject_features_dictionary = subject.get_features_dict()
         self.meta_profiles = [subject] + self._get_list_from_query_set(MinMaxProfileModel.objects.filter(target_subject=subject))
-        self.add_trials(subject, ProfileModel)
-        self.debug_dict(self.subject_data_dictionary)
-        ipdb.set_trace()
+        self.add_trials(subject, ProfileModel, partial_save=partial_save)
+
+        # self.debug_dict(self.subject_data_dictionary)
+        # ipdb.set_trace()
 
         subject_df = pd.DataFrame(self.subject_data_dictionary)
         data_path = "ipa_1_2/static/ipa_1_2/data/"
         path = os.path.join(data_path, "Subject-{}-Data.xlsx".format(str(subject.subject_num)))
         subject_df.to_excel(path, index=False)
-
 
     def _get_list_from_query_set(self, qset):
         l = []
@@ -64,8 +64,7 @@ class SubjectData(object):
         data2 = data1.split(seperator)
         return data2
 
-
-    def add_trials(self, subject, ProfileModel):
+    def add_trials(self, subject, ProfileModel, partial_save=False):
         # identification task responses:
         identification_response = self.trials_to_list(subject.subject_reported_sides) # reponse
         identification_rts = self.trials_to_list(subject.identification_rts) # rt
@@ -80,19 +79,20 @@ class SubjectData(object):
         self._add_meta_data(subject, "identification", identification_response)
 
         # profiles responses
-        profiles_response = self.trials_to_list(subject.trials_responses_list) # respons
-        features_rts = self.trials_to_list(subject.feature_response_times, seperator="-**NextProfile**-", end="-**NextProfile**-") # rt
-        profiles_rts = self.trials_to_list(subject.profiles_response_times, seperator=",", end="") # rt
-        profiles_p_name = self.trials_to_list(subject.trials_string_list) # profile name
-        features_order = self.trials_to_list(subject.trial_features_order, seperator="-**NextProfile**-", end="-**NextProfile**-") # info
+        if not partial_save:
+            profiles_response = self.trials_to_list(subject.trials_responses_list) # respons
+            features_rts = self.trials_to_list(subject.feature_response_times, seperator="-**NextProfile**-", end="-**NextProfile**-") # rt
+            profiles_rts = self.trials_to_list(subject.profiles_response_times, seperator=",", end="") # rt
+            profiles_p_name = self.trials_to_list(subject.trials_string_list) # profile name
+            features_order = self.trials_to_list(subject.trial_features_order, seperator="-**NextProfile**-", end="-**NextProfile**-") # info
 
-        self.subject_data_dictionary["response_value"] = self.subject_data_dictionary["response_value"] + profiles_response
-        self.subject_data_dictionary["response_time_profiles"] = self.subject_data_dictionary["response_time_profiles"] + profiles_rts
-        self.subject_data_dictionary["response_time_features"] = self.subject_data_dictionary["response_time_features"] + features_rts
-        self.subject_data_dictionary["trial_profile"] = self.subject_data_dictionary["trial_profile"] + profiles_p_name
-        self.subject_data_dictionary["trial_features_order"] = self.subject_data_dictionary["trial_features_order"] + features_order
-        self.subject_data_dictionary["response_time"] = self.subject_data_dictionary["response_time"] + [" "]*len(profiles_response) # not relevant to this phase
-        self._add_meta_data(subject, "profiles", profiles_response)
+            self.subject_data_dictionary["response_value"] = self.subject_data_dictionary["response_value"] + profiles_response
+            self.subject_data_dictionary["response_time_profiles"] = self.subject_data_dictionary["response_time_profiles"] + profiles_rts
+            self.subject_data_dictionary["response_time_features"] = self.subject_data_dictionary["response_time_features"] + features_rts
+            self.subject_data_dictionary["trial_profile"] = self.subject_data_dictionary["trial_profile"] + profiles_p_name
+            self.subject_data_dictionary["trial_features_order"] = self.subject_data_dictionary["trial_features_order"] + features_order
+            self.subject_data_dictionary["response_time"] = self.subject_data_dictionary["response_time"] + [" "]*len(profiles_response) # not relevant to this phase
+            self._add_meta_data(subject, "profiles", profiles_response)
 
         for profile_name in self.subject_data_dictionary["trial_profile"]:
             profile = ProfileModel.objects.get(name=profile_name)

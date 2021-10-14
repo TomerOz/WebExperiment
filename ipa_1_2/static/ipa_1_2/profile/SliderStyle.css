@@ -1,4 +1,7 @@
-
+#layerHide{
+  width: 80vw;
+  height: 80vh;
+}
 .slidecontainer {
   width: 85%; /* Width of the outside container */
   margin: auto;
@@ -88,7 +91,7 @@ td {
 }
 
 .thirdScreen {
-  height: 25vh;
+  height: 22vh;
   width: 85vw;
 }
 
@@ -100,7 +103,7 @@ td {
 #nextFeatureButton{
   margin: auto;
   margin-top: 5%;
-  margin-bottom: 5%;
+  margin-bottom: 2%;
 }
 
 
@@ -115,4 +118,8 @@ td {
   padding: 2%;
   width: 66vw;
   margin: auto;
+}
+
+#instrucion{
+  margin-top: 2%;
 }

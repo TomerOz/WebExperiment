@@ -8,6 +8,7 @@
 
 #ampLess{
   display: inline-block;
+  margin-bottom: 25%;
 }
 
 #amplitudeCanvas{
@@ -16,4 +17,5 @@
 
 #ampMore{
   display: inline-block;
+  margin-bottom: 25%;
 }

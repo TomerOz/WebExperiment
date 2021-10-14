@@ -19,6 +19,9 @@ var inTaskInstructionsText = document.getElementById("inTaskInstructionsText");
 var nextFromInstructionsButton = document.getElementById("nextFromInstructions");
 var nextProfileButton = document.getElementById("NextProfileButton");
 
+inTaskInstructions.style.display = "none";
+amplitudeDiv.style.display = "none";
+
 const event = new Event('NewProfile');
 
 var minwWordsPerDescription = 0;
@@ -127,7 +130,6 @@ function startReportPhase(){
 
 function InitializeProfilePresentation(current_profile){
   RecordTime();
-  amplitudeDiv.style.display = "block";
   var profile_features = context[all_profiles_ids[current_profile]][db_features];
   var features_list = context[all_profiles_ids[current_profile]]["features_order"];
   slidecontainer.innerHTML = "";
@@ -141,6 +143,7 @@ function InitializeProfilePresentation(current_profile){
       slidecontainer.innerHTML = InjectProfileDataToHTML(profile_features[features_list[feature_presentaion_index]].name_to_present, right_end, left_end, value);
       featuresOrderOfPresentation.push(context[all_profiles_ids[current_profile]]["features_order"][feature_presentaion_index])
       InitiateTimeCount();
+      amplitudeDiv.style.display = "block";
     };
   } else if(featuresPresentaionNumber < presentationNumber) {
     feature_presentaion_index = -1;
@@ -155,21 +158,21 @@ function InitializeProfilePresentation(current_profile){
 
 // Next Trial - New profile:
 function startNextTrial(){
+  amplitudeDiv.style.display = "none";
   if(current_profile == nPracticeTrials-1 && instructionEndOfPracticePresnted == false){
     HideReoportSection();
+    nextFeatureButton.style.display = "none";
     featuresTable.style.display = "block";
     instructionEndOfPracticePresnted = true;
     inTaskInstructions.style.display = "block";
-    inTaskInstructionsText.innerHTML = inTaskInstructionsTextVar;
+    inTaskInstructionsText.innerHTML = postTrainingInstructionsText;
     nextFromInstructionsButton.style.display = "block";
-    nextFeatureButton.style.display = "none";
   } else {
     inTaskInstructions.style.display = "none";
     if(document.title == "profile"){
       reportT1 = new Date();
       pRts.push(reportT1-reportT0);
       reportT0 = null; // reseting reportT0 to null
-
       profile_dictionary = context[all_profiles_ids[current_profile]];
       profilesList.value = profilesList.value + profile_dictionary.name + "," ;
       subjectResonses.value = subjectResonses.value + similarityInput.value + ",";
@@ -221,9 +224,8 @@ var isProfilePresentedAgain = false;
 
 function ProfileCountDown() {
   nextFeatureButton.style.display = "none";
-  featuresTable.style.display = "block";
-  inTaskInstructions.style.display = "block";
   nextFromInstructionsButton.style.display = "none";
+  featuresTable.style.display = "block";
   if(isProfilePresentedAgain){
     inTaskInstructionsText.innerHTML = presentAgainText
 
@@ -236,6 +238,7 @@ function ProfileCountDown() {
     HideReoportSection();
     window.scrollTo(0, 0);
     nextFeatureButton.style.display = "block";
+    layerHide.style.display = "none";
     InitializeProfilePresentation(current_profile);
     if(isProfilePresentedAgain){
       isProfilePresentedAgain = false;
@@ -335,6 +338,5 @@ nextFromInstructionsButton.addEventListener("click", startNextTrial);
 nextProfileButton.addEventListener("click",startNextTrial);
 presentProfileAgainButton.addEventListener("click", PresentProfileAgain);
 
-inTaskInstructions.style.display = "none";
-amplitudeDiv.style.display = "none";
+
 ProfileCountDown();

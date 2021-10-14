@@ -74,6 +74,7 @@
   font-size: 22px;
   text-align: center;
   margin: 0px;
+  margin-bottom: 10%;
 }
 
 table{
@@ -96,5 +97,21 @@ td {
 }
 
 #nextFeatureButton{
+  margin: auto;
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
+
+.jumbotron {
+  background: #7a2134;
+  color: white;
+  font-size: 22px;
+  text-align: right;
+  direction: rtl;
+
+  border-radius: 3%;
+  padding: 2%;
+  width: 66vw;
   margin: auto;
 }

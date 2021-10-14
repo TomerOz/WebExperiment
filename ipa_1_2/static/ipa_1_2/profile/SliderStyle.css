@@ -1,3 +1,4 @@
+
 .slidecontainer {
   width: 85%; /* Width of the outside container */
   margin: auto;
@@ -74,6 +75,7 @@
   font-size: 22px;
   text-align: center;
   margin: 0px;
+  margin-bottom: 10%;
 }
 
 table{
@@ -97,6 +99,8 @@ td {
 
 #nextFeatureButton{
   margin: auto;
+  margin-top: 5%;
+  margin-bottom: 5%;
 }
 
 

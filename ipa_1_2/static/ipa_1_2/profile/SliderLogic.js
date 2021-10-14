@@ -23,9 +23,9 @@ const event = new Event('NewProfile');
 
 var minwWordsPerDescription = 0;
 var milisecondsPerFeature = 1000; //2000;
-var countDownMiliSeconds = 100; //1500;
-var buttonActivationDelay = 60; //6000; // cnages in presentProfileAgain
-var buttonActivationDelayOriginal = 60 // 6000
+var preProfileTime = 10; //3000;
+var buttonActivationDelay = 1000; //6000; // cnages in presentProfileAgain
+var buttonActivationDelayOriginal = buttonActivationDelay // 6000
 var featuresPresentaionNumber = 1; // indicating the first presentaion
 var presentationNumber = 2; // total ammount of presentation
 var db_features = "features"
@@ -42,8 +42,6 @@ var reportT1
 var rts = [];
 var pRts = [];
 var featuresOrderOfPresentation = [];
-var preProfile = "מיד תחל הצגת פרופיל חדש"
-var texts_pre_profile = [preProfile, 3,2,1]
 var pre_profile_counter = 0
 var feature_presentaion_index;
 var buttonClicked = false;
@@ -55,6 +53,7 @@ var sim_value = parseInt(similarityInput.value);
 var nPracticeTrials = n_practice_trials // n_practice_trials comes from views
 var instructionEndOfPracticePresnted = false;
 var timeOutIntervalIDs = [];
+
 
 function shuffle(array) {
   let currentIndex = array.length,  randomIndex;
@@ -128,6 +127,7 @@ function startReportPhase(){
 
 function InitializeProfilePresentation(current_profile){
   RecordTime();
+  amplitudeDiv.style.display = "block";
   var profile_features = context[all_profiles_ids[current_profile]][db_features];
   var features_list = context[all_profiles_ids[current_profile]]["features_order"];
   slidecontainer.innerHTML = "";
@@ -160,7 +160,8 @@ function startNextTrial(){
     featuresTable.style.display = "block";
     instructionEndOfPracticePresnted = true;
     inTaskInstructions.style.display = "block";
-    inTaskInstructionsText.innerHTML = inTaskInstructionsText.textContent;
+    inTaskInstructionsText.innerHTML = inTaskInstructionsTextVar;
+    nextFromInstructionsButton.style.display = "block";
     nextFeatureButton.style.display = "none";
   } else {
     inTaskInstructions.style.display = "none";
@@ -185,11 +186,11 @@ function startNextTrial(){
       if(current_profile < all_profiles_ids.length){
         pre_profile_counter = 0;
         featuresTable.style.display = "block";
-        nextFeatureButton.disabled = true;
         buttonActivationDelay = buttonActivationDelayOriginal;
         featuresPresentaionNumber = 1;
         HideReoportSection();
         ProfileCountDown();
+        resetAmplitues();
       } else { // enf og trials
         resonsesForm.submit();
       };
@@ -216,30 +217,43 @@ function InitiateTimeCount() {
   t0 = new Date();
 }
 
+var isProfilePresentedAgain = false;
+
 function ProfileCountDown() {
   nextFeatureButton.style.display = "none";
-  if(pre_profile_counter < texts_pre_profile.length) {
-    slidecontainer.innerHTML = texts_pre_profile[pre_profile_counter];
-    pre_profile_counter +=1;
-    setTimeout(function(){ProfileCountDown()}, countDownMiliSeconds);
+  featuresTable.style.display = "block";
+  inTaskInstructions.style.display = "block";
+  nextFromInstructionsButton.style.display = "none";
+  if(isProfilePresentedAgain){
+    inTaskInstructionsText.innerHTML = presentAgainText
+
   } else {
+    inTaskInstructionsText.innerHTML = beforeNewProfileText
+  }
+  setTimeout(function(){
+    inTaskInstructions.style.display = "none";
     feature_presentaion_index = -1;
     HideReoportSection();
     window.scrollTo(0, 0);
     nextFeatureButton.style.display = "block";
     InitializeProfilePresentation(current_profile);
-  };
+    if(isProfilePresentedAgain){
+      isProfilePresentedAgain = false;
+    } else {
+      init();
+    }
+  }, preProfileTime);
 };
 
+
 function PresentProfileAgain(){
-  preProfile = "מיד תחל הצגה מחודשת של פרופיל זה"
-  texts_pre_profile[0] = preProfile;
   feature_presentaion_index = -1;
   pre_profile_counter = 0;
   featuresPresentaionNumber = 1;
   getShuffledNoReppetition(context[all_profiles_ids[current_profile]]["features_order"]);
   featuresTable.style.display = "block";
   buttonActivationDelay = 0;
+  isProfilePresentedAgain = true;
   HideReoportSection();
   ProfileCountDown();
 };
@@ -265,9 +279,19 @@ function ContinuousPressChange(direction){
 };
 
 function delayActivateButton(){
+  nextFeatureButton.style.backgroundColor = "white";
+  nextFeatureButton.style.borderColor = "white";
+  nextFeatureButton.style.outline = "none";
+  nextFeatureButton.style.boxShadow = "none";
+  nextFeatureButton.style.cursor = "default"
   nextFeatureButton.disabled = true;
   setTimeout(function(){
+    nextFeatureButton.style.backgroundColor = "#337ab7";
+    nextFeatureButton.style.borderColor = "#2e6da4";
+    nextFeatureButton.style.outline = "";
+    nextFeatureButton.style.boxShadow = "";
     nextFeatureButton.disabled = false;
+    nextFeatureButton.style.cursor = "pointer"
   }, buttonActivationDelay)
 
 }
@@ -306,12 +330,11 @@ lessSimilarity.addEventListener("mouseup", function(){
   buttonClicked = false;
 });
 
-nextFeatureButton.disabled = true;
 nextFeatureButton.addEventListener("click", function() {InitializeProfilePresentation(current_profile)});
 nextFromInstructionsButton.addEventListener("click", startNextTrial);
 nextProfileButton.addEventListener("click",startNextTrial);
 presentProfileAgainButton.addEventListener("click", PresentProfileAgain);
 
 inTaskInstructions.style.display = "none";
-
+amplitudeDiv.style.display = "none";
 ProfileCountDown();

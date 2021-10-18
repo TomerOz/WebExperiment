@@ -167,6 +167,8 @@ class Subject(ProfileModel):
 
     n_identification_task_rounds = models.IntegerField(default=0)
 
+    runningLocation = models.CharField(max_length=20, default="Lab") # or home
+
     #session_1_ps = models.FloatField(default=0.5)
     #session_2_ps = models.FloatField(default=0.5)
     # session_to_ps = #mapping session to randomly assigned ps
@@ -267,6 +269,7 @@ class UserToSubject(models.Model):
     education = models.CharField(max_length=100, default="BA")
     age = models.IntegerField(default=999)
     gender = models.CharField(max_length=100, default="female")
+    runningLocation = models.CharField(max_length=20, default="Lab") # or home
 
     def __str__(self):
         return (self.user.username + "- Subject-" + self.subject_num)

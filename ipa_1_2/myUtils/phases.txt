@@ -16,3 +16,4 @@ Get Ideal Profile
 End Screen
 Session End
 Experiment Finished
+GeneralPhase

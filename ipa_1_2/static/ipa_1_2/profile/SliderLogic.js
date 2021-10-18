@@ -20,7 +20,6 @@ var nextFromInstructionsButton = document.getElementById("nextFromInstructions")
 var nextProfileButton = document.getElementById("NextProfileButton");
 
 inTaskInstructions.style.display = "none";
-amplitudeDiv.style.display = "none";
 
 const event = new Event('NewProfile');
 
@@ -143,7 +142,6 @@ function InitializeProfilePresentation(current_profile){
       slidecontainer.innerHTML = InjectProfileDataToHTML(profile_features[features_list[feature_presentaion_index]].name_to_present, right_end, left_end, value);
       featuresOrderOfPresentation.push(context[all_profiles_ids[current_profile]]["features_order"][feature_presentaion_index])
       InitiateTimeCount();
-      amplitudeDiv.style.display = "block";
     };
   } else if(featuresPresentaionNumber < presentationNumber) {
     feature_presentaion_index = -1;
@@ -158,7 +156,6 @@ function InitializeProfilePresentation(current_profile){
 
 // Next Trial - New profile:
 function startNextTrial(){
-  amplitudeDiv.style.display = "none";
   if(current_profile == nPracticeTrials-1 && instructionEndOfPracticePresnted == false){
     HideReoportSection();
     nextFeatureButton.style.display = "none";
@@ -193,7 +190,6 @@ function startNextTrial(){
         featuresPresentaionNumber = 1;
         HideReoportSection();
         ProfileCountDown();
-        resetAmplitues();
       } else { // enf og trials
         resonsesForm.submit();
       };
@@ -242,8 +238,6 @@ function ProfileCountDown() {
     InitializeProfilePresentation(current_profile);
     if(isProfilePresentedAgain){
       isProfilePresentedAgain = false;
-    } else {
-      init();
     }
   }, preProfileTime);
 };
@@ -299,6 +293,14 @@ function delayActivateButton(){
 
 }
 
+function endMovement(){
+  for (var i = 0; i < timeOutIntervalIDs.length; i++) {
+    clearInterval(timeOutIntervalIDs[i]);
+  }
+  timeOutIntervalIDs = [];
+  buttonClicked = false;
+}
+
 moreSimilarity.addEventListener("mousedown", function(){
   buttonClicked = true;
   direction = "+";
@@ -308,13 +310,9 @@ moreSimilarity.addEventListener("mousedown", function(){
   timeOutIntervalIDs.push(idTO);
 });
 
-moreSimilarity.addEventListener("mouseup", function(){
-  for (var i = 0; i < timeOutIntervalIDs.length; i++) {
-    clearInterval(timeOutIntervalIDs[i]);
-  }
-  timeOutIntervalIDs = [];
-  buttonClicked = false;
-});
+
+moreSimilarity.addEventListener("mouseup", endMovement);
+moreSimilarity.addEventListener("mouseleave", endMovement);
 
 lessSimilarity.addEventListener("mousedown", function(){
   buttonClicked = true;
@@ -325,13 +323,8 @@ lessSimilarity.addEventListener("mousedown", function(){
   timeOutIntervalIDs.push(idTO);
 });
 
-lessSimilarity.addEventListener("mouseup", function(){
-  for (var i = 0; i < timeOutIntervalIDs.length; i++) {
-    clearInterval(timeOutIntervalIDs[i]);
-  }
-  timeOutIntervalIDs = [];
-  buttonClicked = false;
-});
+lessSimilarity.addEventListener("mouseup", endMovement);
+lessSimilarity.addEventListener("mouseleave", endMovement);
 
 nextFeatureButton.addEventListener("click", function() {InitializeProfilePresentation(current_profile)});
 nextFromInstructionsButton.addEventListener("click", startNextTrial);

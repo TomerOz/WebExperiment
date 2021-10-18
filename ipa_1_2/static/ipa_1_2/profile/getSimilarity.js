@@ -90,7 +90,7 @@ function PresentAllCircles(){
     DrawAgain(canvasMin, ctxMin, yMax, rMin, reportColorMin, minValue);
     AddMinMaxNames();
   } else {
-    reportColor = '#767676';
+    reportColor = '#af4c50';
     ClearCircles(canvasMax, ctxMax);
     ClearCircles(canvasMin, ctxMin);
     canvasMax.style.display = "none";

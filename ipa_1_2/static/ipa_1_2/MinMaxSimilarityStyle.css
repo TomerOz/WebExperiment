@@ -303,3 +303,22 @@
   margin: auto;
   text-align: center;
 }
+
+.leftAlign{
+  direction: ltr;
+}
+
+.moreLessSimButton{
+  background-color: black !important;
+  color: white !important;
+}
+
+.moreLessSimButton:hover{
+  background-color: gray !important;
+  color: black !important;
+  outline: gray;
+}
+
+.moreLessSimButton:active{
+  outline: black;
+}

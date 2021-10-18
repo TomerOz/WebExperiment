@@ -34,7 +34,7 @@ phase_to_html_page = {
                         "During Profile Presentation":  "profile",
                         "Report Similariy":             "ReportSimilarity",
                         "Pre Get Ideal Profile":        "instruction",
-                        "Get Ideal Profile":   "GetSubject/getSubjectProfile",
+                        "Get Ideal Profile":            "GetSubject/getSubjectProfile",
                         "End Screen":                   "endPage",
                         "Session End":                   "endPage",
                     }
@@ -52,6 +52,9 @@ def _update_subject_phase(subject, direction=None):
     subject_updated_phase = _get_next_phase(subject, direction=direction)
     subject.current_phase = subject_updated_phase
     subject.save()
+
+    if subject.current_phase.name == "Pre Task" and subject.runningLocation == "Lab":
+        _update_subject_phase(subject, direction=None)
 
  # return a query set of all phases-model instances associated with this subject's experiment
 def _get_all_subject_phases(subject):
@@ -100,6 +103,14 @@ def _get_phases_instructions(phase_name, users_subject, errors):
         else:
             off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text
 
+    off_order_instruction_queryset = Instruction.objects.filter(str_phase__name="GeneralPhase")
+    for instruction_query in off_order_instruction_queryset:
+        if users_subject.gender == "male":
+            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text_male
+        elif users_subject.gender == "female":
+            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text_female
+        else:
+            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text
     # edding an introduction to current phase with current errors (assuming its an Instruction page, otherwise nothing will be presented if not specified)
     if len(errors)>0:
         errors_introduction = []
@@ -142,6 +153,7 @@ def _create_subject(user):
     new_subject.age = user.usertosubject.age
     new_subject.education = user.usertosubject.education
     new_subject.gender = user.usertosubject.gender
+    new_subject.runningLocation = user.usertosubject.runningLocation
     # new_subject.start_time = pytz.timezone("Israel").localize(datetime.datetime.now())
     # tz = pytz.timezone("Israel")
     # new_subject.start_time = tz.localize(datetime.datetime.now())

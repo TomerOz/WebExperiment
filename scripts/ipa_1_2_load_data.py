@@ -230,12 +230,12 @@ def run():
 
     create_experiment_instance()
     create_experiment_phases() # updte sensitive
+    #squezze_in_new_phases()
     create_instructinos() # deletes all previous instances
     create_feature_labels(features_df) # updte sensitive
     create_sham_questions(sham_questions_df)
     create_contexts()
     create_models() # updte sensitive
     create_n_pilot_profiles(3)
-    # squezze_in_new_phases()
 
 #py manage.py runscript load_inital_data

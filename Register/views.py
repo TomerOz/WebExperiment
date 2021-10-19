@@ -30,9 +30,9 @@ def signup(request, targetPage="Home"):
             user.usertosubject.gender = request.POST["gender"]
             user.usertosubject.runningLocation = request.POST["runningLocation"]
             user.save()
-            login(request, user)
+            # login(request, user)
             #return redirect(targetPageToURL[targetPage])
-            return redirect(reverse(targetPageToURL[targetPage]))
+            return redirect(reverse(targetPageToURL[targetPage]+"/sucecss "+username))
     else:
         form = RegisterForm()
 

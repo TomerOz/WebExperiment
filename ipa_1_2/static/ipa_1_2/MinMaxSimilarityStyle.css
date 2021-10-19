@@ -176,7 +176,6 @@
   text-align: center;
   }
   button {
-  width: 150px;
   padding: 10px;
   border: none;
   border-radius: 5px;
@@ -184,6 +183,7 @@
   font-size: 16px;
   color: #fff;
   cursor: pointer;
+  margin-top: 3%;
   }
   button:hover {
   background:  #a3c2c2;
@@ -280,6 +280,7 @@
     background: white;
     display: block;
     margin: 0 auto;
+    margin-top: 3%;
   }
 
   .profiles_size {
@@ -309,16 +310,20 @@
 }
 
 .moreLessSimButton{
-  background-color: black !important;
+  background-color: #aaaaaa !important;
   color: white !important;
+  border-color: #aaaaaa !important;
+  outline: #aaaaaa !important;
 }
 
 .moreLessSimButton:hover{
-  background-color: gray !important;
+  background-color: #eeeeee !important;
   color: black !important;
-  outline: gray;
+  outline: #aaaaaa !important;
+  /* outline: gray; */
 }
 
 .moreLessSimButton:active{
-  outline: black;
+  border-color: #aaaaaa !important;
+  outline: #aaaaaa !important;
 }

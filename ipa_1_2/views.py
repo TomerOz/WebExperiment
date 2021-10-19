@@ -173,7 +173,6 @@ def _get_user_subject(user):
 # returns a boolean depending on whether user has an associated Subject instance
 def _check_if_user_have_subject(user):
     context = ""
-    ###################
     if Subject.objects.filter(subject_num=user.usertosubject.subject_num).exists(): # check if encrypted number represent a valid pk in Subject
         return True
     return False
@@ -559,11 +558,14 @@ def render_next_phase(request, users_subject):
 
 # A general function that serves as phase decider
 def get_phase_page(request):
-    users_subject = _get_user_subject(request.user)
-    # TODO: Make sure user is authenticated.. subject is ready --> maybe already take care for
-    # TODO: Make sure subject did not already finished this expperiment
-    # TODO: maybe make user subject creation be mediated by a mail an a manual connection (no in DB)
-    return render_next_phase(request, users_subject)
+    if  request.user.is_anonymous:
+        return redirect(reverse("signin_exp2"))
+    else:
+        users_subject = _get_user_subject(request.user)
+        # TODO: Make sure user is authenticated.. subject is ready --> maybe already take care for
+        # TODO: Make sure subject did not already finished this expperiment
+        # TODO: maybe make user subject creation be mediated by a mail an a manual connection (no in DB)
+        return render_next_phase(request, users_subject)
 
 def get_data_page(request):
     data_path = "ipa_1_2/static/ipa_1_2/data/"

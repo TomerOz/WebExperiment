@@ -98,11 +98,31 @@ td {
 .buttonMoreLess{
   margin: auto;
   text-align: center;
+  margin-top: 3%;
+}
+
+.moreLessSimButton{
+  background-color: #aaaaaa !important;
+  color: white !important;
+  border-color: #aaaaaa !important;
+  outline: #aaaaaa !important;
+}
+
+.moreLessSimButton:hover{
+  background-color: #eeeeee !important;
+  color: black !important;
+  outline: #aaaaaa !important;
+  /* outline: gray; */
+}
+
+.moreLessSimButton:active{
+  border-color: #aaaaaa !important;
+  outline: #aaaaaa !important;
 }
 
 #nextFeatureButton{
   margin: auto;
-  margin-top: 5%;
+  margin-top: 15%;
   margin-bottom: 2%;
 }
 

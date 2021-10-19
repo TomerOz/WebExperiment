@@ -64,7 +64,7 @@ var inputs = {"max": maxSimilarity, "min": minSimilarity};
 function HandleInstructions() {
   if(wasCorrect){
     if(currentInstruction <= instructions_list.length) {
-      instructionTextContainer.textContent = instructions_list[currentInstruction];
+      // instructionTextContainer.textContent = instructions_list[currentInstruction];
        testForm.style.display = "block";
       currentInstruction += 1;
     };

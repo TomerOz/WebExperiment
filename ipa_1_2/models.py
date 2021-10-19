@@ -118,7 +118,7 @@ class Instruction(models.Model):
     str_phase = models.ForeignKey(ExperimentPhase, on_delete=models.CASCADE) # Description of phase,e.g. "Initial", "Mid break", "Report instrucion"
 
     is_in_order = models.BooleanField(default=True)
-    off_order_place = models.CharField(max_length=30, default="irrelevant")
+    off_order_place = models.CharField(max_length=40, default="irrelevant")
 
     instruction_text_male = models.CharField(max_length=1000, default="") # Which text it contains
     instruction_text_female = models.CharField(max_length=1000, default="") # Which text it contains

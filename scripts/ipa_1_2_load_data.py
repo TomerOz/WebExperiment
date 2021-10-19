@@ -7,7 +7,7 @@ from ipa_1_2.models import *
 
 CURRENT_APP_NAME = "ipa_1_2"
 EXPERIMENT_NAME = "IPA1.2"
-IS_UPDATE = True
+IS_UPDATE = False
 
 def run():
     def _get_txt_list(path_and_file, splitter):

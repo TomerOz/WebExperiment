@@ -23,7 +23,7 @@
     <form id="instructionsForm" class="" method="post">
       {% csrf_token %}
       <input type="hidden" name="form_phase" value="{{ form_phase }}">
-      <button class="btn btn-primary btn-lg" id="NextInstructionButton" type="button" name="button">הבא</button>
+      <button class="btn btn-primary btn-lg" id="NextInstructionButton" type="button" name="button">{{ off_order_instructions_dict.nextButtonText }}</button>
     </form>
   </div>
     <script>

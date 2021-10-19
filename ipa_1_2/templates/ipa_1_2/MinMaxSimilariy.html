@@ -52,12 +52,12 @@
                 <canvas id="myCanvas" width="400" height="320"></canvas>
                 <br/>
                 <div class="buttonMoreLess">
-                  <button id="lessSimilarityMax" class="btn btn-primary btn moreLessSimButton" type="button" name="button">פחות</button>
-                  <button id="moreSimilarityMax" class="btn btn-primary btn moreLessSimButton" type="button" name="button">יותר</button>
+                  <button id="lessSimilarityMax" class="btn btn-primary btn moreLessSimButton" type="button" name="button">{{ off_order_instructions_dict.lessSimButtonText }}</button>
+                  <button id="moreSimilarityMax" class="btn btn-primary btn moreLessSimButton" type="button" name="button">{{ off_order_instructions_dict.moreSimButtonText }}</button>
                   <input type="hidden" name="similarityInputMax" id="similarityInputMax" value=0>
                 </div>
               </div>
-                <span class="input-group-btn leftAlign"><button id="approve_name_1" type="button" href="/">המשך</button></span>
+                <span class="input-group-btn leftAlign"><button id="approve_name_1" type="button" href="/">{{ off_order_instructions_dict.continueButtonText }}</button></span>
             </div>
 
             <div id="MinSimilaritySection" class="item">
@@ -74,12 +74,12 @@
                 <canvas id="myCanvas2" width="400" height="320"></canvas>
                 <br/>
                 <div class="buttonMoreLess">
-                  <button id="lessSimilarityMin" class="btn btn-primary btn moreLessSimButton" type="button" name="button">פחות</button>
-                  <button id="moreSimilarityMin" class="btn btn-primary btn moreLessSimButton" type="button" name="button">יותר</button>
+                  <button id="lessSimilarityMin" class="btn btn-primary btn moreLessSimButton" type="button" name="button">{{ off_order_instructions_dict.lessSimButtonText }}</button>
+                  <button id="moreSimilarityMin" class="btn btn-primary btn moreLessSimButton" type="button" name="button">{{ off_order_instructions_dict.moreSimButtonText }}</button>
                   <input type="hidden" name="similarityInputMin" id="similarityInputMin" value=0>
                 </div>
               </div>
-                <span class="input-group-btn"><button id="approve_name_2" type="button" href="/">המשך</button></span>
+                <span class="input-group-btn"><button id="approve_name_2" type="button" href="/">{{ off_order_instructions_dict.continueButtonText }}</button></span>
             </div>
 
         <div class="btn-block" style="direction:ltr; color:red; text-align:left;">
@@ -87,7 +87,7 @@
           <span>One answer or more is incorrect!<span><br>
           {% endif %}
           <input type="hidden" name="form_phase" value="{{ form_phase }}">
-          <button id="submitButton" type="submit" href="/" id"changeButton">המשך</button>
+          <button id="submitButton" type="submit" href="/" id"changeButton">{{ off_order_instructions_dict.continueButtonText }}</button>
         </div>
       </form>
     </div>

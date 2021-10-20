@@ -55,9 +55,10 @@ function InitializeProfilePresentation(){
     feature_title, right_end, left_end, feature_name = GetProfileFeatureData(feature);
     slidecontainer.innerHTML = InjectProfileDataToHTML(feature_title, right_end, left_end, feature_name, default_value);
     feature_slider = document.getElementById(feature_name);
-    feature_slider.addEventListener("mousedown",setEngagementTrue);
     currentFeature += 1;
+    feature_slider.addEventListener("mousedown",setEngagementTrue);
   } else {
+    currentFeature += 1;
     featuresForm.submit();
 }};
 

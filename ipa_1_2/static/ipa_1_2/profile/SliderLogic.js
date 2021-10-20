@@ -157,6 +157,7 @@ function InitializeProfilePresentation(current_profile){
 // Next Trial - New profile:
 function startNextTrial(){
   if(current_profile == nPracticeTrials-1 && instructionEndOfPracticePresnted == false){
+    similarityReportSection.style.marginTop = "10%"
     HideReoportSection();
     nextFeatureButton.style.display = "none";
     featuresTable.style.display = "block";

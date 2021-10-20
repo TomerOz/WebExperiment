@@ -1,5 +1,5 @@
-from django.db.models import Q
 from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.db.models import Q
 from .models import ProfileModel, FeatureLabels, Subject, FeatureValue, Experiment, MinMaxProfileModel, ArtificialProfileModel
 from .models import Instruction, GameMatrix, ExperimentPhase, SimilarityContextModel, ShamQuestion
 from .models import Context
@@ -36,7 +36,7 @@ phase_to_html_page = {
                         "Pre Get Ideal Profile":        "instruction",
                         "Get Ideal Profile":            "GetSubject/getSubjectProfile",
                         "End Screen":                   "endPage",
-                        "Session End":                   "endPage",
+                        "Session End":                  "endPage",
                     }
 
 form_phase = "form_phase"
@@ -543,19 +543,21 @@ def render_next_phase(request, users_subject):
             #in case of page refresh request.POST is previous phasewhile users_subject.current_phase.name moved forward
             _update_subject_phase(users_subject) # updates "users_subject.current_phase"
             if users_subject.current_phase.name == "End Screen":
+                phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
                 users_subject.update_subject_session_on_complete()
                 sd = SubjectData()
                 sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel)
-                return render(request, 'ipa_1_2/endPage.html')
+                return render(request, 'ipa_1_2/endPage.html', {"off_order_instructions_dict": off_order_instructions})
         else: # in case of errorsJSON
             if users_subject.current_phase.name == "Identification Task":
                 users_subject.n_identification_task_rounds += 1 # saving an occurance of mistkes in identification task
                 users_subject.save()
             if users_subject.n_identification_task_rounds > users_subject.experiment.n_identification_rounds_allowed:
+                phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
                 users_subject.update_subject_session_on_complete()
                 sd = SubjectData()
                 sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel, partial_save=True)
-                return render(request, 'ipa_1_2/endPage.html')
+                return render(request, 'ipa_1_2/endPage.html', {"off_order_instructions_dict": off_order_instructions})
             _update_subject_phase(users_subject, direction=-1) # updates downwards "users_subject.current_phase"
 
     phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)

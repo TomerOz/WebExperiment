@@ -63,7 +63,7 @@ function InitializeProfilePresentation(){
 
 var engagementTime = 30000;
 function setEngagementTrue(){
-  if(currentFeature < context.length){
+  if(currentFeature <= context.length){
     nextFeatureButton.disabled = false;
   }
 }

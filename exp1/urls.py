@@ -26,7 +26,7 @@ urlpatterns = [
     path('signin/<str:targetPage>', register_views.signin, name='signin'), # singin with argeument
     path('signup/<str:targetPage>', register_views.signup, name='signup'), # signup with argeument
 
-    path('signin/ipa_1_2', register_views.signin, name='signin_exp2'), # using the name signin_exp2 in redirect(reverse("signin_exp2")) leads to signin/ipa_1_2 which is signing in and then experiment starts
+    path('signin/ipa_1_2', register_views.signin, name='signin_exp2'), # using the name signin_exp2 in redirect(reverse("signin_exp2")) leads to signin/ipa_1_2 which is signing in and then experiment starts    
 
     path('profilePresntaion/', include('profilePresntaion.urls')),
     path('ipa_1_2/', include('ipa_1_2.urls')),

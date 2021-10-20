@@ -182,23 +182,26 @@ def _get_profiles_list_context(all_profiles):
     profiles_data = {}
     profiles_data["profiles_list"] = [] # This is the list the will be iterated through the experiment
     for profile in all_profiles:
-        profiles_data[profile.id] = {}
-        profiles_data["profiles_list"].append(profile.id)
+        p_id = profile.id
+        if profile.id in profiles_data.keys():
+            p_id = str(profile.id)+"-d" # dubbled profile
+        profiles_data[p_id] = {}
+        profiles_data["profiles_list"].append(p_id)
 
         features_list = profile.featurevalue_set.all()[::1] # the [::1] converts the query set into a list
-        profiles_data[profile.id]["name"] = profile.name
-        profiles_data[profile.id]["is_subject"] = profile.is_subject
-        profiles_data[profile.id]["features"] = {}
-        profiles_data[profile.id]["features_order"] = []
+        profiles_data[p_id]["name"] = profile.name
+        profiles_data[p_id]["is_subject"] = profile.is_subject
+        profiles_data[p_id]["features"] = {}
+        profiles_data[p_id]["features_order"] = []
         for f in features_list:
             f_name = f.target_feature.feature_name
-            profiles_data[profile.id]["features_order"].append(f_name)
-            profiles_data[profile.id]["features"][f_name] = {}
-            profiles_data[profile.id]["features"][f_name]["value"] = f.value
-            profiles_data[profile.id]["features"][f_name]["l"] = f.target_feature.left_end
-            profiles_data[profile.id]["features"][f_name]["r"] = f.target_feature.right_end
-            profiles_data[profile.id]["features"][f_name]["name_to_present"] = f.target_feature.presenting_name
-        random.shuffle(profiles_data[profile.id]["features_order"])
+            profiles_data[p_id]["features_order"].append(f_name)
+            profiles_data[p_id]["features"][f_name] = {}
+            profiles_data[p_id]["features"][f_name]["value"] = f.value
+            profiles_data[p_id]["features"][f_name]["l"] = f.target_feature.left_end
+            profiles_data[p_id]["features"][f_name]["r"] = f.target_feature.right_end
+            profiles_data[p_id]["features"][f_name]["name_to_present"] = f.target_feature.presenting_name
+        random.shuffle(profiles_data[p_id]["features_order"])
 
     random.shuffle(profiles_data["profiles_list"])
     return profiles_data
@@ -377,6 +380,14 @@ def _create_subject_artificials_for_this_phase(subject, practice_name="Practice"
     for slevel in similarities_levels:
         _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - " + trials_name)
 
+def get_dubbled_profiles_list(subject, trials):
+    dubbled_profiles = []
+    similarity_levels_to_dubble = subject.experiment.dubbled_artificials_list.split(", ")
+    for profile in _get_list_from_query_set(trials):
+        for slevle in similarity_levels_to_dubble:
+            if slevle in profile.name:
+                dubbled_profiles.append(profile)
+    return dubbled_profiles
 
 def _get_profile_list_for_profiles_presentation_phase(subject):
     _create_subject_artificials_for_this_phase(subject)
@@ -387,9 +398,8 @@ def _get_profile_list_for_profiles_presentation_phase(subject):
     practice = artificials.filter(name__contains='Practice')
     trials = artificials.filter(name__contains='Trials')
 
-    NUMBER_OF_DUBLICATED_ARTICIAL_PROFILES = 4
     all  = _get_list_from_query_set(min_max) + _get_list_from_query_set(regulars) + _get_list_from_query_set(sp_model) \
-     + _get_list_from_query_set(trials) + random.sample(_get_list_from_query_set(trials), NUMBER_OF_DUBLICATED_ARTICIAL_PROFILES)
+     + _get_list_from_query_set(trials) + get_dubbled_profiles_list(subject, trials)
 
     practice_context = _get_profiles_list_context(practice) # _get_profiles_list_context also shuffles trials order
     regulars_min_max_trials_subject = _get_profiles_list_context(all) # _get_profiles_list_context also shuffles trials order

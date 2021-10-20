@@ -33,8 +33,14 @@
                               <input type="email" name="email" id="email" placeholder="Your Email"/>
                             </div> -->
                             {% if user.is_authenticated %}
-                            {% if user.is_superuser %}
-                              Hello {{ user.first_name }} {{ user.last_name}}
+                              {% if user.is_superuser %}
+                                {% if targetURLAfterLogin != "Home" %}
+                                  <p><h3 style="color: green"> {{targetURLAfterLogin}} was registered</h3><p>
+                                {% endif %}
+                                {% if registrationErrors%}
+                                <p><h3 style="color: red"> not registered</h3><p>
+                                {% endif %}
+
                              <div class="form-group">
                                 <label for="username"><i class="zmdi zmdi-account material-icons-name"></i></label>
                                 <input type="text" name="username" id="username" placeholder="Your User Name"/>
@@ -96,7 +102,9 @@
                             </div>
 
                             <div class="form-group form-button">
-                                <input type="submit" name="signup" id="signup" class="form-submit" value="Register Now"/>
+                              <input type="hidden" name="flow" id="flowInput" value="goHome">
+                              <input name="signupContinue" id="signupContinue" class="form-submit" value="Register and Continue"/>
+                              <input type="submit" name="signup" id="signup" class="form-submit" value="Register Now"/>
                             </div>
                         </form>
                     </div>

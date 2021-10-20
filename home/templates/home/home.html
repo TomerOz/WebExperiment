@@ -118,7 +118,8 @@
       <p class="lead text-muted">In order to monitor experiment participation, users must be loged in before starting an experiment.</p>
         <form action=""  method="post">
           {% csrf_token %}
-          <a class="btn btn-primary" href="/ipa_1_2/Data">Data Terminal</a>
+        <a class="btn btn-primary" href="/ipa_1_2/Data">Data Terminal</a>
+        <a class="btn btn-primary" href="/admin">Mange Experiment</a>
         <a class="btn btn-primary" href="/signin">Login</a>
         <a class="btn btn-primary" href="/signup">Signup</a>
           <button type="submit" class="btn btn-secondary red my-3">logout</button>

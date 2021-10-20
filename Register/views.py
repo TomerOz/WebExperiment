@@ -17,7 +17,7 @@ def signup(request, targetPage="Home"):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if not request.POST["subject_set"] in ["A","B","C"]:
-            return render(request, 'Register/signup.html', {'errors': "Must choose a lettr", "targetURLAfterLogin": targetPage})
+            return render(request, 'Register/signup.html', {'errors': "Must choose a value", "targetURLAfterLogin": targetPage})
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
@@ -30,9 +30,13 @@ def signup(request, targetPage="Home"):
             user.usertosubject.gender = request.POST["gender"]
             user.usertosubject.runningLocation = request.POST["runningLocation"]
             user.save()
-            # login(request, user)
-            #return redirect(targetPageToURL[targetPage])
-            return redirect(reverse(targetPageToURL[targetPage]+"/sucecss "+username))
+            if request.POST["flow"] == "continue":
+                return redirect("/signup/" + username)
+            else:
+                login(request, user)
+            return redirect(targetPageToURL[targetPage])
+        else:
+            return render(request, 'Register/signup.html', {'form': form, "targetURLAfterLogin": targetPage, 'registrationErrors': "Invalid deatils - not registered" })
     else:
         form = RegisterForm()
 

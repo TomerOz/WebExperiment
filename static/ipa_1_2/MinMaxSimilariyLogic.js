@@ -64,7 +64,7 @@ var inputs = {"max": maxSimilarity, "min": minSimilarity};
 function HandleInstructions() {
   if(wasCorrect){
     if(currentInstruction <= instructions_list.length) {
-      instructionTextContainer.textContent = instructions_list[currentInstruction];
+      // instructionTextContainer.textContent = instructions_list[currentInstruction];
        testForm.style.display = "block";
       currentInstruction += 1;
     };
@@ -257,6 +257,12 @@ function ContinuousPressChange(direction){
   };
 };
 
+function endMovement(){
+  clearAllIntervals();
+  buttonClicked = false;
+}
+
+
 moreSimilarityMax.addEventListener("mousedown", function(){
   buttonClicked = true;
   direction = "+";
@@ -265,10 +271,10 @@ moreSimilarityMax.addEventListener("mousedown", function(){
   idTO = setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
   timeOutIntervalIDs.push(idTO);
 });
-moreSimilarityMax.addEventListener("mouseup", function(){
-  clearAllIntervals();
-  buttonClicked = false;
-});
+
+moreSimilarityMax.addEventListener("mouseup", endMovement);
+moreSimilarityMax.addEventListener("mouseleave", endMovement);
+
 lessSimilarityMax.addEventListener("mousedown", function(){
   buttonClicked = true;
   direction = "-";
@@ -277,10 +283,9 @@ lessSimilarityMax.addEventListener("mousedown", function(){
   idTO = setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
   timeOutIntervalIDs.push(idTO);
 });
-lessSimilarityMax.addEventListener("mouseup", function(){
-  clearAllIntervals();
-  buttonClicked = false;
-});
+
+lessSimilarityMax.addEventListener("mouseup", endMovement);
+lessSimilarityMax.addEventListener("mouseleave", endMovement);
 
 function ChagngeSimilarityValue2(direction){
   if (direction == "+"){
@@ -292,6 +297,7 @@ function ChagngeSimilarityValue2(direction){
     similarityInputMin.value = sim_valueMin;
   };
 };
+
 function ContinuousPressChange2(direction){
   if(buttonClicked==true){
     idTO = setTimeout(function(){ContinuousPressChange2(direction)}, changeRate);
@@ -309,10 +315,10 @@ moreSimilarityMin.addEventListener("mousedown", function(){
   idTO = setTimeout(function(){ContinuousPressChange2(direction)}, contiousDelay);
   timeOutIntervalIDs.push(idTO);
 });
-moreSimilarityMin.addEventListener("mouseup", function(){
-  clearAllIntervals();
-  buttonClicked = false;
-});
+
+moreSimilarityMin.addEventListener("mouseup", endMovement);
+moreSimilarityMin.addEventListener("mouseleave", endMovement);
+
 lessSimilarityMin.addEventListener("mousedown", function(){
   buttonClicked = true;
   direction = "-";
@@ -321,7 +327,6 @@ lessSimilarityMin.addEventListener("mousedown", function(){
   idTO = setTimeout(function(){ContinuousPressChange2(direction)}, contiousDelay);
   timeOutIntervalIDs.push(idTO);
 });
-lessSimilarityMin.addEventListener("mouseup", function(){
-  clearAllIntervals();
-  buttonClicked = false;
-});
+
+lessSimilarityMin.addEventListener("mouseup", endMovement);
+lessSimilarityMin.addEventListener("mouseleave", endMovement);

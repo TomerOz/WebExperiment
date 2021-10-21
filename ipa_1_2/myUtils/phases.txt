@@ -14,6 +14,4 @@ During Profile Presentation
 Pre Get Ideal Profile
 Get Ideal Profile
 End Screen
-Session End
-Experiment Finished
 GeneralPhase

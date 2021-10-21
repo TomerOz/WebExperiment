@@ -180,13 +180,7 @@ class Subject(ProfileModel):
     def update_subject_session_on_complete(self):
         tz = pytz.timezone("Israel")
         self.end_time = tz.localize(datetime.datetime.now())
-    # a function intended to be called on session end prior to logging out the user.
-        if self.subject_session == 1:
-            self.subject_session = 2
-            self.current_phase = ExperimentPhase.objects.get(name="Consent phase")
-        elif self.subject_session == 2:
-            self.completed_experiments = self.completed_experiments + self.experiment.name + ","
-            self.current_phase = ExperimentPhase.objects.get(name="Experiment Finished")
+        self.completed_experiments = self.completed_experiments + self.experiment.name + ","
         self.save()
 
 class ArtificialProfileModel(ProfileModel):

@@ -36,7 +36,6 @@ phase_to_html_page = {
                         "Pre Get Ideal Profile":        "instruction",
                         "Get Ideal Profile":            "GetSubject/getSubjectProfile",
                         "End Screen":                   "endPage",
-                        "Session End":                  "endPage",
                     }
 
 form_phase = "form_phase"
@@ -52,7 +51,6 @@ def _update_subject_phase(subject, direction=None):
     subject_updated_phase = _get_next_phase(subject, direction=direction)
     subject.current_phase = subject_updated_phase
     subject.save()
-
     if subject.current_phase.name == "Pre Task" and subject.runningLocation == "Lab":
         _update_subject_phase(subject, direction=None)
 
@@ -65,12 +63,12 @@ def _get_next_phase(subject, direction=None):
     if direction==None:
         direction=1
     phases = ExperimentPhase.objects.all()
-    if subject.current_phase.name != "Session End":
-        # ipdb.set_trace()
-        next_phase = phases.get(phase_place=subject.current_phase.phase_place+(direction*1))
-        return next_phase
-    else: # upon ending a session
-        return subject.current_phase
+    next_phase = phases.get(phase_place=subject.current_phase.phase_place+(direction*1))
+
+    if subject.current_phase.name == "End Screen": # stays in place if its current phase
+            return subject.current_phase
+
+    return next_phase
 
 # returns a list all instruciton-model instances texts associated with this phase - orderd by order property
 def _get_phases_instructions(phase_name, users_subject, errors):
@@ -91,19 +89,8 @@ def _get_phases_instructions(phase_name, users_subject, errors):
             else:
                 pictures_paths.append(r'/static/ipa_1_2/media/images/' + pic_name)
 
-
-
     off_order_instructions_dict = {}
     off_order_instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=False)
-    for instruction_query in off_order_instruction_queryset:
-        if users_subject.gender == "male":
-            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text_male
-        elif users_subject.gender == "female":
-            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text_female
-        else:
-            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text
-
-    off_order_instruction_queryset = Instruction.objects.filter(str_phase__name="GeneralPhase")
     for instruction_query in off_order_instruction_queryset:
         if users_subject.gender == "male":
             off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text_male
@@ -122,6 +109,16 @@ def _get_phases_instructions(phase_name, users_subject, errors):
                     errors_introduction.append(instruction_query.instruction_text_female)
 
         instructions_list = errors_introduction + instructions_list
+
+    off_order_instruction_queryset = Instruction.objects.filter(str_phase__name="GeneralPhase")
+    for instruction_query in off_order_instruction_queryset:
+        if users_subject.gender == "male":
+            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text_male
+        elif users_subject.gender == "female":
+            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text_female
+        else:
+            off_order_instructions_dict[instruction_query.off_order_place] = instruction_query.instruction_text
+
     return instructions_list, off_order_instructions_dict, pictures_paths
 
 # Returns one of the contexts
@@ -543,21 +540,20 @@ def render_next_phase(request, users_subject):
             #in case of page refresh request.POST is previous phasewhile users_subject.current_phase.name moved forward
             _update_subject_phase(users_subject) # updates "users_subject.current_phase"
             if users_subject.current_phase.name == "End Screen":
-                phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
                 users_subject.update_subject_session_on_complete()
                 sd = SubjectData()
                 sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel)
-                return render(request, 'ipa_1_2/endPage.html', {"off_order_instructions_dict": off_order_instructions})
         else: # in case of errorsJSON
             if users_subject.current_phase.name == "Identification Task":
                 users_subject.n_identification_task_rounds += 1 # saving an occurance of mistkes in identification task
                 users_subject.save()
             if users_subject.n_identification_task_rounds > users_subject.experiment.n_identification_rounds_allowed:
-                phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
                 users_subject.update_subject_session_on_complete()
                 sd = SubjectData()
                 sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel, partial_save=True)
-                return render(request, 'ipa_1_2/endPage.html', {"off_order_instructions_dict": off_order_instructions})
+                users_subject.current_phase = ExperimentPhase.objects.get(name="End Screen")
+                users_subject.save()
+
             _update_subject_phase(users_subject, direction=-1) # updates downwards "users_subject.current_phase"
 
     phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)

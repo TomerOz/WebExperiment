@@ -579,10 +579,13 @@ def get_data_page(request):
     data_path = "ipa_1_2/static/ipa_1_2/data/"
     files = os.listdir(data_path)
     paths = []
+    js_paths = []
     for file in files:
         paths.append(os.path.join("ipa_1_2/data/", file))
+        js_paths.append(os.path.join(data_path, file))
     paths_files = zip(paths, files)
-    return render(request, 'ipa_1_2/data.html', {"paths_files": paths_files})
+    ipdb.set_trace()
+    return render(request, 'ipa_1_2/data.html', {"paths_files": paths_files, "js_paths": json.dumps(js_paths)})
 
 def save_try(request):
     users_subject = _get_user_subject(request.user)

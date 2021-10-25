@@ -16,6 +16,7 @@ import copy
 from .myUtils.FormsProcessing import FormsProcessor, PhasesDataSaver
 from .myUtils.ArticialProfile import create_artificial_profile_3
 from .myUtils.SubjectData import SubjectData
+from .myUtils.AnalyzeData import AnalyzeData
 
 phase_to_html_page = {
                         "Consent phase":                "Index",
@@ -579,13 +580,17 @@ def get_data_page(request):
     data_path = "ipa_1_2/static/ipa_1_2/data/"
     files = os.listdir(data_path)
     paths = []
-    js_paths = []
+    df_paths = []
     for file in files:
         paths.append(os.path.join("ipa_1_2/data/", file))
-        js_paths.append(os.path.join(data_path, file))
+        df_paths.append(os.path.join(data_path, file))
     paths_files = zip(paths, files)
-    ipdb.set_trace()
-    return render(request, 'ipa_1_2/data.html', {"paths_files": paths_files, "js_paths": json.dumps(js_paths)})
+
+    bounuses = {}
+    for df in df_paths:
+        ad = AnalyzeData(df)
+        bounuses[str(ad.df_subject.subject_num.unique()[0])] = ad.get_subject_bonus()
+    return render(request, 'ipa_1_2/data.html', {"paths_files": paths_files, "bounuses": json.dumps(bounuses)})
 
 def save_try(request):
     users_subject = _get_user_subject(request.user)

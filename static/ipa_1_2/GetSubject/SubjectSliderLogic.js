@@ -61,7 +61,7 @@ function InitializeProfilePresentation(){
     feature = context[currentFeature];
     feature_title, right_end, left_end, feature_name = GetProfileFeatureData(feature);
     slidecontainer.innerHTML = InjectProfileDataToHTML(feature_title, right_end, left_end, feature_name, default_value);
-    if (subject_set == "C"){
+    if (subject_group == "C"){
       changeFontSize(25);
     }
     feature_slider = document.getElementById(feature_name);

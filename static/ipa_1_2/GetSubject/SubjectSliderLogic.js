@@ -26,6 +26,13 @@ function InjectProfileDataToHTML(title, right_end, left_end, feature_name, value
     return basicProfileHTMLText;
 }
 
+function changeFontSize(fontSize) {
+  var cols = document.getElementsByClassName('side');
+  for(i = 0; i < cols.length; i++) {
+    cols[i].style.fontSize  = fontSize + "px";
+  }
+}
+
 function getHiddenInputOfLastFeature(featureIndex){
   hiddenInputOfLastFeature = ' ';
   if(featureIndex >= 0){
@@ -54,6 +61,9 @@ function InitializeProfilePresentation(){
     feature = context[currentFeature];
     feature_title, right_end, left_end, feature_name = GetProfileFeatureData(feature);
     slidecontainer.innerHTML = InjectProfileDataToHTML(feature_title, right_end, left_end, feature_name, default_value);
+    if (subject_set == "C"){
+      changeFontSize(25);
+    }
     feature_slider = document.getElementById(feature_name);
     currentFeature += 1;
     feature_slider.addEventListener("mousedown",setEngagementTrue);

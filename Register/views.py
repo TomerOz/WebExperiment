@@ -25,10 +25,11 @@ def signup(request, targetPage="Home"):
             user = authenticate(username=username, password=raw_password)
             user.usertosubject.subject_num = request.POST["subject_num"]
             user.usertosubject.features_set = request.POST["subject_set"]
-            user.usertosubject.education = request.POST["education"]
-            user.usertosubject.age = request.POST["age"]
-            user.usertosubject.gender = request.POST["gender"]
             user.usertosubject.runningLocation = request.POST["runningLocation"]
+            user.usertosubject.gender = request.POST["gender"]
+
+            # user.usertosubject.education = request.POST["education"]
+            # user.usertosubject.age = request.POST["age"]
             user.save()
             if request.POST["flow"] == "continue":
                 return redirect("/signup/" + username)

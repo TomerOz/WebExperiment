@@ -36,6 +36,7 @@ phase_to_html_page = {
                         "Report Similariy":             "ReportSimilarity",
                         "Pre Get Ideal Profile":        "instruction",
                         "Get Ideal Profile":            "GetSubject/getSubjectProfile",
+                        "Demographics":                 "Demographics",
                         "End Screen":                   "endPage",
                     }
 
@@ -264,7 +265,7 @@ def _get_new_subject_profile_page_context(users_subject):
     return {"features_list" : json.dumps(features_list)}
 
 # Builds a generic context that is used in all views (db-html-js context, not manipulated context)
-def _get_context(form_phase, instructions_list, single_instruction_text, off_order_instructions, words_to_highlight, pictures_paths, n_trials, n_practice_trials, errors):
+def _get_context(form_phase, instructions_list, single_instruction_text, off_order_instructions, words_to_highlight, pictures_paths, n_trials, n_practice_trials, errors, subject_group):
     context = {
                 "form_phase": form_phase,
                 "instructions_list":  json.dumps(instructions_list),
@@ -272,6 +273,7 @@ def _get_context(form_phase, instructions_list, single_instruction_text, off_ord
                 "single_instructions": single_instruction_text,
                 "n_trials": n_trials,
                 "n_practice_trials": n_practice_trials,
+                "subject_group": subject_group,
                 "errors": errors,
                 "errorsJSON": json.dumps(errors),
                 "pictures_paths": pictures_paths,
@@ -555,13 +557,14 @@ def render_next_phase(request, users_subject):
                 users_subject.current_phase = ExperimentPhase.objects.get(name="End Screen")
                 users_subject.save()
 
-            _update_subject_phase(users_subject, direction=-1) # updates downwards "users_subject.current_phase"
+            if users_subject.current_phase.name == "Identification Task": # on concent and demographics we want to stay in place and not go back
+                _update_subject_phase(users_subject, direction=-1) # updates downwards "users_subject.current_phase"
 
     phases_instructions, off_order_instructions, pictures_paths = _get_phases_instructions(users_subject.current_phase.name, users_subject, errors)
     single_instruction = phases_instructions[0] if len(phases_instructions) == 1 else None
     n_trials, n_practice_trials = _get_n_trials_and_practice_trials(users_subject)
     phases_instructions, single_instruction, off_order_instructions, words_to_highlight = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction, off_order_instructions)
-    context_to_send = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, words_to_highlight, pictures_paths, n_trials, n_practice_trials, errors)
+    context_to_send = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, words_to_highlight, pictures_paths, n_trials, n_practice_trials, errors, users_subject.profile_label_set)
     context_to_send = _update_context_if_necessry(context_to_send, users_subject.current_phase.name, users_subject)
     return render(request, 'ipa_1_2/{}.html'.format(phase_to_html_page[users_subject.current_phase.name]), context_to_send)
 

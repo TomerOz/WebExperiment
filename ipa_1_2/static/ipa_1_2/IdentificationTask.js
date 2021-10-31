@@ -38,6 +38,13 @@ function InjectProfileDataToHTML(title, right_end, left_end, value, feature_name
     return basicProfileHTMLText;
 };
 
+function changeFontSize(fontSize) {
+  var cols = document.getElementsByClassName('side');
+  for(i = 0; i < cols.length; i++) {
+    cols[i].style.fontSize  = fontSize + "px";
+  }
+}
+
 function GetProfileFeatureData (feature) {
   value = feature.value;
   left_end = feature.l;
@@ -161,6 +168,10 @@ function InitializeProfilePresentation(current_profile){
   containers[subject_side].innerHTML = text_1;
   containers[other_side].innerHTML = text_2;
   profiles_possitions.push(positions_temp.toString().replace(",", "//"));
+
+  if(subject_group=="C"){
+    changeFontSize(22);
+  }
 
   HideAndShowContainers(containers);
   HandelResponseButtons(containers);

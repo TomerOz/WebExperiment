@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Demographics</title>
+
+    <!-- Font Icon -->
+      {% load static %}
+    <link rel="stylesheet" href="{% static 'ipa_1_2/Demographics/fonts/material-icon/css/material-design-iconic-font.min.css' %}">
+    <!--  Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Main css -->
+    <link rel="stylesheet" href="{% static 'ipa_1_2/Demographics/css/style.css' %}">
+
+</head>
+<body>
+    <div class="main" dir="rtl">
+        <!-- Sign up form -->
+        <section class="signup">
+            <div class="container">
+                <div class="signup-content">
+                    <div class="signup-form">
+                        <h2 class="form-title">פרטים דמוגרפיים</h2>
+                        <form method="POST" class="register-form" id="register-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_phase" value="{{ form_phase }}">
+                            <div class="form-group">
+                              <select name="education" id="education" class="form-select" aria-label="Default select example">
+                                <option selected>השכלה</option>
+                                <option value="HS">סיימתי תיכון</option>
+                                <option value="BA">סיימתי\לומד.ת לתואר ראשון</option>
+                                <option value="MA">סיימתי\לומד.ת לתואר שני</option>
+                                <option value="PhD">סיימתי\לומד.ת לתואר שלישי</option>
+                              </select>
+                             </div>
+
+                             <div class="form-group">
+                                <label for="age"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input type="number" name="age" id="age" placeholder="גיל"/>
+                            </div>
+
+                            <div class="form-group form-button">
+                              <input type="submit" name="signup" id="signup" class="form-submit" value="שליחה"/>
+                            </div>
+                            {% if errors %}
+                              {% for error in errors %}
+                                <p style="color:red"> {{ error }} </p>
+                              {% endfor %}
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- JS -->
+    <script src="{% static 'ipa_1_2/Demographics/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'ipa_1_2/Demographics/js/main.js' %}"></script>
+</body><!-- This templates was made by Colorlib (https://colorlib.com)
+</html>

@@ -7,8 +7,11 @@ class FormsProcessor(object):
             "Consent phase" : self._process_consent_form,
             "Matrix tutorial" : self._process_matrix_tutorial_form,
             "Identification Task" : self._process_identification_task,
+            "Demographics"         : self._process_demographics,
 
         }
+
+
 
     def process_form(self, phase_name, post_data):
         if phase_name in self.phase_to_form_processor:
@@ -17,6 +20,13 @@ class FormsProcessor(object):
         else:
             return [] # returns an empty list -  no form verification is needed
 
+    def _process_demographics(self, post_data):
+        errors = []
+        if post_data["age"]=='':
+            errors.append("חובה לציין גיל")
+        if post_data["education"]=="השכלה":
+            errors.append("חובה לציין השכלה")
+        return errors
     # checks if consent form was filled correctly - returns a list of errors
     def _process_consent_form(self, post_data):
         consent_form_fields = {
@@ -74,7 +84,17 @@ class PhasesDataSaver(object):
             "Get Min Similarity Profile" : self._get_min_max_similarity_profile,
             "Get Ideal Profile" : self._get_min_max_similarity_profile,
             "Identification Task" : self._save_identification_task,
+            "Demographics" : self._save_demographics,
         }
+
+    def _save_demographics(self, post_data, subject):
+        if not post_data["age"].isnumeric():
+            age = 0
+        else:
+            age = int(post_data["age"])
+        subject.age = age
+        subject.education = post_data["education"]
+        subject.save()
 
     def _save_identification_task(self, post_data, subject):
         subject.subject_profile_sides += post_data["profilesSides"]

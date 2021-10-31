@@ -68,7 +68,7 @@ def run():
                 added_phases+=1
             else:
                 existing_phase = current_phases.get(name=phase)
-                existing_phase.phase_place = i+1+added_phases
+                existing_phase.phase_place = i+1+added_phases-1
                 existing_phase.save()
 
         phases_to_remove = [phase for phase in current_phases if not phase.name in exp_phases]

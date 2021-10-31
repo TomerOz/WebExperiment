@@ -43,7 +43,7 @@
 
                              <div class="form-group">
                                 <label for="username"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" name="username" id="username" placeholder="Your User Name"/>
+                                <input type="text" name="username" id="username" placeholder="Subject User Name"/>
                             </div>
                             <div class="form-group">
                                 <label for="pass"><i class="zmdi zmdi-lock"></i></label>
@@ -55,7 +55,7 @@
                             </div>
                             <div class="form-group">
                                <label for="subject_num"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                               <input type="text" name="subject_num" id="subject_num" placeholder="Enter Subject Number"/>
+                               <input type="text" name="subject_num" id="subject_num" placeholder="Subject Number"/>
                            </div>
                            <div class="form-group">
                              <select name="subject_set" id="subject_set" class="form-select" aria-label="Default select example">
@@ -66,17 +66,6 @@
                              </select>
                              <p style="color:red"> {{ errors }} </p>
                             </div>
-
-                            <div class="form-group">
-                              <select name="education" id="education" class="form-select" aria-label="Default select example">
-                                <option selected>Select Subject Education</option>
-                                <option value="HS">High School</option>
-                                <option value="BA">BA</option>
-                                <option value="MA">MA</option>
-                                <option value="PhD">PhD</option>
-                              </select>
-                              <p style="color:red"> {{ errors }} </p>
-                             </div>
 
                              <div class="form-group">
                                <select name="gender" id="gender" class="form-select" aria-label="Default select example">
@@ -95,11 +84,6 @@
                                 </select>
                                 <p style="color:red"> {{ errors }} </p>
                                </div>
-
-                             <div class="form-group">
-                                <label for="age"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="number" name="age" id="age" placeholder="Subject Age"/>
-                            </div>
 
                             <div class="form-group form-button">
                               <input type="hidden" name="flow" id="flowInput" value="goHome">

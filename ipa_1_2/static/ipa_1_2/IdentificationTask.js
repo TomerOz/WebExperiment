@@ -170,7 +170,7 @@ function InitializeProfilePresentation(current_profile){
   profiles_possitions.push(positions_temp.toString().replace(",", "//"));
 
   if(subject_group=="C"){
-    changeFontSize(22);
+    changeFontSize(24);
   }
 
   HideAndShowContainers(containers);

@@ -24,9 +24,9 @@ inTaskInstructions.style.display = "none";
 const event = new Event('NewProfile');
 
 var minwWordsPerDescription = 0;
-var milisecondsPerFeature = 1000; //2000;
-var preProfileTime = 10; //3000;
-var buttonActivationDelay = 1000; //6000; // cnages in presentProfileAgain
+var milisecondsPerFeature = 2000; //2000;
+var preProfileTime = 3000; //3000;
+var buttonActivationDelay = 6000; //6000; // cnages in presentProfileAgain
 var buttonActivationDelayOriginal = buttonActivationDelay // 6000
 var featuresPresentaionNumber = 1; // indicating the first presentaion
 var presentationNumber = 2; // total ammount of presentation
@@ -52,10 +52,14 @@ var changeRate = 25;
 var contiousDelay = 500;
 var direction;
 var sim_value = parseInt(similarityInput.value);
-var nPracticeTrials = n_practice_trials // n_practice_trials comes from views
-var instructionEndOfPracticePresnted = false;
 var timeOutIntervalIDs = [];
 
+function changeFontSize(fontSize) {
+  var cols = document.getElementsByClassName('side');
+  for(i = 0; i < cols.length; i++) {
+    cols[i].style.fontSize  = fontSize + "px";
+  }
+}
 
 function shuffle(array) {
   let currentIndex = array.length,  randomIndex;
@@ -140,6 +144,9 @@ function InitializeProfilePresentation(current_profile){
     // check if the property/key is defined in the object itself, not in parent
     if (profile_features.hasOwnProperty(features_list[feature_presentaion_index])) {
       slidecontainer.innerHTML = InjectProfileDataToHTML(profile_features[features_list[feature_presentaion_index]].name_to_present, right_end, left_end, value);
+      if (subject_group == "C"){
+        changeFontSize(30);
+      }
       featuresOrderOfPresentation.push(context[all_profiles_ids[current_profile]]["features_order"][feature_presentaion_index])
       InitiateTimeCount();
     };
@@ -156,52 +163,41 @@ function InitializeProfilePresentation(current_profile){
 
 // Next Trial - New profile:
 function startNextTrial(){
-  if(current_profile == nPracticeTrials-1 && instructionEndOfPracticePresnted == false){
-    similarityReportSection.style.marginTop = "10%"
-    HideReoportSection();
-    nextFeatureButton.style.display = "none";
-    featuresTable.style.display = "block";
-    instructionEndOfPracticePresnted = true;
-    inTaskInstructions.style.display = "block";
-    inTaskInstructionsText.innerHTML = postTrainingInstructionsText;
-    nextFromInstructionsButton.style.display = "block";
-  } else {
-    inTaskInstructions.style.display = "none";
-    if(document.title == "profile"){
-      reportT1 = new Date();
-      pRts.push(reportT1-reportT0);
-      reportT0 = null; // reseting reportT0 to null
-      profile_dictionary = context[all_profiles_ids[current_profile]];
-      profilesList.value = profilesList.value + profile_dictionary.name + "," ;
-      subjectResonses.value = subjectResonses.value + similarityInput.value + ",";
-      trialFeatureOrder.value = trialFeatureOrder.value + featuresOrderOfPresentation.toString() + "-**NextProfile**-";
-      featuresOrderOfPresentation = []; // emptying the list after data was saved
-      subjectRTs.value = subjectRTs.value + rts.toString() + "-**NextProfile**-"
-      rts = []; // needs to be reseted between trials
-      profileRTs.value = pRts.toString(); // updates it self between trials
-      similarityInput.value = 0;
-      sim_value = parseInt(similarityInput.value);
-      preProfile = "מיד תחל הצגת פרופיל חדש";
-      current_profile +=1;
-      document.getElementsByTagName("body")[0].dispatchEvent(event); // Dispatch the event.
-      if(current_profile < all_profiles_ids.length){
-        pre_profile_counter = 0;
-        featuresTable.style.display = "block";
-        buttonActivationDelay = buttonActivationDelayOriginal;
-        featuresPresentaionNumber = 1;
-        HideReoportSection();
-        ProfileCountDown();
-      } else { // enf og trials
-        resonsesForm.submit();
-      };
-    } else { // not in profile presentation phase
-      current_profile +=1;
-      if(current_profile < all_profiles_ids.length){
-        pre_profile_counter = 0;
-        ProfileCountDown();
-      } else {
-        resonsesForm.submit();
-      };
+  inTaskInstructions.style.display = "none";
+  if(document.title == "profile"){
+    reportT1 = new Date();
+    pRts.push(reportT1-reportT0);
+    reportT0 = null; // reseting reportT0 to null
+    profile_dictionary = context[all_profiles_ids[current_profile]];
+    profilesList.value = profilesList.value + profile_dictionary.name + "," ;
+    subjectResonses.value = subjectResonses.value + similarityInput.value + ",";
+    trialFeatureOrder.value = trialFeatureOrder.value + featuresOrderOfPresentation.toString() + "-**NextProfile**-";
+    featuresOrderOfPresentation = []; // emptying the list after data was saved
+    subjectRTs.value = subjectRTs.value + rts.toString() + "-**NextProfile**-"
+    rts = []; // needs to be reseted between trials
+    profileRTs.value = pRts.toString(); // updates it self between trials
+    similarityInput.value = 0;
+    sim_value = parseInt(similarityInput.value);
+    preProfile = "מיד תחל הצגת פרופיל חדש";
+    current_profile +=1;
+    document.getElementsByTagName("body")[0].dispatchEvent(event); // Dispatch the event.
+    if(current_profile < all_profiles_ids.length){
+      pre_profile_counter = 0;
+      featuresTable.style.display = "block";
+      buttonActivationDelay = buttonActivationDelayOriginal;
+      featuresPresentaionNumber = 1;
+      HideReoportSection();
+      ProfileCountDown();
+    } else { // enf og trials
+      resonsesForm.submit();
+    };
+  } else { // not in profile presentation phase
+    current_profile +=1;
+    if(current_profile < all_profiles_ids.length){
+      pre_profile_counter = 0;
+      ProfileCountDown();
+    } else {
+      resonsesForm.submit();
     };
   };
 };

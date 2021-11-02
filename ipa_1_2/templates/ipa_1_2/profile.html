@@ -42,9 +42,7 @@
     <div class="text-center" id="instrucion" style="direction:rtl">{{off_order_instructions_dict.report_instructions}}<br></div>
     <div id="SimilarityReportSection" class="row profiles_size" style="direction:ltr">
       <br><br>
-      <canvas id="CanvasMax" width="300" height="150"></canvas>
       <canvas id="myCanvas" width="400" height="250"></canvas>
-      <canvas id="CanvasMin" width="300" height="150"></canvas>
       <input type="hidden" name="" id="similarityInput" value=0>
     </div>
       <!-- consider deleting the following -->
@@ -62,16 +60,14 @@
         </div>
         <div id="presentProfileAgainButtonSection"class="container text-center spaceDownButtons">
           <br><br>
-          <button id="presentProfileAgainButton" class="btn btn-primary btn" type="button" name="button">{{ off_order_instructions_dict.pesentAgainButtonText }}</button>
-          <br><br>
-          <button id="NextProfileButton" class="btn btn-primary btn" type="button" name="button">{{ off_order_instructions_dict.continueToNextProfileButtonText }}</button>
+          <button id="presentProfileAgainButton" class="btn btn-primary btn spaced-buttons" type="button" name="button">{{ off_order_instructions_dict.pesentAgainButtonText }}</button>
+          <button id="NextProfileButton" class="btn btn-primary btn spaced-buttons" type="button" name="button">{{ off_order_instructions_dict.continueToNextProfileButtonText }}</button>
         </div>
         <br>
       </div>
 
       <p style="display:none" id="beforeNewProfile">{{off_order_instructions_dict.beforeNewProfile}}</p>
       <p style="display:none" id="presentAgain">{{off_order_instructions_dict.presentAgain}}</p>
-      <p style="display:none" id="postTrainingInstructions">{{off_order_instructions_dict.practiceTrialsInstructions}}</p>
       <script>
         var b = document.getElementsByTagName("body")[0];
         b.style.width = window.screen.height
@@ -85,7 +81,6 @@
        var subject_group = "{{ subject_group }}"
        var beforeNewProfileText = beforeNewProfile.textContent
        var presentAgainText = presentAgain.textContent
-       var postTrainingInstructionsText = postTrainingInstructions.textContent
       // working with the variable context
       </script>
     </div>

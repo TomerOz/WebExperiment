@@ -148,3 +148,8 @@ td {
 .spaceDownButtons {
   margin-top: 4%;
 }
+
+.spaced-buttons{
+  margin-left: 8%;
+  margin-right: 8%;
+}

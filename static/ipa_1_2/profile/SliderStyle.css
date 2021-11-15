@@ -1,8 +1,13 @@
 #layerHide{
   width: 80vw;
   height: 80vh;
-  outline: none;
 }
+
+#layerHideTextArea{
+  outline: none;
+  border: none;
+}
+
 .slidecontainer {
   width: 85%; /* Width of the outside container */
   margin: auto;

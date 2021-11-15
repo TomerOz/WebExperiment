@@ -26,8 +26,8 @@ const event = new Event('NewProfile');
 var minwWordsPerDescription = 0;
 var milisecondsPerFeature = 2000; //2000;
 var preProfileTime = 3000; //3000;
-var buttonActivationDelay = 6000; //6000; // cnages in presentProfileAgain
-var buttonActivationDelayOriginal = buttonActivationDelay // 6000
+var buttonActivationDelay = 3000; //3000; // cnages in presentProfileAgain
+var buttonActivationDelayOriginal = buttonActivationDelay // 3000
 var featuresPresentaionNumber = 1; // indicating the first presentaion
 var presentationNumber = 2; // total ammount of presentation
 var db_features = "features"
@@ -219,6 +219,7 @@ function ProfileCountDown() {
   nextFeatureButton.style.display = "none";
   nextFromInstructionsButton.style.display = "none";
   featuresTable.style.display = "block";
+  inTaskInstructions.style.display = "block";
   if(isProfilePresentedAgain){
     inTaskInstructionsText.innerHTML = presentAgainText
 

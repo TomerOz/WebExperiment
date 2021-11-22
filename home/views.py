@@ -18,6 +18,4 @@ def home_page(request):
             else:
                 return redirect(reverse(targetPageToURL[target_experiment]))
         else:
-            import os
-            x = os.getcwd()
-            return redirect('signup/' + target_experiment, {"x":x})
+            return redirect('signup/' + target_experiment)

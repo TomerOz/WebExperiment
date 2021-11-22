@@ -12,6 +12,7 @@ import os
 import ipdb
 import random
 import copy
+import pandas as pd
 
 from .myUtils.FormsProcessing import FormsProcessor, PhasesDataSaver
 from .myUtils.ArticialProfile import create_artificial_profile_3
@@ -580,20 +581,53 @@ def get_phase_page(request):
         return render_next_phase(request, users_subject)
 
 def get_data_page(request):
+    from distutils.dir_util import copy_tree
+
     data_path = "ipa_1_2/static/ipa_1_2/data/"
     files = os.listdir(data_path)
     paths = []
     df_paths = []
+
     for file in files:
         paths.append(os.path.join("ipa_1_2/data/", file))
         df_paths.append(os.path.join(data_path, file))
     paths_files = zip(paths, files)
 
-    bounuses = {}
+    df_all = get_single_df_all_data(data_path)
+    df_all.to_excel(os.path.join(data_path, "all_data.xlsx"), index=False)
+
+
+    from_dir = data_path
+    to_dir = os.path.join("static", "ipa_1_2", "data")
+    copy_tree(from_dir, to_dir)
+
+    exp = Experiment.objects.get(name="IPA1.2")
+    bounuses = get_bonuses_dict(exp.subject_bonuses)
     for df in df_paths:
-        ad = AnalyzeData(df)
-        bounuses[str(ad.df_subject.subject_num.unique()[0])] = ad.get_subject_bonus()
+        if df.endswith(".xlsx") and "Subject" in df:
+            subject_num = df.split("-")[1]
+            if not subject_num in bounuses.keys():
+                ad = AnalyzeData(df)
+                bounuses[subject_num] = ad.get_subject_bonus()
+    bounuses_string = get_string_from_bonuses_dict(bounuses)
+    exp.subject_bonuses = bounuses_string
+    exp.save()
     return render(request, 'ipa_1_2/data.html', {"paths_files": paths_files, "bounuses": json.dumps(bounuses)})
+
+def get_bonuses_dict(bounuses_string):
+    bounuses_string = bounuses_string.split(",")
+    bonuses_dict = {}
+    for kvp in bounuses_string:
+        if kvp != "":
+            k,v = kvp.split("-")
+            bonuses_dict[k] = v
+    return bonuses_dict
+
+def get_string_from_bonuses_dict(bonuses_dict):
+    bounuses_string = ""
+    for k,v in bonuses_dict.items():
+        bounuses_string = bounuses_string + str(k) + "-" + str(v) + ","
+    return bounuses_string
 
 def save_try(request):
     users_subject = _get_user_subject(request.user)
@@ -601,7 +635,14 @@ def save_try(request):
     sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel)
     return render(request, 'ipa_1_2/endPage.html')
 
-
+def get_single_df_all_data(data_dir):
+    files = os.listdir(r''+data_dir)
+    all_data = pd.DataFrame()
+    for file in files:
+        if file.endswith(".xlsx") and file != "all_data.xlsx":
+            df = pd.read_excel(os.path.join(r''+data_dir,file))
+            all_data = all_data.append(df)
+    return all_data
 
 ## Development Views: ################################################################################################################################################
 # New subject profile page -- > this view is kept seprately for development purposes, New subject - creating his/her new progile:

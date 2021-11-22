@@ -62,6 +62,7 @@ class Experiment(models.Model):
     phases = models.CharField(max_length=30, default="pre task, post task")
     n_identification_rounds_allowed = models.IntegerField(default=2)
     dubbled_artificials_list = models.CharField(max_length=100, default="0.2, 0.4, 0.6, 0.8")
+    subject_bonuses = models.TextField(default="9999-0,")
 
     def __str__(self):
         return (self.name)

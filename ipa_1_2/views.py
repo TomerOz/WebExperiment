@@ -41,6 +41,18 @@ phase_to_html_page = {
                         "End Screen":                   "endPage",
                     }
 
+COL_NAMES_BY_GROUP = {
+    "A": ['self_way_of_speech', 'self_socio_economic', 'self_ethnicity_skin_color', 'self_personality', 'self_dress_propeties', 'self_political_affiliation', 'self_hobbies', 'self_body_size', 'self_intelligence'],
+    "B": ['self_goodness', 'self_age', 'self_happiness', 'self_normality', 'self_appearnce', 'self_interest', 'self_sainity', 'self_importance', 'self_amazing'],
+    "C": ['self_c1', 'self_c2', 'self_c3', 'self_c4', 'self_c5', 'self_c6', 'self_c7', 'self_c8', 'self_c9'],
+}
+
+PROFILE_COL_NAMES_BY_GROUP = {
+    "A": ['profile_way_of_speech', 'profile_socio_economic', 'profile_ethnicity_skin_color', 'profile_personality', 'profile_dress_propeties', 'profile_political_affiliation', 'profile_hobbies', 'profile_body_size', 'profile_intelligence'],
+    "B": ['profile_goodness', 'profile_age', 'profile_happiness', 'profile_normality', 'profile_appearnce', 'profile_interest', 'profile_sainity', 'profile_importance', 'profile_amazing'],
+    "C": ['profile_c1', 'profile_c2', 'profile_c3', 'profile_c4', 'profile_c5', 'profile_c6', 'profile_c7', 'profile_c8', 'profile_c9'],
+}
+
 form_phase = "form_phase"
 
 forms_processor = FormsProcessor(GameMatrix)
@@ -641,6 +653,11 @@ def get_single_df_all_data(data_dir):
     for file in files:
         if file.endswith(".xlsx") and file != "all_data.xlsx":
             df = pd.read_excel(os.path.join(r''+data_dir,file))
+            subject_group = df.subject_group.unique()[0]
+            for i in range(len(COL_NAMES_BY_GROUP[subject_group])):
+                subject_feature = COL_NAMES_BY_GROUP[subject_group][i]
+                profile_feature = PROFILE_COL_NAMES_BY_GROUP[subject_group][i]
+                df["Feature-"+str(i+1)] = (100 - (abs(df[subject_feature]-df[profile_feature])))/100
             all_data = all_data.append(df)
     return all_data
 

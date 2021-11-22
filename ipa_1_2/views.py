@@ -579,6 +579,12 @@ def render_next_phase(request, users_subject):
     phases_instructions, single_instruction, off_order_instructions, words_to_highlight = _get_enriched_instructions_if_nesseccary(users_subject, phases_instructions, single_instruction, off_order_instructions)
     context_to_send = _get_context(users_subject.current_phase.name, phases_instructions, single_instruction, off_order_instructions, words_to_highlight, pictures_paths, n_trials, n_practice_trials, errors, users_subject.profile_label_set)
     context_to_send = _update_context_if_necessry(context_to_send, users_subject.current_phase.name, users_subject)
+
+    if request.method == "GET" and users_subject.current_phase.name == "End Screen":
+        users_subject.update_subject_session_on_complete()
+        sd = SubjectData()
+        sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel)
+
     return render(request, 'ipa_1_2/{}.html'.format(phase_to_html_page[users_subject.current_phase.name]), context_to_send)
 
 # A general function that serves as phase decider

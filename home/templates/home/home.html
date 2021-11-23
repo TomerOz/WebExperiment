@@ -125,93 +125,34 @@
           <button type="submit" class="btn btn-secondary red my-3">logout</button>
             <input type="hidden" name="form_phase" value="logout"><!-- Hidden input tells server which form was submitted, form_name should be constant in all forms, just the value shoudl change -->
         </form>
-        <!-- The text field -->
-        <input type="text" value="http://164.90.226.100/ipa_1_2/" id="myInput">
+      </div>
+      <div class="container"> ----------------------------------- </div>
+      <div class="container">
+          <div class="btn-group">
+            <input type="text" value="http://164.90.226.100/ipa_1_2/" id="myInput">
         <!-- The button used to copy the text -->
         <button onclick="copyFunction()">Copy Subject Link</button>
-    </div>
-  </section>
-
-  {% if user.is_superuser %}
-  <div class="album py-5 bg-light">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="card mb-4 shadow-sm">
-            <img class="bd-placeholder-img card-img-top" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail" src="https://cdn.vox-cdn.com/thumbor/Zdj79hA6hb7ENmNh0CRPq7AffGU=/0x0:1399x787/1200x800/filters:focal(589x283:811x505)/cdn.vox-cdn.com/uploads/chorus_image/image/65744778/apps.10088.13977311502771693.72aef738_75a3_4db8_97c9_280f3b8c4daa.0.jpg">
-            <div class="card-body">
-              <p class="card-text">Experiment 1</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <form action=""  method="post">
-                    {% csrf_token %}
-                      <input type="hidden" name="form_phase" value="SGS1"><!-- Hidden input tells server which form was submitted, form_name should be constant in all forms, just the value shoudl change -->
-                      <button type="submit" class="btn btn-sm btn-outline-secondary">Start</button>
-                  </form>
-                </div>
-                <small class="text-muted">45-60 mins</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card mb-4 shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">EXP.2</text></svg>
-            <div class="card-body">
-              <p class="card-text">Experiment 2 - Not active</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <form action=""  method="post">
-                    {% csrf_token %}
-                      <input type="hidden" name="form_phase" value="ipa_1_2"><!-- Hidden input tells server which form was submitted, form_name should be constant in all forms, just the value shoudl change -->
-                      <button type="submit" class="btn btn-sm btn-outline-secondary">Start</button>
-                  </form>
-                </div>
-                <small class="text-muted">35 mins</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card mb-4 shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">EXP.3</text></svg>
-            <div class="card-body">
-              <p class="card-text">Experiment 3 - Not active</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-secondary" disabled="disabled">Start</button>
-                </div>
-                <small class="text-muted">75 mins</small>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
-  </div>
+
+
+  {% if user.is_superuser %}
+
   {% else %}
-
-  <section class="jumbotron text-center">
     <div class="container">
-      <p class="lead text-muted">Contact the lab member in order to start the experimentphase_set</p>
-      <p class="lead text-muted"> Email: _______________________</p>
+      <div class="container"> ----------------------------------- </div>
+      <div class="btn-group">
+        <form action=""  method="post">
+          {% csrf_token %}
+          <input type="hidden" name="form_phase" value="ipa_1_2"><!-- Hidden input tells server which form was submitted, form_name should be constant in all forms, just the value shoudl change -->
+          <button type="submit" class="btn btn-primary">Start Experiment</button>
+        </form>
+      <!-- The text field -->
+      </div>
     </div>
-  </section>
-
   {% endif %}
+  </section>
 </main>
-
-<footer class="text-muted">
-  <div class="container">
-    <p class="float-right">
-      <a href="#">Back to top</a>
-    </p>
-    <p>Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
-    <p>New to Bootstrap? <a href="https://getbootstrap.com/">Visit the homepage</a> or read our <a href="/docs/4.3/getting-started/introduction/">getting started guide</a>.</p>
-  </div>
-</footer>
 
 <script src="{% static 'home/homeLogic.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

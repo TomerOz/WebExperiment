@@ -582,11 +582,11 @@ def render_next_phase(request, users_subject):
 
     if request.method == "GET" and users_subject.current_phase.name == "End Screen":
         users_subject.update_subject_session_on_complete()
-        partial_save=False
+        lpartial_save=False
         if users_subject.n_identification_task_rounds > users_subject.experiment.n_identification_rounds_allowed:
-            partial_save=True
+            lpartial_save=True
         sd = SubjectData()
-        sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel, partial_save=partial_save)
+        sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel, partial_save=lpartial_save)
 
     return render(request, 'ipa_1_2/{}.html'.format(phase_to_html_page[users_subject.current_phase.name]), context_to_send)
 

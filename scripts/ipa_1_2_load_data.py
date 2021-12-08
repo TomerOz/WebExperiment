@@ -214,12 +214,33 @@ def run():
                     profile_feature.save()
                     profile.save(force_update=True)
 
+    def create_ecological_profiles():
 
+        ProfileModel.objects.filter(name__contains="Eco").delete()
 
-    #conda activate exp1 (at localhost)/ source exp1/bin/activate (at server)
-    #py manage.py shell;
-    #from profilePresntaion.models import *
-    #exec(open('load_inital_data.py').read())
+        ecologicals_A = pd.read_excel(os.path.join(CURRENT_APP_NAME,"myUtils","ecologicals_A.xlsx"))
+        ecologicals_B = pd.read_excel(os.path.join(CURRENT_APP_NAME,"myUtils","ecologicals_B.xlsx"))
+        ecologicals_C = pd.read_excel(os.path.join(CURRENT_APP_NAME,"myUtils","ecologicals_C.xlsx"))
+
+        labels_A = FeatureLabels.objects.filter(label_set="A").values_list("feature_name", flat=True)
+        labels_B = FeatureLabels.objects.filter(label_set="B").values_list("feature_name", flat=True)
+        labels_C = FeatureLabels.objects.filter(label_set="C").values_list("feature_name", flat=True)
+
+        df_ls = [[ecologicals_A, labels_A, "A"], [ecologicals_B, labels_B, "B"], [ecologicals_C, labels_C, "C"]]
+        counter = 1
+        for df, ls, set in df_ls:
+            subs = df.Subject.unique().tolist()
+            for sub in subs:
+                profile = ProfileModel(name="Eco-"+set+"-"+str(counter), profile_label_set=set)
+                profile.save()
+                for l in ls:
+                    feature = FeatureLabels.objects.get(feature_name=l)
+                    feature_value = int(df.loc[df.Subject==sub,l].values[0])
+                    profile_feature = FeatureValue(target_profile=profile, target_feature=feature, value=feature_value)
+                    profile_feature.save()
+                    profile.save(force_update=True)
+                counter += 1
+            counter = 1
 
 
     path = os.path.join(CURRENT_APP_NAME,"myUtils","features.xlsx")
@@ -228,14 +249,16 @@ def run():
     sham_questions_df = pd.read_excel(sham_path)
     features_names = features_df.feature.tolist()
 
-    create_experiment_instance()
-    create_experiment_phases() # updte sensitive
+    #create_experiment_instance()
+    #create_experiment_phases() # updte sensitive
     #squezze_in_new_phases()
-    create_instructinos() # deletes all previous instances
-    create_feature_labels(features_df) # updte sensitive
-    create_sham_questions(sham_questions_df)
-    create_contexts()
-    create_models() # updte sensitive
-    create_n_pilot_profiles(3)
+    #create_instructinos() # deletes all previous instances
+    #create_feature_labels(features_df) # updte sensitive
+    #create_sham_questions(sham_questions_df)
+    #create_contexts()
+    #create_models() # updte sensitive
+    #create_n_pilot_profiles(3)
+
+    create_ecological_profiles()
 
 #py manage.py runscript load_inital_data

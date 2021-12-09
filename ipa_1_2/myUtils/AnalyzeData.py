@@ -31,6 +31,6 @@ class AnalyzeData(object):
 
         val_scores = []
         for val in double_values:
-            val_score = 100 - (int(max(val)) - int(min(val)))
+            val_score = 100 - abs((int(max(val)) - int(min(val))))
             val_scores.append(val_score)
         return np.mean(val_scores)

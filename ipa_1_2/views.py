@@ -618,7 +618,14 @@ def get_data_page(request):
 
     df_all = get_single_df_all_data(data_path)
     all_data_path = os.path.join(data_path, "all_data.xlsx")
-    df_all.to_excel(all_data_path, index=False, engine='openpyxl')
+
+    writer = pd.ExcelWriter(os.path.join(all_data_path,'all_data.xlsx'),
+                        engine='xlsxwriter',
+                        options={'strings_to_urls': False,
+                                 'strings_to_formulas': False})
+
+    df_all.to_excel(writer, sheet_name='all_data', index=False)
+    #df_all.to_excel(all_data_path, index=False, engine='openpyxl')
 
     to_dir = os.path.join("static", "ipa_1_2", "data")
     to_dir_files = os.listdir(to_dir)

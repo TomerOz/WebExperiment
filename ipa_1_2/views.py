@@ -619,7 +619,7 @@ def get_data_page(request):
     df_all = get_single_df_all_data(data_path)
     all_data_path = os.path.join(data_path, "all_data.xlsx")
 
-    writer = pd.ExcelWriter(os.path.join(all_data_path,'all_data.xlsx'),
+    writer = pd.ExcelWriter(all_data_path,
                         engine='xlsxwriter',
                         options={'strings_to_urls': False,
                                  'strings_to_formulas': False})

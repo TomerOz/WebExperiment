@@ -618,7 +618,7 @@ def get_data_page(request):
 
     df_all = get_single_df_all_data(data_path)
     all_data_path = os.path.join(data_path, "all_data.xlsx")
-    df_all.to_excel(all_data_path, index=False)
+    df_all.to_excel(all_data_path, index=False, engine='openpyxl')
 
     to_dir = os.path.join("static", "ipa_1_2", "data")
     to_dir_files = os.listdir(to_dir)
@@ -671,7 +671,7 @@ def get_single_df_all_data(data_dir):
     if not os.path.exists(all_data_file_path):
         all_data = pd.DataFrame()
     else:
-        all_data = pd.read_excel(all_data_file_path)
+        all_data = pd.read_excel(all_data_file_path, engine='openpyxl')
         existing_subjects = all_data.subject_num.unique().tolist()
 
     for file in files:

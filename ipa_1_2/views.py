@@ -678,7 +678,7 @@ def get_single_df_all_data(data_dir):
     if not os.path.exists(all_data_file_path):
         all_data = pd.DataFrame()
     else:
-        all_data = pd.read_excel(all_data_file_path, engine='openpyxl')
+        all_data = pd.read_excel(all_data_file_path)
         existing_subjects = all_data.subject_num.unique().tolist()
 
     for file in files:

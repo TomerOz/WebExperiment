@@ -672,7 +672,7 @@ def get_single_df_all_data(data_dir):
         all_data = pd.DataFrame()
     else:
         all_data = pd.read_excel(all_data_file_path)
-        existing_subjects = subjects = all_data.subject_num.unique().tolist()
+        existing_subjects = all_data.subject_num.unique().tolist()
 
     for file in files:
         if file.endswith(".xlsx") and file != "all_data.xlsx":

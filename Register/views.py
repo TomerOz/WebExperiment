@@ -6,8 +6,25 @@ from django.contrib.auth.forms import UserCreationForm
 import ipdb
 
 #targetPageToURL = {"SGS1" : "profilePresntaion/PhaseDecision", None : 'home/home'} # for simple "redirect"
-targetPageToURL = {"SGS1" : "profilePresntaion:PhaseDecision", "ipa_1_2": "ipa_1_2:PhaseDecision", 'Home' : 'home:home'} # for "reverse" --> totally new path
+targetPageToURL = {"ipa_2" : "ipa_2:PhaseDecision", "ipa_1_2": "ipa_1_2:PhaseDecision", 'Home' : 'home:home'} # for "reverse" --> totally new path
 
+
+def process_sign_ups(post_data):
+    questions_answers = {
+        "subject_set": ["A","B","C"],
+        "runningLocation": ["Lab", "Home"],
+        "assignesExperiment": ["IPA_1.2","IPA_2"],
+        "gender": ["female", "male"],
+        }
+
+    errors = {}
+    filled_ok = {}
+    for k,v in questions_answers.items():
+        if not post_data[k] in v:
+            errors[k+"_errors"] = "Must choose a value"
+        else:
+            filled_ok["selected"+post_data[k]] = "selected"
+    return (errors, filled_ok)
 
 def logout_user(request):
     logout(request)
@@ -16,28 +33,44 @@ def logout_user(request):
 def signup(request, targetPage="Home"):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
-        if not request.POST["subject_set"] in ["A","B","C"]:
-            return render(request, 'Register/signup.html', {'errors': "Must choose a value", "targetURLAfterLogin": targetPage})
+        errors, filled_ok = process_sign_ups(request.POST)
+        if len(errors) > 0:
+            context = {"targetURLAfterLogin": targetPage, "selectedUserName":  request.POST["username"], "selectedSubject_num": request.POST["subject_num"]}
+            context.update(errors)
+            context.update(filled_ok)
+            return render(request, 'Register/signup.html', context)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            user.usertosubject.subject_num = request.POST["subject_num"]
-            user.usertosubject.features_set = request.POST["subject_set"]
-            user.usertosubject.runningLocation = request.POST["runningLocation"]
-            user.usertosubject.gender = request.POST["gender"]
+            user = authenticate(username=username, password=raw_password, first_name=request.POST["assignesExperiment"])
+            if request.POST["assignesExperiment"] == "IPA_1.2":
+                user.usertosubject.subject_num = request.POST["subject_num"]
+                user.usertosubject.features_set = request.POST["subject_set"]
+                user.usertosubject.runningLocation = request.POST["runningLocation"]
+                user.usertosubject.gender = request.POST["gender"]
+
+
+            elif request.POST["assignesExperiment"] == "IPA_2":
+                user.usertosubjectipa2.subject_num = request.POST["subject_num"]
+                user.usertosubjectipa2.features_set = request.POST["subject_set"]
+                user.usertosubjectipa2.runningLocation = request.POST["runningLocation"]
+                user.usertosubjectipa2.gender = request.POST["gender"]
 
             # user.usertosubject.education = request.POST["education"]
             # user.usertosubject.age = request.POST["age"]
-            user.save()
             if request.POST["flow"] == "continue":
                 return redirect("/signup/" + username)
             else:
                 login(request, user)
             return redirect(targetPageToURL[targetPage])
         else:
-            return render(request, 'Register/signup.html', {'form': form, "targetURLAfterLogin": targetPage, 'registrationErrors': "Invalid deatils - not registered" })
+            context = {'form': form, "targetURLAfterLogin": targetPage, 'registrationErrors': "Invalid deatils - not registered" }
+            context.update({"selectedUserName":  request.POST["username"], "selectedSubject_num": request.POST["subject_num"]})
+            context.update(errors)
+            context.update(filled_ok)
+
+            return render(request, 'Register/signup.html', context)
     else:
         form = RegisterForm()
 

@@ -4,7 +4,6 @@ from . import views
 
 app_name = 'ipa_1_2'
 urlpatterns = [
-    path('<str:poll_id>/<str:some>', views.polls_detail),
     path('', views.get_phase_page, name='PhaseDecision'), # A general requests handler that dicides on subject's phase
     path('Data', views.get_data_page, name='get_data_page'), # A general requests handler that dicides on subject's phase
     path('Save', views.save_try, name='save_try'), # A general requests handler that dicides on subject's phase

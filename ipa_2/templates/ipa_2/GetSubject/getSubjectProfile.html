@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'ipa_1_2/GetSubject/SubjectSliderStyle.css' %}">
+  </head>
+  <body>
+
+<form action ="" method="post" id="featuresForm">
+  {% csrf_token %}
+  <br>
+  <br>
+  <div id="featuresTable">
+    <table>
+      <tr class="thirdScreen">
+        <td></td>
+      </tr>
+      <tr class="thirdScreen">
+        <td>
+          <div class="slidecontainer text-center" id="slidecontainer"></div>
+          <div class="buttonMoreLess">
+            <br><br><button id="nextFeatureButton" class="btn btn-primary btn" type="button" name="button">הבא</button>
+          </div>
+          <div id="inTaskInstructions" class="buttonMoreLess"></div>
+        </td>
+      </tr>
+      <tr class="thirdScreen">
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="container">
+    <input type="hidden" name="form_phase" value="{{ form_phase }}">
+  </div>
+    <div class="container" id="hiddenInputs">
+  </div>
+</form>
+
+      <script>
+       var context = {{features_list|safe}}
+       var subject_group = "{{ subject_group }}"
+
+      // working with the variable context
+      </script>
+  </body>
+
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
+
+  <script src="{% static 'ipa_1_2/GetSubject/SubjectSliderLogic.js' %}"></script>
+</html>

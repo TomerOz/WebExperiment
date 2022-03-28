@@ -273,8 +273,12 @@ class UserToSubject(models.Model):
 @receiver(post_save, sender=User)
 def create_user_subject(sender, instance, created, **kwargs):
     if created:
-        UserToSubject.objects.create(user=instance)
+        if instance.first_name=="IPA_1.2":
+            UserToSubject.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
 def save_user_subject(sender, instance, **kwargs):
-    instance.usertosubject.save()
+    try:
+        instance.usertosubject.save()
+    except:
+        pass

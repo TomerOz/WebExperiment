@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>profile</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'ipa_2/profile/SliderStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'ipa_2/profile/getSimilarity.css' %}">
+    <link rel="stylesheet" href="{% static 'ipa_2/gameStyle.css' %}">
+
+    <link rel="stylesheet" href="{% static 'ipa_2/profile/anchorsStyle.css' %}">
+  </head>
+  <body id="body">
+    <div id="featuresTable">
+      <table>
+        <tr class="thirdScreen">
+          <td></td>
+        </tr>
+        <tr class="thirdScreen">
+          <td>
+            <div class="slidecontainer text-center" id="slidecontainer"></div>
+            <div class="buttonMoreLess">
+              <button id="nextFeatureButton" class="btn btn-primary btn" type="button" name="button">{{ off_order_instructions_dict.nextButtonText }}</button>
+            </div>
+            <div id="inTaskInstructions" class="buttonMoreLess">
+              <div id="instructionContainer" class="jumbotron">
+                <br><br>
+                <p id="inTaskInstructionsText"></p>
+              </div>
+              <div id="layerHide" style="margin:auto;text-align:center;"><textarea od="layerHideTextArea" rows="40"columns="40"></textarea></div>
+              <br><br><button id="nextFromInstructions" class="btn btn-primary btn" type="button" name="button">{{ off_order_instructions_dict.continueTaskButtonText }}</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="thirdScreen">
+          <td></td>
+        </tr>
+      </table>
+    </div>
+    <div class="text-center" id="instrucion" style="direction:rtl">{{off_order_instructions_dict.report_instructions}}<br></div>
+
+    <!-- Start of Game Matrix -->
+    <div class="text-center" id="GameMatrixSection">
+      <div id="matrixContainer">
+        <table class="gameTable">
+          <tbody>
+            <tr>
+              <td>X</td>
+              <td colspan="2">{{game.strategy_a}}</td>
+              <td colspan="2">{{game.strategy_b}}</td>
+            </tr>
+            <tr class="A TopRow">
+              <td id="A" class="choiceButton" rowspan="2">{{game.strategy_a}}</td>
+              <!-- A or B stands for row choice, a or b stands for col choice -->
+              <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
+              <td class="Aa">{{off_order_instructions_dict.youGet}}</td>
+              <td class="Aa">{{off_order_instructions_dict.OtherGet}}</td>
+              <td class="Ab">{{off_order_instructions_dict.youGet}}</td>
+              <td class="Ab">{{off_order_instructions_dict.OtherGet}}</td>
+            </tr>
+            <tr class="A BottomRow">
+              <td class="Aa">{{game.pA_Aa}}</td>
+              <td class="Aa">{{game.pB_Aa}}</td>
+              <td class="Ab">{{game.pA_Ab}}</td>
+              <td class="Ab">{{game.pB_Ab}}</td>
+            <tr class="B TopRow">
+              <td rowspan="2" id="B" class="choiceButton">{{game.strategy_b}}</td>
+              <!-- A or B stands for row choice, a or b stands for col choice -->
+              <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
+              <td class="Ba">{{off_order_instructions_dict.youGet}}</td>
+              <td class="Ba">{{off_order_instructions_dict.OtherGet}}</td>
+              <td class="Bb">{{off_order_instructions_dict.youGet}}</td>
+              <td class="Bb">{{off_order_instructions_dict.OtherGet}}</td>
+            </tr>
+            <tr class="B BottomRow">
+              <td class="Ba">{{game.pA_Ba}}</td>
+              <td class="Ba">{{game.pB_Ba}}</td>
+              <td class="Bb">{{game.pA_Bb}}</td>
+              <td class="Bb">{{game.pB_Bb}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <br>
+    <div class="explantions" id="explantionsDiv" style="direction:rtl">
+    </div>
+    <!-- End of Game Matrix -->
+
+      <!-- consider deleting the following -->
+      <div class="container">
+        <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      </div>
+      <div class="container" id="hiddenInputs"></div>
+      <!-- end deletion consideration -->
+      <br>
+      <br>
+
+      <div id="NextProfileButtonSection"class="container text-center">
+        <div id="presentProfileAgainButtonSection"class="container text-center spaceDownButtons">
+          <br><br>
+          <button id="NextProfileButton" class="btn btn-primary btn spaced-buttons" type="button" name="button">{{ off_order_instructions_dict.continueToNextProfileButtonText }}</button>
+          <button id="presentProfileAgainButton" class="btn btn-primary btn spaced-buttons" type="button" name="button">{{ off_order_instructions_dict.pesentAgainButtonText }}</button>
+        </div>
+        <br>
+      </div>
+
+      <p style="display:none" id="beforeNewProfile">{{off_order_instructions_dict.beforeNewProfile}}</p>
+      <p style="display:none" id="presentAgain">{{off_order_instructions_dict.presentAgain}}</p>
+      <p style="display:none" id="ExplanationTexts">{{off_order_instructions_dict.ExplanationTexts}}</p>
+      <script>
+        var b = document.getElementsByTagName("body")[0];
+        b.style.width = window.screen.height
+        b.style.height = window.screen.height
+       var context = {{context|safe}}
+       var maxValue = {{maxValue|safe}}
+       var minValue = {{minValue|safe}}
+       var maxName = {{maxName|safe}}
+       var minName = {{minName|safe}}
+       var n_practice_trials = {{n_practice_trials|safe}}
+       var subject_group = "{{ subject_group }}"
+       var beforeNewProfileText = beforeNewProfile.textContent
+       var presentAgainText = presentAgain.textContent
+       var gameJSON = {{gameJSON|safe}}
+      // working with the variable context
+      </script>
+    </div>
+    <form id="subjectResonseForm" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      <input id="subjectResonses" type="hidden" name="responses" value="">
+      <input id="profilesList" type="hidden" name="profilesList" value="">
+      <input id="profilesDescriptions" type="hidden" name="profilesDescriptions" value="">
+      <input id="subjectRTs" type="hidden" name="subjectRTs" value=""> <!-- each feature rt-->
+      <input id="profileRTs" type="hidden" name="profileRTs" value=""> <!-- each profile rt-->
+      <input id="trial" type="hidden" name="currentTrial" value="">
+      <input id="trialFeatureOrder" type="hidden" name="trialFeatureOrder" value="">
+    </form>
+  </body>
+
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
+
+  <script src="{% static 'ipa_2/profile/SliderLogic.js' %}"></script>
+  <!-- <script src="{% static 'ipa_2/profile/getSimilarity.js' %}"></script> -->
+  <script src="{% static 'ipa_2/gameLogic.js' %}"></script>
+</html>

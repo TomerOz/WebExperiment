@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'profilePresntaion.apps.ProfilepresntaionConfig',
     'ipa_1_2.apps.Ipa12Config',
     'Register.apps.RegisterConfig',
+    'ipa_2.apps.Ipa2Config',
     # 'core.apps.CoreConfig',
     'home.apps.HomeConfig',
     'django.contrib.admin',

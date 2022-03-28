@@ -612,14 +612,21 @@ def get_data_page(request):
     for file in files:
         paths.append(os.path.join("ipa_1_2/data/", file))
         df_paths.append(os.path.join(data_path, file))
+
+
     paths_files = zip(paths, files)
 
     df_all = get_single_df_all_data(data_path)
-    df_all.to_excel(os.path.join(data_path, "all_data.xlsx"), index=False)
+    all_data_path = os.path.join(data_path, "all_data.xlsx")
+    df_all.to_excel(all_data_path, index=False)
 
-
-    from_dir = data_path
     to_dir = os.path.join("static", "ipa_1_2", "data")
+    to_dir_files = os.listdir(to_dir)
+    to_dir_files = [file.split("/")[-1] for file in to_dir_files]
+    df_paths = [added_file for added_file in df_paths if not added_file.split("/")[-1] in to_dir_files]
+    df_paths.append(all_data_path)
+    from_dir = data_path
+
     copy_tree(from_dir, to_dir)
 
     exp = Experiment.objects.get(name="IPA1.2")
@@ -658,16 +665,26 @@ def save_try(request):
 
 def get_single_df_all_data(data_dir):
     files = os.listdir(r''+data_dir)
-    all_data = pd.DataFrame()
+
+    all_data_file_path = os.path.join(data_dir,"all_data.xlsx")
+    existing_subjects = []
+    if not os.path.exists(all_data_file_path):
+        all_data = pd.DataFrame()
+    else:
+        all_data = pd.read_excel(all_data_file_path)
+        existing_subjects = subjects = all_data.subject_num.unique().tolist()
+
     for file in files:
         if file.endswith(".xlsx") and file != "all_data.xlsx":
-            df = pd.read_excel(os.path.join(r''+data_dir,file))
-            subject_group = df.subject_group.unique()[0]
-            for i in range(len(COL_NAMES_BY_GROUP[subject_group])):
-                subject_feature = COL_NAMES_BY_GROUP[subject_group][i]
-                profile_feature = PROFILE_COL_NAMES_BY_GROUP[subject_group][i]
-                df["Feature-"+str(i+1)] = (100 - (abs(df[subject_feature]-df[profile_feature])))/100
-            all_data = all_data.append(df)
+            subject_num = int(file.split("-")[1])
+            if not subject_num in existing_subjects:
+                df = pd.read_excel(os.path.join(r''+data_dir,file))
+                subject_group = df.subject_group.unique()[0]
+                for i in range(len(COL_NAMES_BY_GROUP[subject_group])):
+                    subject_feature = COL_NAMES_BY_GROUP[subject_group][i]
+                    profile_feature = PROFILE_COL_NAMES_BY_GROUP[subject_group][i]
+                    df["Feature-"+str(i+1)] = (100 - (abs(df[subject_feature]-df[profile_feature])))/100
+                all_data = all_data.append(df)
     return all_data
 
 ## Development Views: ################################################################################################################################################

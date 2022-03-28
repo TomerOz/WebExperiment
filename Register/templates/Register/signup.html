@@ -43,7 +43,7 @@
 
                              <div class="form-group">
                                 <label for="username"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" name="username" id="username" placeholder="Subject User Name"/>
+                                <input type="text" name="username" id="username" value="{{selectedUserName}}" placeholder="Subject User Name"/>
                             </div>
                             <div class="form-group">
                                 <label for="pass"><i class="zmdi zmdi-lock"></i></label>
@@ -55,35 +55,44 @@
                             </div>
                             <div class="form-group">
                                <label for="subject_num"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                               <input type="text" name="subject_num" id="subject_num" placeholder="Subject Number"/>
+                               <input type="text" name="subject_num" value="{{selectedSubject_num}}" id="subject_num" placeholder="Subject Number"/>
                            </div>
                            <div class="form-group">
                              <select name="subject_set" id="subject_set" class="form-select" aria-label="Default select example">
                                <option selected>Select Subject Group Letter</option>
-                               <option value="A">A</option>
-                               <option value="B">B</option>
-                               <option value="C">C</option>
+                               <option {{selectedA}} value="A">A</option>
+                               <option {{selectedB}} value="B">B</option>
+                               <option {{selectedC}} value="C">C</option>
                              </select>
-                             <p style="color:red"> {{ errors }} </p>
+                             <p style="color:red"> {{ subject_set_errors }} </p>
                             </div>
 
                              <div class="form-group">
                                <select name="gender" id="gender" class="form-select" aria-label="Default select example">
                                  <option selected>Select Subject Gender</option>
-                                 <option value="female">Female</option>
-                                 <option value="male">Male</option>
+                                 <option {{selectedfemale}} value="female">Female</option>
+                                 <option {{selectedmale}} value="male">Male</option>
                                </select>
-                               <p style="color:red"> {{ errors }} </p>
+                               <p style="color:red"> {{ gender_errors }} </p>
                               </div>
 
                               <div class="form-group">
                                 <select name="runningLocation" id="runningLocation" class="form-select" aria-label="Default select example">
                                   <option selected>Select Running Location </option>
-                                  <option value="Lab">Lab</option>
-                                  <option value="Home">Home</option>
+                                  <option {{selectedLab}} value="Lab">Lab</option>
+                                  <option {{selectedHome}} value="Home">Home</option>
                                 </select>
-                                <p style="color:red"> {{ errors }} </p>
+                                <p style="color:red"> {{ runningLocation_errors }} </p>
                                </div>
+
+                               <div class="form-group">
+                                 <select name="assignesExperiment" id="assignesExperiment" class="form-select" aria-label="Default select example">
+                                   <option selected>Select Experiment </option>
+                                   <option {{selectedIPA_1.2}}selected value="IPA_1.2">IPA 1.2</option>
+                                   <option {{selectedIPA_2}} value="IPA_2">IPA 2</option>
+                                 </select>
+                                 <p style="color:red"> {{ assignesExperiment_errors }} </p>
+                                </div>
 
                             <div class="form-group form-button">
                               <input type="hidden" name="flow" id="flowInput" value="goHome">

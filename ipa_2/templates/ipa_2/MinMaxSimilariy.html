@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Fonts links -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+    {% load static %}
+    <!-- styles links -->
+    <link rel="stylesheet" href="{% static 'ipa_2/MinMaxSimilarityStyle.css' %}">
+
+  </head>
+  <body>
+    {% if instructions_list %}
+  <div class="container">
+    <!-- <div id="instructionContainer" class="jumbotron">
+    </div> -->
+    {% endif %}
+    <!-- Buttons -->
+      <div class="text-center">
+      <button id="NextStepButton" style="display:none" class="btn btn-primary btn" type="button" name="button">Next Step</button>
+    </div>
+    <!-- Questions: -->
+    <div class="testbox" style="direction:rtl">
+      <form id="testForm" method="post">
+      {% csrf_token %}
+        <br/>
+
+        <br/>
+            <!-- <div id="MaxSimilaritySection" class="item"><label for="maxSimilarity"> <h3>{{ off_order_instructions_dict.MaxName }}<span> :</span></h3></label> -->
+            <div id="MaxSimilaritySection" class="item">
+              <div id="maxSimilarityQuestion">
+                <label id="maxSimilarityQuestionText" for="maxSimilarity"> <h3>{{ off_order_instructions_dict.askMax }}<span> :</span></h3></label>
+                <div class="input-group">
+                  <input  autocomplete="off" type="text" id="maxSimilarity" name="maxSimilarityName" min="1" max="50" required>
+                </div>
+              </div>
+              <div id="MaxSimilarityReportSection" class="row" style="direction:ltr">
+                <p>
+                  <h3 style="direction:rtl" id="beforeReportMax">{{ off_order_instructions_dict.reportMaxSimilarity }}</h3>
+                </p>
+                <canvas id="myCanvas" width="400" height="320"></canvas>
+                <br/>
+                <div class="buttonMoreLess">
+                  <button id="lessSimilarityMax" class="btn btn-primary btn moreLessSimButton" type="button" name="button">{{ off_order_instructions_dict.lessSimButtonText }}</button>
+                  <button id="moreSimilarityMax" class="btn btn-primary btn moreLessSimButton" type="button" name="button">{{ off_order_instructions_dict.moreSimButtonText }}</button>
+                  <input type="hidden" name="similarityInputMax" id="similarityInputMax" value=0>
+                </div>
+              </div>
+                <span class="input-group-btn leftAlign"><button id="approve_name_1" type="button" href="/">{{ off_order_instructions_dict.continueButtonText }}</button></span>
+            </div>
+
+            <div id="MinSimilaritySection" class="item">
+              <div id="minSimilarityQuestion">
+                <label id="minSimilarityQuestionText" for="minSimilarity"><h3>{{ off_order_instructions_dict.askMin }}<span> :</span></h3></label>
+                <div class="input-group">
+                  <input  autocomplete="off" type="text" id="minSimilarity" name="minSimilarityName" min="1" max="50" required>
+                </div>
+              </div>
+              <div id="MinSimilarityReportSection" class="row" style="direction:ltr">
+                <p>
+                  <h3 style="direction:rtl" id="beforeReportMin">{{ off_order_instructions_dict.reportMinSimilarity }}</h3>
+                </p>
+                <canvas id="myCanvas2" width="400" height="320"></canvas>
+                <br/>
+                <div class="buttonMoreLess">
+                  <button id="lessSimilarityMin" class="btn btn-primary btn moreLessSimButton" type="button" name="button">{{ off_order_instructions_dict.lessSimButtonText }}</button>
+                  <button id="moreSimilarityMin" class="btn btn-primary btn moreLessSimButton" type="button" name="button">{{ off_order_instructions_dict.moreSimButtonText }}</button>
+                  <input type="hidden" name="similarityInputMin" id="similarityInputMin" value=0>
+                </div>
+              </div>
+                <span class="input-group-btn leftAlign"><button id="approve_name_2" type="button" href="/">{{ off_order_instructions_dict.continueButtonText }}</button></span>
+            </div>
+
+        <div class="btn-block" style="direction:ltr; color:red; text-align:left;">
+          {% if errors %}
+          <span>One answer or more is incorrect!<span><br>
+          {% endif %}
+          <input type="hidden" name="form_phase" value="{{ form_phase }}">
+          <button id="submitButton" type="submit" href="/" id"changeButton">{{ off_order_instructions_dict.continueButtonText }}</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+     var instructions_list = {{instructions_list|safe}}
+     var errorsJSON = {{errorsJSON|safe}}
+     var wordsToHighlight = {{words_to_highlight|safe}}
+    // working with the variable context
+    </script>
+    </div>
+
+    <form id="subjectResonseForm" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      <input id="subjectResonses" type="hidden" name="responses" value="">
+      <input id="trial" type="hidden" name="currentTrial" value="">
+    </form>
+
+    <form id="instructionsForm" class="" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+    </form>
+  </body>
+
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
+  <script src="{% static 'ipa_2/MinMaxSimilariyLogic.js' %}"></script>
+</html>

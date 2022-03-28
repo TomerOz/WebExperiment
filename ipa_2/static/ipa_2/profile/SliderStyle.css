@@ -1,0 +1,160 @@
+#layerHide{
+  width: 80vw;
+  height: 80vh;
+}
+
+#layerHideTextArea{
+  outline: none;
+  border: none;
+}
+
+.slidecontainer {
+  width: 85%; /* Width of the outside container */
+  margin: auto;
+}
+
+@media all and (min-width: 1366px) {
+  .slidecontainer {
+    max-width: 60%; /* Width of the outside container */
+    margin: auto;
+  }
+}
+
+.container {
+  width: 100%;
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 75%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #4CAF50; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #4CAF50; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.column {
+  float: left;
+  text-align: center;
+}
+
+.side {
+  width: 25%;
+  font-size: 18px;
+}
+
+.middle {
+  width: 50%;
+}
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+
+#title{
+  font-size: 22px;
+  text-align: center;
+  margin: 0px;
+  margin-bottom: 10%;
+}
+
+table{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+td {
+  width: 85vw;
+}
+
+.thirdScreen {
+  height: 22vh;
+  width: 85vw;
+}
+
+.buttonMoreLess{
+  margin: auto;
+  text-align: center;
+  margin-top: 3%;
+}
+
+.moreLessSimButton{
+  background-color: #aaaaaa !important;
+  color: white !important;
+  border-color: #aaaaaa !important;
+  outline: #aaaaaa !important;
+}
+
+.moreLessSimButton:hover{
+  background-color: #eeeeee !important;
+  color: black !important;
+  outline: #aaaaaa !important;
+  /* outline: gray; */
+}
+
+.moreLessSimButton:active{
+  border-color: #aaaaaa !important;
+  outline: #aaaaaa !important;
+}
+
+#nextFeatureButton{
+  margin: auto;
+  margin-top: 15%;
+  margin-bottom: 2%;
+}
+
+
+.jumbotron {
+  background: #7a2134;
+  color: white;
+  font-size: 22px;
+  text-align: right;
+  direction: rtl;
+
+  border-radius: 3%;
+  padding: 2%;
+  width: 66vw;
+  margin: auto;
+}
+
+#instrucion{
+  margin-top: 2%;
+}
+
+.spaceDownButtons {
+  margin-top: 4%;
+}
+
+.spaced-buttons{
+  margin-left: 8%;
+  margin-right: 8%;
+}

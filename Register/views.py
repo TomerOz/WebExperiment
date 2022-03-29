@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import login, logout, authenticate
 from .forms import RegisterForm
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
 import ipdb
 
 #targetPageToURL = {"SGS1" : "profilePresntaion/PhaseDecision", None : 'home/home'} # for simple "redirect"
@@ -43,20 +45,28 @@ def signup(request, targetPage="Home"):
             form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password, first_name=request.POST["assignesExperiment"])
+            user = authenticate(username=username, password=raw_password)
+            user.first_name = request.POST["assignesExperiment"]
+            user.save()
             if request.POST["assignesExperiment"] == "IPA_1.2":
+                from ipa_1_2.models import create_user_subject
+                create_user_subject(User, user, True)
+                user.usertosubject.save()
                 user.usertosubject.subject_num = request.POST["subject_num"]
                 user.usertosubject.features_set = request.POST["subject_set"]
                 user.usertosubject.runningLocation = request.POST["runningLocation"]
                 user.usertosubject.gender = request.POST["gender"]
-
+                user.usertosubject.save()
 
             elif request.POST["assignesExperiment"] == "IPA_2":
+                from ipa_2.models import create_user_subject
+                create_user_subject(User, user, True)
+                user.usertosubject.save()
                 user.usertosubjectipa2.subject_num = request.POST["subject_num"]
                 user.usertosubjectipa2.features_set = request.POST["subject_set"]
                 user.usertosubjectipa2.runningLocation = request.POST["runningLocation"]
                 user.usertosubjectipa2.gender = request.POST["gender"]
-
+                user.usertosubject.save()
             # user.usertosubject.education = request.POST["education"]
             # user.usertosubject.age = request.POST["age"]
             if request.POST["flow"] == "continue":

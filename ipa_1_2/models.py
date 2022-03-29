@@ -275,6 +275,7 @@ def create_user_subject(sender, instance, created, **kwargs):
     if created:
         if instance.first_name=="IPA_1.2":
             UserToSubject.objects.create(user=instance)
+            instance.usertosubject.save()
 
 @receiver(post_save, sender=User)
 def save_user_subject(sender, instance, **kwargs):

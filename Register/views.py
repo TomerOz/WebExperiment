@@ -61,12 +61,12 @@ def signup(request, targetPage="Home"):
             elif request.POST["assignesExperiment"] == "IPA_2":
                 from ipa_2.models import create_user_subject
                 create_user_subject(User, user, True)
-                user.usertosubject.save()
+                user.usertosubjectipa2.save()
                 user.usertosubjectipa2.subject_num = request.POST["subject_num"]
                 user.usertosubjectipa2.features_set = request.POST["subject_set"]
                 user.usertosubjectipa2.runningLocation = request.POST["runningLocation"]
                 user.usertosubjectipa2.gender = request.POST["gender"]
-                user.usertosubject.save()
+                user.usertosubjectipa2.save()
             # user.usertosubject.education = request.POST["education"]
             # user.usertosubject.age = request.POST["age"]
             if request.POST["flow"] == "continue":
@@ -87,6 +87,7 @@ def signup(request, targetPage="Home"):
     return render(request, 'Register/signup.html', {'form': form, "targetURLAfterLogin": targetPage})
 
 def signin(request, targetPage="Home"):
+    # ipdb.set_trace( )
     if request.method == 'POST': # User tries to login
         logout(request)
         username = request.POST["username"]
@@ -103,6 +104,7 @@ def signin(request, targetPage="Home"):
             return render(request, 'Register/signin.html', form_feedback)
 
     else: # User is about to login
+
         return render(request, 'Register/signin.html', {"targetURLAfterLogin": targetPage})
 
 

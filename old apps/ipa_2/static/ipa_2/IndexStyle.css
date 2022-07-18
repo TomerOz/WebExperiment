@@ -1,0 +1,25 @@
+
+.jumbotron {
+  background: #7a2134;
+  color: white;
+  font-size: 22px;
+  text-align: right;
+  direction: rtl;
+}
+
+.btn {
+  color: white;
+  background: #302d2d;
+  border: #807d7d;
+  font-weight: bold;
+}
+
+.btn:hover  {
+  background: #b5aeae;
+  color: #7a2134;
+}
+
+img {
+  margin: auto;
+  text-align: center;
+}

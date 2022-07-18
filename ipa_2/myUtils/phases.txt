@@ -2,7 +2,8 @@ Consent phase
 Pre Task
 Get Min Max Similarity
 Pre Get Profile
-During Get Profile
+During Get Profile1
+During Get Profile2
 Pre Identification Task
 Identification Task
 Pre Get Max Profile

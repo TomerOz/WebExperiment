@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height initial-scale=1, shrink-to-fit=yes">
+    <title>IPA 2020 - Instructions</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'ipa_2/instructionStyle.css' %}">
+
+  </head>
+  <body>
+    <link rel="stylesheet" type="text/css" href="{% static 'ipa_2/IndexStyle.css' %}">
+    {% if instructions_list %}
+    <br>
+    <br>
+    <div class="container">
+    <div id="instructionContainer" class="jumbotron"></div>
+    {% endif %}
+
+    <div class="container" id="picturesContainer"></div>
+
+    <form id="instructionsForm" class="" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      <button class="btn btn-primary btn-lg" id="NextInstructionButton" type="button" name="button">{{ off_order_instructions_dict.nextButtonText }}</button>
+    </form>
+  </div>
+    <script>
+     var instructions_list = {{instructions_list|safe}}
+     var wordsToHighlight = {{words_to_highlight|safe}}
+     var picturesPaths = {{pictures_paths|safe}}
+
+    </script>
+
+  </body>
+    <script src="{% static 'ipa_2/InstructionLogic.js' %}"></script>
+</html>

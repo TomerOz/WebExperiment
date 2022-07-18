@@ -24,7 +24,8 @@ phase_to_html_page = {
                         "Pre Task":                     "instruction",
                         "Get Min Max Similarity":       "MinMaxSimilariy",
                         "Pre Get Profile":              "instruction",
-                        "During Get Profile":           "GetSubject/getSubjectProfile",
+                        "During Get Profile1":           "GetSubject/getSubjectProfile",
+                        "During Get Profile2":           "GetSubject/getSubjectProfile",
                         "Pre Identification Task":      "instruction",
                         "Identification Task":          "IdentificationTask",
                         "Pre Get Max Profile":          "instruction",
@@ -177,7 +178,10 @@ def _check_if_user_have_subject(user):
     return False
 
 # returns a context dictionary withh all the profiles data ready for rendering (a sort od serialiser)
-def _get_profiles_list_context(all_profiles):
+def _get_profiles_list_context(all_profiles,  label_set=None):
+    if label_set == None:
+         label_set="A"
+
     profiles_data = {}
     profiles_data["profiles_list"] = [] # This is the list the will be iterated through the experiment
     for profile in all_profiles:
@@ -186,8 +190,10 @@ def _get_profiles_list_context(all_profiles):
             p_id = str(profile.id)+"-d" # dubbled profile
         profiles_data[p_id] = {}
         profiles_data["profiles_list"].append(p_id)
-
         features_list = profile.featurevalue_set.all()[::1] # the [::1] converts the query set into a list
+        if profile.is_subject:
+            features_list = [feature for feature in features_list if feature.target_feature.label_set==label_set]
+
         profiles_data[p_id]["name"] = profile.name
         profiles_data[p_id]["is_subject"] = profile.is_subject
         profiles_data[p_id]["features"] = {}
@@ -249,14 +255,19 @@ def get_profile_question_text(subject, fl):
     return text
 
 # Preparing context for the a new subject page
-def _get_new_subject_profile_page_context(users_subject):
+def _get_new_subject_profile_page_context(users_subject, set_num):
+    if set_num ==1:
+        label_set = users_subject.sets_order.split(",")[0]
+    else:
+        label_set = users_subject.sets_order.split(",")[1]
+
     features_list = []
-    for fl in FeatureLabels.objects.filter(label_set=users_subject.profile_label_set).all():
+    for fl in FeatureLabels.objects.filter(label_set=label_set).all():
         question_text = get_profile_question_text(users_subject, fl)
         features_list.append([fl.feature_name, fl.right_end, fl.left_end, question_text])
     random.shuffle(features_list)
 
-    if users_subject.current_phase.name == "During Get Profile":
+    if users_subject.current_phase.name == "During Get Profile1":
         sham_list = []
         for sq in ShamQuestion.objects.all():
             question_text = get_profile_question_text(users_subject, sq)
@@ -282,10 +293,14 @@ def _get_context(form_phase, instructions_list, single_instruction_text, off_ord
                 }
     return context
 
-def _get_subject_profile(users_subject):
+def _get_subject_profile(users_subject, label_set=None):
+    if label_set==None:
+        label_set = users_subject.profile_label_set
+
     user_profile = ProfileModel.objects.get(name = users_subject.name)
     user_profile_data = {"features": {}, "features_order": [], "name": user_profile.name, "is_subject": user_profile.is_subject}
     features_data = user_profile.featurevalue_set.all()[::1] # the [::1] converts the query set into a list
+    features_data = [feature for feature in features_data if feature.target_feature.label_set==label_set]
     for feature in features_data:
         f_name = feature.target_feature.feature_name
         user_profile_data["features_order"].append(f_name)
@@ -333,9 +348,9 @@ def print_profile_debug(model, ap, sp):
     for feature in ap["features_order"]:
         print(feature + " - " + str(ap["features"][feature]["value"]))
 
-def _generate_profile(users_subject, target_similarity, name_instance=""):
-    sp = _get_subject_profile(users_subject) # subject profile
-    model = SimilarityContextModel.objects.get(context__name=users_subject.context_group.name, label_set=users_subject.profile_label_set)
+def _generate_profile(users_subject, target_similarity, label_set, name_instance=""):
+    sp = _get_subject_profile(users_subject, label_set) # subject profile
+    model = SimilarityContextModel.objects.get(context__name=users_subject.context_group.name, label_set=label_set)
     min_s = _get_min_similarity(model, sp) # min possible similarity
     relative_similarity_level = (1-min_s)*target_similarity + min_s
     initial_profile = copy.deepcopy(sp)
@@ -347,13 +362,13 @@ def _generate_profile(users_subject, target_similarity, name_instance=""):
     ap["name"] = ap_name
 
     # save this profile
-    ArtificialProfileModel.objects.filter(target_subject=users_subject, name=ap_name).delete() # first_deleting an existing profile
+    ArtificialProfileModel.objects.filter(target_subject=users_subject, name=ap_name, profile_label_set=label_set).delete() # first_deleting an existing profile
     ap_instance = ArtificialProfileModel(is_artificial=True, target_subject=users_subject)
     ap_instance.name = ap_instance.get_name_pattern(str(target_similarity), name_instance)
     ap_instance.target_phase = users_subject.current_phase
-    ap_instance.profile_label_set = users_subject.profile_label_set
+    ap_instance.profile_label_set = label_set
     ap_instance.save()
-    feaure_labels = FeatureLabels.objects.filter(label_set=users_subject.profile_label_set).values_list("feature_name", flat=True)
+    feaure_labels = FeatureLabels.objects.filter(label_set=label_set).values_list("feature_name", flat=True)
     for feature_name in feaure_labels:
         feature = FeatureLabels.objects.get(feature_name=feature_name)
         feature_value = ap["features"][feature_name]["value"]
@@ -369,16 +384,18 @@ def _get_list_from_query_set(qset):
         l.append(i)
     return l
 
-def _create_subject_artificials_for_this_phase(subject, practice_name="Practice", trials_name="Trials"):
+def _create_subject_artificials_for_this_phase(subject, label_set=None, practice_name="Practice", trials_name="Trials"):
+    if label_set==None:
+        label_set = subject.profile_label_set
     '''Generates subject artificial profiles for the current phase '''
     practice_similarities_levels = subject.current_phase.get_practice_trials_content()
 
     for slevel in practice_similarities_levels:
-        _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - " + practice_name)
+        _generate_profile(subject, slevel, label_set, name_instance=subject.current_phase.name+" - " + practice_name)
 
     similarities_levels = subject.current_phase.get_trials_content()
     for slevel in similarities_levels:
-        _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - " + trials_name)
+        _generate_profile(subject, slevel, label_set, name_instance=subject.current_phase.name+" - " + trials_name)
 
 def get_dubbled_profiles_list(subject, trials):
     dubbled_profiles = []
@@ -390,29 +407,134 @@ def get_dubbled_profiles_list(subject, trials):
     return dubbled_profiles
 
 def _get_profile_list_for_profiles_presentation_phase(subject):
-    _create_subject_artificials_for_this_phase(subject)
-    regulars = ProfileModel.objects.filter(profile_label_set=subject.profile_label_set, is_artificial=False, is_subject=False, is_MinMax=False).all()
-    min_max = MinMaxProfileModel.objects.filter(profile_label_set=subject.profile_label_set,target_subject=subject).all()
-    artificials = ArtificialProfileModel.objects.filter(profile_label_set=subject.profile_label_set,target_subject=subject, target_phase=subject.current_phase).all()
-    sp_model = ProfileModel.objects.filter(name=subject.name, profile_label_set=subject.profile_label_set, is_artificial=False, is_subject=True, is_MinMax=False).all()
-    practice = artificials.filter(name__contains='Practice')
-    trials = artificials.filter(name__contains='Trials')
+    _create_subject_artificials_for_this_phase(subject, label_set="A")
+    _create_subject_artificials_for_this_phase(subject, label_set="C")
 
-    all  = _get_list_from_query_set(min_max) + _get_list_from_query_set(regulars) + _get_list_from_query_set(sp_model) \
-     + _get_list_from_query_set(trials) + get_dubbled_profiles_list(subject, trials)
+    regulars_A = ProfileModel.objects.filter(profile_label_set="A", is_artificial=False, is_subject=False, is_MinMax=False).all()
+    regulars_C = ProfileModel.objects.filter(profile_label_set="C", is_artificial=False, is_subject=False, is_MinMax=False).all()
 
-    practice_context = _get_profiles_list_context(practice) # _get_profiles_list_context also shuffles trials order
-    regulars_min_max_trials_subject = _get_profiles_list_context(all) # _get_profiles_list_context also shuffles trials order
-    all_profiles_list = [] + regulars_min_max_trials_subject["profiles_list"]
-    regulars_min_max_trials_subject.update(practice_context) # addint the profiles data
-    regulars_min_max_trials_subject["profiles_list"] = practice_context["profiles_list"] + all_profiles_list # putting practice profiles first
-    regulars_min_max_trials_subject["profiles_list"] = regulars_min_max_trials_subject["profiles_list"]
-    return regulars_min_max_trials_subject
+    # min_max = MinMaxProfileModel.objects.filter(profile_label_set=subject.profile_label_set,target_subject=subject).all()
+
+    artificials_A = ArtificialProfileModel.objects.filter(profile_label_set="A",target_subject=subject, target_phase=subject.current_phase).all()
+    artificials_C = ArtificialProfileModel.objects.filter(profile_label_set="C",target_subject=subject, target_phase=subject.current_phase).all()
+
+    sp_model = ProfileModel.objects.filter(name=subject.name, is_artificial=False, is_subject=True, is_MinMax=False).all()
+
+    practice_A = artificials_A.filter(name__contains='Practice')
+    trials_A = artificials_A.filter(name__contains='Trials')
+
+    practice_C = artificials_C.filter(name__contains='Practice')
+    trials_C = artificials_C.filter(name__contains='Trials')
+
+    all_A  = _get_list_from_query_set(regulars_A) + _get_list_from_query_set(trials_A) \
+        + _get_list_from_query_set(sp_model) #+ get_dubbled_profiles_list(subject, trials_A)
+
+    all_C  = _get_list_from_query_set(regulars_C) + _get_list_from_query_set(sp_model) + _get_list_from_query_set(trials_C) \
+        #+ get_dubbled_profiles_list(subject, trials_C)
+
+    practice_context_A = _get_profiles_list_context(practice_A) # _get_profiles_list_context also shuffles trials order
+    practice_context_C = _get_profiles_list_context(practice_C) # _get_profiles_list_context also shuffles trials order
+
+    regulars_min_max_trials_subject_A = _get_profiles_list_context(all_A, label_set="A") # _get_profiles_list_context also shuffles trials order
+    regulars_min_max_trials_subject_C = _get_profiles_list_context(all_C,  label_set="C") # _get_profiles_list_context also shuffles trials order
+
+    all_profiles_list_A = [] + regulars_min_max_trials_subject_A["profiles_list"]
+    all_profiles_list_C = [] + regulars_min_max_trials_subject_C["profiles_list"]
+
+    regulars_min_max_trials_subject_A.update(practice_context_A) # addint the profiles data
+    regulars_min_max_trials_subject_C.update(practice_context_C) # addint the profiles data
+
+    regulars_min_max_trials_subject_A["profiles_list"] = practice_context_A["profiles_list"] + all_profiles_list_A # putting practice profiles first
+    regulars_min_max_trials_subject_C["profiles_list"] = practice_context_C["profiles_list"] + all_profiles_list_C # putting practice profiles first
+
+    ids_to_profile_identifier_A, profile_identifier_to_ids_A = get_mapped_ids(regulars_min_max_trials_subject_A["profiles_list"])
+    new_profiles_list_A = arrage_in_pairs(regulars_min_max_trials_subject_A["profiles_list"], ids_to_profile_identifier_A, profile_identifier_to_ids_A, "A")
+
+    ids_to_profile_identifier_C, profile_identifier_to_ids_C = get_mapped_ids(regulars_min_max_trials_subject_C["profiles_list"])
+    new_profiles_list_C = arrage_in_pairs(regulars_min_max_trials_subject_C["profiles_list"], ids_to_profile_identifier_C, profile_identifier_to_ids_C, "C")
+
+    regulars_min_max_trials_subject_A["profiles_list"] = new_profiles_list_A
+    regulars_min_max_trials_subject_C["profiles_list"] = new_profiles_list_C
+    ipdb.set_trace()
+
+    all_both = (regulars_min_max_trials_subject_A, regulars_min_max_trials_subject_C)
+    return all_both
+
+# arranges profiles list in pairs:
+def arrage_in_pairs(profiles_list, ids_to_profile_identifier, profile_identifier_to_ids, label_set):
+    pairs = [
+                ["0.2", "0.8"],
+                ["0.3", "0.7"],
+                ["0.4", "0.6"],
+                ["0.501", "0.5011"],
+                ["0.9", "0.901"],
+                ["0.301", "0.3011"],
+            ]
+    practice_pairs = [
+                        ['0.7-p','0.2-p'],
+                        ['0.32-p','0.62-p'],
+                    ]
+
+    new_profiles_list = []
+    new_practice_profiles_list = []
+
+    for pair in pairs:
+        p_1 = profile_identifier_to_ids[pair[0]]
+        p_2 = profile_identifier_to_ids[pair[1]]
+        new_profiles_list.append([p_1, p_2])
+    for pair in practice_pairs:
+        p_1 = profile_identifier_to_ids[pair[0]]
+        p_2 = profile_identifier_to_ids[pair[1]]
+        new_practice_profiles_list.append([p_1, p_2])
+
+    options = [o+1 for o in range(8)]
+    ecos_list = []
+    while len(options)>0:
+        p1 = random.sample(options,1)[0]
+        options.remove(p1)
+        p2 = random.sample(options,1)[0]
+        options.remove(p2)
+        p1 = "Eco-{}-".format(label_set)+str(p1)
+        p2 = "Eco-{}-".format(label_set)+str(p2)
+        p1id = profile_identifier_to_ids[p1]
+        p2id = profile_identifier_to_ids[p2]
+        ecos_list.append([p1id,p2id])
+
+    new_profiles_list = ecos_list + new_profiles_list
+    random.shuffle(new_profiles_list)
+    new_profiles_list = new_practice_profiles_list + new_profiles_list
+
+    return new_profiles_list
+
+
+# maps ids to identifiers and vise versa
+def get_mapped_ids(profiles_list):
+    ids_to_profile_identifier = {} # identifier = similarity level / Eco number / subject
+    profile_identifier_to_ids = {} # identifier = similarity level / Eco number / subject
+    for profile in profiles_list:
+        p_object = ProfileModel.objects.get(id=profile)
+        p_name = p_object.name
+        if p_object.is_artificial:
+            similarity_level = p_name.split("-")[1]
+            if "Practice" in p_name:
+                similarity_level = str(similarity_level)+"-p"
+            ids_to_profile_identifier[profile] = similarity_level
+            profile_identifier_to_ids[similarity_level] = profile
+        elif p_object.is_subject:
+            ids_to_profile_identifier[profile] = "subject"
+            profile_identifier_to_ids["subject"] = profile
+        else:
+            ids_to_profile_identifier[profile] = p_name
+            profile_identifier_to_ids[p_name] = profile
+    return (ids_to_profile_identifier, profile_identifier_to_ids)
 
 # Updates the generic context on specific phases
 def _update_context_if_necessry(context, current_phase, users_subject):
-    if current_phase == "During Get Profile":
-        context.update(_get_new_subject_profile_page_context(users_subject))
+    if current_phase == "During Get Profile1":
+        context.update(_get_new_subject_profile_page_context(users_subject, 1))
+
+    elif current_phase == "During Get Profile2":
+        context.update(_get_new_subject_profile_page_context(users_subject, 2))
 
     elif current_phase =="Get Max Similarity Profile" or current_phase=="Get Min Similarity Profile" or current_phase=="Get Ideal Profile":
         context.update(_get_new_subject_profile_page_context(users_subject))
@@ -424,10 +546,11 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         "gameJSON":gameJSON,
                         })
     elif current_phase == "During Profile Presentation":
-        peofiles = _get_profile_list_for_profiles_presentation_phase(users_subject)
+        peofiles_A, peofiles_C = _get_profile_list_for_profiles_presentation_phase(users_subject)
         game = _get_game_data(users_subject)
         gameJSON = json.dumps(_get_game_dict(game))
-        context.update({"context":json.dumps(peofiles)})
+        context.update({"task_profiles_A":json.dumps(peofiles_A)})
+        context.update({"task_profiles_C":json.dumps(peofiles_C)})
         context.update({"maxValue":users_subject.max_similarity_value,
                         "maxName": json.dumps(users_subject.max_similarity_name),
                         "minValue":users_subject.min_similarity_value,
@@ -448,8 +571,8 @@ def _update_context_if_necessry(context, current_phase, users_subject):
         trials_nta_indexes = random.sample(range(len(trials_context["profiles_list"])), 4)
         similarity_levels = [0.4, 0.5, 0.6, 0.7]
         for i, trial in enumerate(trials_nta_indexes):
-            _generate_profile(users_subject, similarity_levels[i], name_instance=users_subject.current_phase.name+" - " + "SlowPhase-No_One-1")
-            _generate_profile(users_subject, similarity_levels[i], name_instance=users_subject.current_phase.name+" - " + "SlowPhase-No_One-2")
+            _generate_profile(users_subject, similarity_levels[i], subject.profile_label_set, name_instance=users_subject.current_phase.name+" - " + "SlowPhase-No_One-1")
+            _generate_profile(users_subject, similarity_levels[i], subject.profile_label_set, name_instance=users_subject.current_phase.name+" - " + "SlowPhase-No_One-2")
             trials_context["profiles_list"].insert(trial+i, "no_one")
         no_one_profiles = ArtificialProfileModel.objects.filter(name__contains ="SlowPhase-No", target_subject=users_subject)
         no_one_profiles_context = _get_profiles_list_context(no_one_profiles)

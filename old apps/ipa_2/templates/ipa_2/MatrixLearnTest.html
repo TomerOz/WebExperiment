@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Fonts links -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    {% load static %}
+    <!-- styles links -->
+    <link rel="stylesheet" href="{% static 'ipa_2/gameStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'ipa_2/MatrixTutorialStyle.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'ipa_2/IndexStyle.css' %}">
+  </head>
+  <body>
+    {% if instructions_list %}
+  <div class="container">
+    <div id="instructionContainer" class="jumbotron">
+      <!-- Here instructions will be inserted -->
+      {{instructions_list}} Place Holder holer holder
+    </div>
+    {% endif %}
+    <!-- Buttons -->
+      <div class="text-center">
+      <button id="showMatrixButton" class="btn btn-primary btn" type="button" name="button">{{ off_order_instructions_dict.presentTableButton }}</button>
+      <button id="NextStepButton" class="btn btn-primary btn" type="button" name="button">{{ off_order_instructions_dict.NextStep }}</button>
+    </div>
+    <!-- Game table -->
+      <div class="text-center">
+        <div id="matrixContainer">
+          <table class="gameTable">
+            <tbody>
+          <tr>
+            <td>X</td>
+            <td colspan="2">{{game.strategy_a}}</td>
+            <td colspan="2">{{game.strategy_b}}</td>
+          </tr>
+          <tr class="A TopRow">
+            <td id="A" class="choiceButton" rowspan="2">{{game.strategy_a}}</td>
+            <!-- A or B stands for row choice, a or b stands for col choice -->
+            <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
+            <td class="Aa">{{off_order_instructions_dict.youGet}}</td>
+            <td class="Aa">{{off_order_instructions_dict.OtherGet}}</td>
+            <td class="Ab">{{off_order_instructions_dict.youGet}}</td>
+            <td class="Ab">{{off_order_instructions_dict.OtherGet}}</td>
+          </tr>
+          <tr class="A BottomRow">
+            <td class="Aa">{{game.pA_Aa}}</td>
+            <td class="Aa">{{game.pB_Aa}}</td>
+            <td class="Ab">{{game.pA_Ab}}</td>
+            <td class="Ab">{{game.pB_Ab}}</td>
+          <tr class="B TopRow">
+            <td rowspan="2" id="B" class="choiceButton">{{game.strategy_b}}</td>
+            <!-- A or B stands for row choice, a or b stands for col choice -->
+            <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
+            <td class="Ba">{{off_order_instructions_dict.youGet}}</td>
+            <td class="Ba">{{off_order_instructions_dict.OtherGet}}</td>
+            <td class="Bb">{{off_order_instructions_dict.youGet}}</td>
+            <td class="Bb">{{off_order_instructions_dict.OtherGet}}</td>
+          </tr>
+          <tr class="B BottomRow">
+            <td class="Ba">{{game.pA_Ba}}</td>
+            <td class="Ba">{{game.pB_Ba}}</td>
+            <td class="Bb">{{game.pA_Bb}}</td>
+            <td class="Bb">{{game.pB_Bb}}</td>
+          </tr>
+        </tbody>
+        </table>
+      </div><br>
+      <div class="explantions">
+      </div><br>
+      </div>
+    <!-- Matrix Test -->
+    <div class="testbox" style="direction:rtl">
+      <form id="testForm" method="post">
+      {% csrf_token %}
+        <!-- <div class="banner">
+          <h1>Annual Conference</h1>
+        </div> -->
+        <br/>
+        <p>
+        <center>
+            <h3>מבחן הבנה - ענה.י על השאלות הבאות:</h3>
+        </center>
+        </p>
+        <br/>
+        <div class="colums">
+          <div class="item"><label for="pA_Aa"> {{ off_order_instructions_dict.You_Aa  }}<span>*</span></label>
+            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+              <input type="number" id="pA_Aa" name="pA_Aa" min="1" max="50" required>
+          </div>
+          <div class="item"><label for="pA_Ab"> {{ off_order_instructions_dict.You_Ab  }}<span>*</span></label>
+            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+              <input type="number" id="pA_Ab" name="pA_Ab" min="1" max="50" required>
+          </div>
+
+          <div class="item"><label for="pA_Ba"> {{ off_order_instructions_dict.You_Ba  }}<span>*</span></label>
+            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+              <input type="number" id="pA_Ba" name="pA_Ba" min="1" max="50" required>
+          </div>
+          <div class="item"><label for="pA_Bb"> {{ off_order_instructions_dict.You_Bb  }}<span>*</span></label>
+            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+              <input type="number" id="pA_Bb" name="pA_Bb" min="1" max="50" required>
+          </div>
+
+          <div class="item"><label for="pB_Aa"> {{ off_order_instructions_dict.Other_Aa  }}<span>*</span></label>
+            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+              <input type="number" id="pB_Aa" name="pB_Aa" min="1" max="50" required>
+          </div>
+          <div class="item"><label for="pB_Ab"> {{ off_order_instructions_dict.Other_Ab  }}<span>*</span></label>
+            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+              <input type="number" id="pB_Ab" name="pB_Ab" min="1" max="50" required>
+          </div>
+
+          <div class="item"><label for="pB_Ba"> {{ off_order_instructions_dict.Other_Ba  }}<span>*</span></label>
+            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+              <input type="number" id="pB_Ba" name="pB_Ba" min="1" max="50" required>
+          </div>
+          <div class="item"><label for="pB_Bb"> {{ off_order_instructions_dict.Other_Bb  }}<span>*</span></label>
+            <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+              <input type="number" id="pB_Bb" name="pB_Bb" min="1" max="50" required>
+          </div>
+        <div class="btn-block" style="direction:ltr; color:red; text-align:left;">
+          {% if errors %}
+          <span>One answer or more is incorrect!<span><br>
+          {% endif %}
+          <input type="hidden" name="form_phase" value="{{ form_phase }}">
+          <button type="submit" href="/">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+     var instructions_list = {{instructions_list|safe}}
+     var gameJSON = {{gameJSON|safe}}
+     var errorsJSON = {{errorsJSON|safe}}
+    // working with the variable context
+    </script>
+    </div>
+
+    <form id="subjectResonseForm" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+      <input id="subjectResonses" type="hidden" name="responses" value="">
+      <input id="trial" type="hidden" name="currentTrial" value="">
+    </form>
+
+    <form id="instructionsForm" class="" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="form_phase" value="{{ form_phase }}">
+
+    </form>
+  </body>
+
+  <script
+  src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+  integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+  crossorigin="anonymous"></script>
+  <script src="{% static 'ipa_2/gameLogic.js' %}"></script>
+  <script src="{% static 'ipa_2/MatrixTutorialLogic.js' %}"></script>
+</html>

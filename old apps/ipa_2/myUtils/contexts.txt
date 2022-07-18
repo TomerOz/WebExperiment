@@ -1,0 +1,6 @@
+tutorial
+trade
+romantic
+friendship
+violence
+neutral

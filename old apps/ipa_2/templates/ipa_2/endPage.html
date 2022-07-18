@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height initial-scale=1, shrink-to-fit=yes">
+    <title>IPA1.2 2021 - End Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  </head>
+  <body>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'ipa_2/IndexStyle.css' %}">
+
+  <div class="container">
+      <div id="instructionContainer" class="jumbotron">
+        <h1> {{ off_order_instructions_dict.endTitle }}</h1>
+
+        <p>{{ off_order_instructions_dict.endSubTitle }}</p>
+
+        <p>{{ off_order_instructions_dict.endInstructions }}</p>
+
+      </div>
+    </div>
+    <script type="text/javascript">
+
+        // fitty(document.getElementsByClassName('jumbotron'))
+    </script>
+  </body>
+</html>

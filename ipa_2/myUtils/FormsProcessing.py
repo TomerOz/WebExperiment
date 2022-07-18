@@ -77,7 +77,8 @@ class PhasesDataSaver(object):
         self.FeatureValue = FeatureValue
         self.MinMaxProfileModel = MinMaxProfileModel
         self.phase_to_saver_function = {
-            "During Get Profile" : self._process_create_new_subject_profile,
+            "During Get Profile1" : self._process_create_new_subject_profile,
+            "During Get Profile2" : self._process_create_new_subject_profile,
             "During Profile Presentation": self._save_trials_data,
             "Get Min Max Similarity" : self._process_min_max_similarity,
             "Get Max Similarity Profile" : self._get_min_max_similarity_profile,
@@ -117,9 +118,21 @@ class PhasesDataSaver(object):
 
     # Fills subject model with posted features provided by the subject user (subject profile witg default values already exists)
     def _process_create_new_subject_profile(self, post_data, new_subject):
-        new_subject.featurevalue_set.all().delete() # deeleting existing features data on this profile if re-entered
+        # new_subject.featurevalue_set.all().delete() #
+        # shuld be cahnged 12.07.22
         ########################### Mind which features set to choose from! 13.07.21
-        feaure_labels = self.FeatureLabels.objects.filter(label_set=new_subject.profile_label_set).values_list("feature_name", flat=True)
+
+        if new_subject.current_phase.name == "During Get Profile1":
+            label_set = new_subject.sets_order.split(",")[0]
+        else:
+            label_set = new_subject.sets_order.split(",")[1]
+
+        # deeleting existing features data on this profile if re-entered
+        for feature in new_subject.featurevalue_set.all():
+            if feature.target_feature.label_set == label_set:
+                feature.delete()
+
+        feaure_labels = self.FeatureLabels.objects.filter(label_set=label_set).values_list("feature_name", flat=True)
         ###########################
         for feature_name in feaure_labels:
             feature = self.FeatureLabels.objects.get(feature_name=feature_name)

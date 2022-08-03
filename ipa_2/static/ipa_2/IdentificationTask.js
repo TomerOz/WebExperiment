@@ -10,6 +10,8 @@ var currentTrial = document.getElementById("trial");
 var responseTimes = document.getElementById("RTs");
 var profilesSides = document.getElementById("profilesSides");
 var profilesList = document.getElementById("profilesList");
+var profilesListLeft = document.getElementById("profilesListLeft");
+var profilesListRight = document.getElementById("profilesListRight");
 var instructionContainer = document.getElementById("instructionContainer");
 var textContainer = document.getElementById("textContainer");
 var nextInstructionButton = document.getElementById("NextInstructionButton");
@@ -168,6 +170,11 @@ function InitializeProfilePresentation(current_profile){
   containers[subject_side].innerHTML = text_1;
   containers[other_side].innerHTML = text_2;
   profiles_possitions.push(positions_temp.toString().replace(",", "//"));
+
+  sides_profiles_lists = [profilesListLeft, profilesListRight]
+  sides_profiles_lists[subject_side].value += name_1
+  sides_profiles_lists[other_side].value += name_2
+
 
   if(subject_group=="C"){
     changeFontSize(24);

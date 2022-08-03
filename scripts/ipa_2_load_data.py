@@ -250,15 +250,15 @@ def run():
     sham_questions_df = pd.read_excel(sham_path)
     features_names = features_df.feature.tolist()
 
-    create_experiment_instance()
-    create_experiment_phases() # updte sensitive
+    # create_experiment_instance()
+    # create_experiment_phases() # updte sensitive
     create_instructinos() # deletes all previous instances
-    create_feature_labels(features_df) # updte sensitive
-    create_sham_questions(sham_questions_df)
-    create_contexts()
-    create_models() # updte sensitive
-    create_ecological_profiles()
-    create_games_matrices()
+    # create_feature_labels(features_df) # updte sensitive
+    # create_sham_questions(sham_questions_df)
+    # create_contexts()
+    # create_models() # updte sensitive
+    # create_ecological_profiles()
+    # create_games_matrices()
 
     # squezze_in_new_phases()
     # create_n_pilot_profiles(3)

@@ -97,10 +97,15 @@ button {
   text-align: center;
 }
 
-#Next_left {
-  margin-right: 10%;
+#leftIgnore {
+  margin-right: 5%;
 }
-
-#Next_right{
-  margin-left: 10%;
+#leftAction {
+  margin-left: 5%;
+}
+#rightIgnore{
+  margin-right: 5%;
+}
+#rightAction{
+  margin-left: 5%;
 }

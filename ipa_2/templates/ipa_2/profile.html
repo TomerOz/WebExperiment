@@ -20,18 +20,19 @@
     </div>
 
   <div id="headInstruction" class="container text-center">
-    <h3>בחר.י את הפרופיל שלך</h3>
+    <h3 id="gameCompetitiveHead">{{ off_order_instructions_dict.gameCompetitive }}</h3>
+    <h3 id="gameCooperativeHead">{{ off_order_instructions_dict.gameCooperative }}</h3>
   </div>
 
   <div id="chooseSetContainer" class="container text-center">
     <table>
       <tr>
         <td>
-          <button class="btn btn-primary btn-lg" id="setAButton" type="button" name="button">{{ off_order_instructions_dict.thisIsMeText }}</button>
+          <button class="btn btn-primary btn-lg" id="setAButton" type="button" name="button">{{ off_order_instructions_dict.setAName }}</button>
           <!-- set image here -->
         </td>
         <td>
-          <button class="btn btn-primary btn-lg" id="setCButton" type="button" name="button">{{ off_order_instructions_dict.thisIsMeText }}</button>
+          <button class="btn btn-primary btn-lg" id="setCButton" type="button" name="button">{{ off_order_instructions_dict.setBName }}</button>
           <!-- set image here -->
         </td>
       </tr>
@@ -62,13 +63,18 @@
     <div class="container text-center">
     </div>
 
-    <table>
+    <table id="buttonsTable">
       <tr>
-        <td><button class="btn btn-primary btn-lg" id="Next_left" type="button" name="button">{{ off_order_instructions_dict.thisIsMeText }}</button></td>
-        <td><button class="btn btn-primary btn-lg" id="NoneOfThem" type="button" name="button">{{ off_order_instructions_dict.noOneText }}</button></td>
-        <td><button class="btn btn-primary btn-lg" id="Next_right" type="button" name="button">{{ off_order_instructions_dict.thisIsMeText }}</button></td>
+        <td><button class="btn btn-primary btn-lg" id="leftIgnore" type="button" name="button">{{ off_order_instructions_dict.ignoreAction }}</button></td>
+        <td><button class="btn btn-primary btn-lg" id="leftAction" type="button" name="button">{{ off_order_instructions_dict.shootAction }}</button></td>
+        <!-- <td><button class="btn btn-primary btn-lg" id="NoneOfThem" type="button" name="button">{{ off_order_instructions_dict.noOneText }}</button></td> -->
+        <td><button class="btn btn-primary btn-lg" id="rightIgnore" type="button" name="button">{{ off_order_instructions_dict.ignoreAction }}</button></td>
+        <td><button class="btn btn-primary btn-lg" id="rightAction" type="button" name="button">{{ off_order_instructions_dict.helpAction }}</button></td>
       </tr>
     </table>
+
+    <p id="shootAction">{{ off_order_instructions_dict.shootAction }}</p>
+    <p id="helpAction">{{ off_order_instructions_dict.helpAction }}</p>
 
       <script>
        var n_trials = {{n_trials|safe}}
@@ -77,6 +83,7 @@
        var subject_group = "{{ subject_group }}"
        var task_profiles_A = {{task_profiles_A|safe}}
        var task_profiles_C = {{task_profiles_C|safe}}
+       var gameTypes = {{gameTypes|safe}}
       // working with the variable context
       </script>
     </div>
@@ -88,6 +95,9 @@
       <input id="RTs" type="hidden" name="reactionTimes" value="">
       <input id="profilesSides" type="hidden" name="profilesSides" value="">
       <input id="profilesList" type="hidden" name="profilesList" value="">
+      <input id="profilesListLeft" type="hidden" name="profilesListLeft" value="">
+      <input id="profilesListRight" type="hidden" name="profilesListRight" value="">
+      <input id="trialFeatureOrder" type="hidden" name="trialFeatureOrder" value="">
       <!-- <input id="profilesIDs" type="hidden" name="profilesIDsList" value="{{ context.profiles_ids_list }}"> -->
     </form>
   </body>

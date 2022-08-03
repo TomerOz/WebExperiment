@@ -455,7 +455,6 @@ def _get_profile_list_for_profiles_presentation_phase(subject):
 
     regulars_min_max_trials_subject_A["profiles_list"] = new_profiles_list_A
     regulars_min_max_trials_subject_C["profiles_list"] = new_profiles_list_C
-    ipdb.set_trace()
 
     all_both = (regulars_min_max_trials_subject_A, regulars_min_max_trials_subject_C)
     return all_both
@@ -549,8 +548,13 @@ def _update_context_if_necessry(context, current_phase, users_subject):
         peofiles_A, peofiles_C = _get_profile_list_for_profiles_presentation_phase(users_subject)
         game = _get_game_data(users_subject)
         gameJSON = json.dumps(_get_game_dict(game))
+        trials = len(peofiles_A["profiles_list"])-2
+        games_types = ["shoot"]*int(trials/2) + ["help"]*int(trials/2)
+        random.shuffle(games_types)
+        games_types = ["help", "shoot"] + games_types
         context.update({"task_profiles_A":json.dumps(peofiles_A)})
         context.update({"task_profiles_C":json.dumps(peofiles_C)})
+        context.update({"gameTypes":json.dumps(games_types)})
         context.update({"maxValue":users_subject.max_similarity_value,
                         "maxName": json.dumps(users_subject.max_similarity_name),
                         "minValue":users_subject.min_similarity_value,

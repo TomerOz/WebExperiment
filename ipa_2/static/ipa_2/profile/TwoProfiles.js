@@ -1,24 +1,30 @@
 
 var left_profile = document.getElementById("slidecontainer");
 var right_profile = document.getElementById("slidecontainer_right");
-var nextLeftButton = document.getElementById("Next_left");
-var nextRightButton = document.getElementById("Next_right");
-var noneOfThemButton = document.getElementById("NoneOfThem");
+var leftActionButton = document.getElementById("leftAction");
+var leftIgnoreButton = document.getElementById("leftIgnore");
+var rightActionButton = document.getElementById("rightAction");
+var rightIgnoreButton = document.getElementById("rightIgnore");
 var subjectResonseForm = document.getElementById("subjectResonseForm");
 var subjectResonses = document.getElementById("subjectResonses");
 var currentTrial = document.getElementById("trial");
 var responseTimes = document.getElementById("RTs");
 var profilesSides = document.getElementById("profilesSides");
 var profilesList = document.getElementById("profilesList");
+var profilesListLeft = document.getElementById("profilesListLeft");
+var profilesListRight = document.getElementById("profilesListRight");
 var instructionContainer = document.getElementById("instructionContainer");
 var textContainer = document.getElementById("textContainer");
 var nextInstructionButton = document.getElementById("NextInstructionButton");
 var chooseSetContainer = document.getElementById("chooseSetContainer");
 var setAButton = document.getElementById("setAButton");
 var setCButton = document.getElementById("setCButton");
+var trialFeatureOrder = document.getElementById("trialFeatureOrder");
+var buttonsTable = document.getElementById("buttonsTable");
 
-var PeofileWaitTime = 7000 // 7000; // 15 seconds until button appears
-var BetweenProfilesInterval = 1000// 1000; // 1 seconds between profiles
+var PeofileWaitTime = 1000 // 7000; // 15 seconds until button appears
+var BetweenProfilesInterval = 2000// 1000; // 1 seconds between profiles
+var BetweenProfilesIntervalButtons = 4000// 1000; // 1 seconds between profiles
 
 var db_features = "features";
 var current_profile = 0;
@@ -34,6 +40,10 @@ var right_end = "r";
 var left_end = "l";
 var value = "4";
 
+var shootActionText = shootAction.innerText;
+var helpActionText = helpAction.innerText;
+shootAction.style.display = "none";
+helpAction.style.display = "none";
 
 function InjectProfileDataToHTML(title, right_end, left_end, value, feature_name){
   basicProfileHTMLText = '<h3 id="title">'+ feature_name + '</h3>\
@@ -106,19 +116,28 @@ function _getStringFormField(val){
 
 function RecordResponses(button){ // From button presss
   RecordTime();
-  profile_id = task_profiles["artificials"]["profiles_list"][current_profile]
-  profilesGroup = "artificials";
-  if(profile_id=="no_one"){
-    profile_id = task_profiles["no_one_pairs_indexes"][no_one_counter][0];
-    profilesGroup = "no_one_profiles";
-  }
+
+  var profilesChoseSet = task_profiles[chosenSet];
+  var idsChosenSet = task_profiles[chosenSet].profiles_list
+  var profile_id_1 = idsChosenSet[current_profile][0]
+  var profile_id_2 = idsChosenSet[current_profile][1]
+  var profile_1 = profilesChoseSet[idsChosenSet[current_profile][0]]
+  var profile_2 = profilesChoseSet[idsChosenSet[current_profile][1]]
+  var profile_features_1 = profile_1.features;
+  var profile_features_2 = profile_2.features;
+  var name_1 = profile_1.name
+  var name_2 =  profile_2.name
+
   buttons_presses.push(button);
   pressed_button = button;
   subjectResonses.value += _getStringFormField(buttons_presses[current_profile]);
   currentTrial.value = _getStringFormField(current_profile);
   responseTimes.value += _getStringFormField(rts[current_profile]);
   profilesSides.value += _getStringFormField(profiles_possitions[current_profile]);
-  profilesList.value += _getStringFormField(task_profiles[profilesGroup][profile_id]["name"]);
+  profilesList.value += _getStringFormField(name_1);
+
+  gameCooperativeHead.style.display = "none";
+  gameCompetitiveHead.style.display = "none";
   NextTrial(); // increases current_profile
 }
 
@@ -132,19 +151,32 @@ function InitiateTimeCount() {
 }
 
 function HandelResponseButtons(containers){
-  setTimeout(function(){Next_left.style.display = 'block';}, PeofileWaitTime);
-  setTimeout(function(){NoneOfThem.style.display = 'block';}, PeofileWaitTime);
-  setTimeout(function(){Next_right.style.display = 'block';}, PeofileWaitTime);
+  setTimeout(function(){leftAction.style.display = 'block';}, PeofileWaitTime);
+  setTimeout(function(){leftIgnore.style.display = 'block';}, PeofileWaitTime);
+  setTimeout(function(){rightAction.style.display = 'block';}, PeofileWaitTime);
+  setTimeout(function(){rightIgnore.style.display = 'block';}, PeofileWaitTime);
 }
 
 function HideAndShowContainers(containers){
   containers[0].style.display = 'none';
   containers[1].style.display = 'none';
-  Next_left.style.display = 'none';
-  Next_right.style.display = 'none';
-  NoneOfThem.style.display = 'none';
-  setTimeout(function() {containers[0].style.display = 'block'}, BetweenProfilesInterval);
-  setTimeout(function() {containers[1].style.display = 'block'}, BetweenProfilesInterval);
+  buttonsTable.style.display = "block"; // hiding instructions
+  leftAction.style.display = 'none';
+  leftIgnore.style.display = 'none';
+  rightAction.style.display = 'none';
+  rightIgnore.style.display = 'none';
+  setTimeout(function() {containers[0].style.display = 'block'}, PeofileWaitTime);
+  setTimeout(function() {containers[1].style.display = 'block'}, PeofileWaitTime);
+};
+
+function HideContainers(containers){
+  containers[0].style.display = 'none';
+  containers[1].style.display = 'none';
+  buttonsTable.style.display = "block"; // hiding instructions
+  leftAction.style.display = 'none';
+  leftIgnore.style.display = 'none';
+  rightAction.style.display = 'none';
+  rightIgnore.style.display = 'none';
 };
 
 function InitializeProfilePresentation(current_profile){
@@ -160,20 +192,31 @@ function InitializeProfilePresentation(current_profile){
   var name_1 = profile_1.name
   var name_2 =  profile_2.name
 
+  trialFeatureOrder.value = trialFeatureOrder.value + profile_1["features_order"].toString() + "-**NextProfile**-";
+
   var features_list = profile_1.features_order
 
   text_1 = GetProfileData(profile_features_1, features_list);
   text_2 = GetProfileData(profile_features_2, features_list);;
 
-  subject_side = _getRndInteger(0,1);
-  other_side = (subject_side - 1) * -1;
+  other_profile_1_side = _getRndInteger(0,1);
+  other_profile_2_side = (other_profile_1_side - 1) * -1;
 
   positions_temp = ["Left = ", "Right = "];
-  positions_temp[subject_side] = positions_temp[subject_side] + name_1;
-  positions_temp[other_side] = positions_temp[other_side] + name_2;
-  containers[subject_side].innerHTML = text_1;
-  containers[other_side].innerHTML = text_2;
+  positions_temp[other_profile_1_side] = positions_temp[other_profile_1_side] + name_1;
+  positions_temp[other_profile_2_side] = positions_temp[other_profile_2_side] + name_2;
+  containers[other_profile_1_side].innerHTML = text_1;
+  containers[other_profile_2_side].innerHTML = text_2;
   profiles_possitions.push(positions_temp.toString().replace(",", "//"));
+
+  sides_profiles_lists = [profilesListLeft, profilesListRight]
+  sides_profiles_lists[other_profile_1_side].value += _getStringFormField(name_1);
+  sides_profiles_lists[other_profile_2_side].value += _getStringFormField(name_2);
+
+  current_game = gameTypes[current_profile];
+  gamesToActions = {"shoot": shootActionText, "help": helpActionText}
+  leftAction.innerText = gamesToActions[current_game]
+  rightAction.innerText = gamesToActions[current_game]
 
   if(chosenSet=="C"){
     changeFontSize(24);
@@ -186,19 +229,22 @@ function InitializeProfilePresentation(current_profile){
 
 
 function NextTrial(){
+  HideContainers(containers);
+  instructionContainer.style.display = "none"; // hiding instructions
+  buttonsTable.style.display = "none"; // hiding instructions
+
+  setTimeout(function() {showHideHeaders()}, BetweenProfilesInterval);
+  setTimeout(function() {chooseSetContainer.style.display = "block";}, BetweenProfilesIntervalButtons);
+
   var profilesChoseSet = task_profiles[chosenSet];
   var idsChosenSet = task_profiles[chosenSet].profiles_list
 
-  if(profilesChoseSet["artificials"]["profiles_list"][current_profile]=="no_one"){
-    no_one_counter += 1;
-  };
   current_profile +=1;
   trialCounter +=1;
-  if(current_profile < idsChosenSet.length){
-      InitializeProfilePresentation(current_profile);
-    } else {
+  if(current_profile >= idsChosenSet.length){
       subjectResonseForm.submit();
-}};
+    };
+};
 
 function hideChooseSetContainer(){
   chooseSetContainer.style.display = "none";
@@ -212,10 +258,22 @@ function chooseFeaturesSet(set){
   InitializeProfilePresentation(current_profile);
 }
 
+function showHideHeaders(){
+  current_game = gameTypes[current_profile];
+  if(current_game == "shoot"){
+    gameCompetitiveHead.style.display = "block";
+    gameCooperativeHead.style.display = "none";
+  } else {
+    gameCooperativeHead.style.display = "block";
+    gameCompetitiveHead.style.display = "none";
+  };
+};
 
-nextLeftButton.addEventListener("click",  function(){RecordResponses(left)})
-nextRightButton.addEventListener("click",  function(){RecordResponses(right)})
-noneOfThemButton.addEventListener("click",  function(){RecordResponses(noneOfThemValue)})
+
+leftActionButton.addEventListener("click",  function(){RecordResponses(left)})
+leftIgnoreButton.addEventListener("click",  function(){RecordResponses(left)})
+rightActionButton.addEventListener("click",  function(){RecordResponses(right)})
+rightIgnoreButton.addEventListener("click",  function(){RecordResponses(right)})
 
 setAButton.addEventListener("click",  function(){chooseFeaturesSet("A")})
 setCButton.addEventListener("click",  function(){chooseFeaturesSet("C")})
@@ -223,3 +281,10 @@ setCButton.addEventListener("click",  function(){chooseFeaturesSet("C")})
 
 // starting first_trial
 instructionContainer.style.display = "none"; // hiding instructions
+buttonsTable.style.display = "none"; // hiding instructions
+
+gameCooperativeHead.style.display = "none";
+gameCompetitiveHead.style.display = "none";
+chooseSetContainer.style.display = "none";
+setTimeout(function() {showHideHeaders()}, BetweenProfilesInterval);
+setTimeout(function() {chooseSetContainer.style.display = "block";}, BetweenProfilesIntervalButtons);

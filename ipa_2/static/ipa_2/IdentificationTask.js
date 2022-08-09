@@ -21,12 +21,18 @@ var BetweenProfilesInterval = 1000// 1000; // 1 seconds between profiles
 
 var db_features = "features";
 var current_profile = 0;
-var all_profiles_ids = task_profiles["artificials"]["profiles_list"];
+var all_profiles_ids = task_profiles["artificials_A"]["profiles_list"];
 var no_one_counter = 0;
 var title = "Title new";
 var right_end = "r";
 var left_end = "l";
 var value = "4";
+
+var artificials_type = {"A":"artificials_A", "C":"artificials_C"}
+var no_one_pairs_indexes_type = {"A":"no_one_pairs_indexes_A", "C":"no_one_pairs_indexes_C"}
+var no_one_profiles_type = {"A":"no_one_profiles_A", "C":"no_one_profiles_C"}
+var subject_type = {"A":"subject_A", "C":"subject_C"}
+
 
 function InjectProfileDataToHTML(title, right_end, left_end, value, feature_name){
   basicProfileHTMLText = '<h3 id="title">'+ feature_name + '</h3>\
@@ -99,11 +105,11 @@ function _getStringFormField(val){
 
 function RecordResponses(button){ // From button presss
   RecordTime();
-  profile_id = task_profiles["artificials"]["profiles_list"][current_profile]
-  profilesGroup = "artificials";
+  profile_id = task_profiles[artificials_type[current_set[current_profile]]]["profiles_list"][current_profile]
+  profilesGroup = artificials_type[current_set[current_profile]];
   if(profile_id=="no_one"){
-    profile_id = task_profiles["no_one_pairs_indexes"][no_one_counter][0];
-    profilesGroup = "no_one_profiles";
+    profile_id = task_profiles[no_one_pairs_indexes_type[current_set[current_profile]]][no_one_counter][0];
+    profilesGroup = no_one_profiles_type[current_set[current_profile]];
   }
   buttons_presses.push(button);
   pressed_button = button;
@@ -140,21 +146,21 @@ function HideAndShowContainers(containers){
 };
 
 function InitializeProfilePresentation(current_profile){
-  profile_id = task_profiles["artificials"]["profiles_list"][current_profile]
+  profile_id = task_profiles[artificials_type[current_set[current_profile]]]["profiles_list"][current_profile]
   if(profile_id == "no_one"){
-    no_one_profile_id_1 = task_profiles["no_one_pairs_indexes"][no_one_counter][0];
-    no_one_profile_id_2 = task_profiles["no_one_pairs_indexes"][no_one_counter][1];
-    profile_features_1 = task_profiles["no_one_profiles"][no_one_profile_id_1][db_features];
-    profile_features_2 = task_profiles["no_one_profiles"][no_one_profile_id_2][db_features];
-    name_1 = task_profiles["no_one_profiles"][no_one_profile_id_1]["name"]
-    name_2 = task_profiles["no_one_profiles"][no_one_profile_id_2]["name"]
-    var features_list = task_profiles["no_one_profiles"][no_one_profile_id_1]["features_order"];
+    no_one_profile_id_1 = task_profiles[no_one_pairs_indexes_type[current_set[current_profile]]][no_one_counter][0];
+    no_one_profile_id_2 = task_profiles[no_one_pairs_indexes_type[current_set[current_profile]]][no_one_counter][1];
+    profile_features_1 = task_profiles[no_one_profiles_type[current_set[current_profile]]][no_one_profile_id_1][db_features];
+    profile_features_2 = task_profiles[no_one_profiles_type[current_set[current_profile]]][no_one_profile_id_2][db_features];
+    name_1 = task_profiles[no_one_profiles_type[current_set[current_profile]]][no_one_profile_id_1]["name"]
+    name_2 = task_profiles[no_one_profiles_type[current_set[current_profile]]][no_one_profile_id_2]["name"]
+    var features_list = task_profiles[no_one_profiles_type[current_set[current_profile]]][no_one_profile_id_1]["features_order"];
   }  else {
-    var profile_features_1 = task_profiles["subject"][db_features];
-    var profile_features_2 = task_profiles["artificials"][profile_id][db_features];
-    name_1 = task_profiles["subject"]["name"]
-    name_2 = task_profiles["artificials"][profile_id]["name"]
-    var features_list = task_profiles["artificials"][profile_id]["features_order"];
+    var profile_features_1 = task_profiles[subject_type[current_set[current_profile]]][db_features];
+    var profile_features_2 = task_profiles[artificials_type[current_set[current_profile]]][profile_id][db_features];
+    name_1 = task_profiles[subject_type[current_set[current_profile]]]["name"]
+    name_2 = task_profiles[artificials_type[current_set[current_profile]]][profile_id]["name"]
+    var features_list = task_profiles[artificials_type[current_set[current_profile]]][profile_id]["features_order"];
   };
 
 
@@ -172,8 +178,8 @@ function InitializeProfilePresentation(current_profile){
   profiles_possitions.push(positions_temp.toString().replace(",", "//"));
 
   sides_profiles_lists = [profilesListLeft, profilesListRight]
-  sides_profiles_lists[subject_side].value += name_1
-  sides_profiles_lists[other_side].value += name_2
+  sides_profiles_lists[subject_side].value += name_1 + ","
+  sides_profiles_lists[other_side].value += name_2 + ","
 
 
   if(subject_group=="C"){
@@ -187,7 +193,7 @@ function InitializeProfilePresentation(current_profile){
 
 
 function NextTrial(){
-  if(task_profiles["artificials"]["profiles_list"][current_profile]=="no_one"){
+  if(task_profiles[artificials_type[current_set[current_profile]]]["profiles_list"][current_profile]=="no_one"){
     no_one_counter += 1;
   };
   current_profile +=1;

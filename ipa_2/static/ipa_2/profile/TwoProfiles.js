@@ -21,6 +21,7 @@ var setAButton = document.getElementById("setAButton");
 var setCButton = document.getElementById("setCButton");
 var trialFeatureOrder = document.getElementById("trialFeatureOrder");
 var buttonsTable = document.getElementById("buttonsTable");
+var trials_set = document.getElementById("trials_set");
 
 var PeofileWaitTime = 1000 // 7000; // 15 seconds until button appears
 var BetweenProfilesInterval = 2000// 1000; // 1 seconds between profiles
@@ -135,6 +136,7 @@ function RecordResponses(button){ // From button presss
   responseTimes.value += _getStringFormField(rts[current_profile]);
   profilesSides.value += _getStringFormField(profiles_possitions[current_profile]);
   profilesList.value += _getStringFormField(name_1);
+  trials_set.value += _getStringFormField(chosenSet);
 
   gameCooperativeHead.style.display = "none";
   gameCompetitiveHead.style.display = "none";

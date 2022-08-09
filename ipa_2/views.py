@@ -154,10 +154,10 @@ def _create_subject(user):
     new_subject.education = user.usertosubjectipa2.education
     new_subject.gender = user.usertosubjectipa2.gender
     new_subject.runningLocation = user.usertosubjectipa2.runningLocation
-    # new_subject.start_time = pytz.timezone("Israel").localize(datetime.datetime.now())
-    # tz = pytz.timezone("Israel")
-    # new_subject.start_time = tz.localize(datetime.datetime.now())
     new_subject.start_time = datetime.datetime.now()
+    orders = ["A,C", "C,A"]
+    new_subject.sets_order = orders[random.randint(0,1)]
+
     new_subject.save(force_update=True)
     user.save()
     return new_subject
@@ -546,8 +546,6 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         })
     elif current_phase == "During Profile Presentation":
         peofiles_A, peofiles_C = _get_profile_list_for_profiles_presentation_phase(users_subject)
-        game = _get_game_data(users_subject)
-        gameJSON = json.dumps(_get_game_dict(game))
         trials = len(peofiles_A["profiles_list"])-2
         games_types = ["shoot"]*int(trials/2) + ["help"]*int(trials/2)
         random.shuffle(games_types)
@@ -555,39 +553,59 @@ def _update_context_if_necessry(context, current_phase, users_subject):
         context.update({"task_profiles_A":json.dumps(peofiles_A)})
         context.update({"task_profiles_C":json.dumps(peofiles_C)})
         context.update({"gameTypes":json.dumps(games_types)})
-        context.update({"maxValue":users_subject.max_similarity_value,
-                        "maxName": json.dumps(users_subject.max_similarity_name),
-                        "minValue":users_subject.min_similarity_value,
-                        "minName": json.dumps(users_subject.min_similarity_name),
-                        "game":game,
-                        "gameJSON":gameJSON,
-                        })
+
     elif current_phase == "Identification Task":
-        _create_subject_artificials_for_this_phase(users_subject, practice_name="---", trials_name="SlowPhase")
-        artificials = ArtificialProfileModel.objects.filter(profile_label_set=users_subject.profile_label_set,target_subject=users_subject, target_phase=users_subject.current_phase).all()
-        artificials = artificials.filter(~Q(name__contains="No_One"))
-        slow_phase = _get_list_from_query_set(artificials.filter(name__contains='SlowPhase'))
-        trials_context = _get_profiles_list_context(slow_phase)
-        trials_context.update(trials_context) # addint the profiles data -- update deletes current profiles_list and replace it with those of practice_context
-        sp = _get_subject_profile(users_subject) # getting subject profile
+        _create_subject_artificials_for_this_phase(users_subject,  label_set="A", practice_name="---", trials_name="SlowPhase")
+        _create_subject_artificials_for_this_phase(users_subject,  label_set="C", practice_name="---", trials_name="SlowPhase")
+        artificials_A = ArtificialProfileModel.objects.filter(profile_label_set="A",target_subject=users_subject, target_phase=users_subject.current_phase).all()
+        artificials_A = artificials_A.filter(~Q(name__contains="No_One"))
+        artificials_C = ArtificialProfileModel.objects.filter(profile_label_set="C",target_subject=users_subject, target_phase=users_subject.current_phase).all()
+        artificials_C = artificials_C.filter(~Q(name__contains="No_One"))
+        slow_phase_A = _get_list_from_query_set(artificials_A.filter(name__contains='SlowPhase'))
+        slow_phase_C = _get_list_from_query_set(artificials_C.filter(name__contains='SlowPhase'))
+        trials_context_A = _get_profiles_list_context(slow_phase_A)
+        trials_context_C = _get_profiles_list_context(slow_phase_C)
+        trials_context_A.update(trials_context_A) # addint the profiles data -- update deletes current profiles_list and replace it with those of practice_context
+        trials_context_C.update(trials_context_C) # addint the profiles data -- update deletes current profiles_list and replace it with those of practice_context
+        sp_A = _get_subject_profile(users_subject, label_set="A") # getting subject profile
+        sp_C = _get_subject_profile(users_subject, label_set="C") # getting subject profile
 
         # none_of_the_above creation
-        trials_nta_indexes = random.sample(range(len(trials_context["profiles_list"])), 4)
+        trials_nta_indexes = random.sample(range(len(trials_context_A["profiles_list"])), 4) # only on "A" so that both sets trials' lists will be on the same indexes
         similarity_levels = [0.4, 0.5, 0.6, 0.7]
         for i, trial in enumerate(trials_nta_indexes):
-            _generate_profile(users_subject, similarity_levels[i], subject.profile_label_set, name_instance=users_subject.current_phase.name+" - " + "SlowPhase-No_One-1")
-            _generate_profile(users_subject, similarity_levels[i], subject.profile_label_set, name_instance=users_subject.current_phase.name+" - " + "SlowPhase-No_One-2")
-            trials_context["profiles_list"].insert(trial+i, "no_one")
-        no_one_profiles = ArtificialProfileModel.objects.filter(name__contains ="SlowPhase-No", target_subject=users_subject)
-        no_one_profiles_context = _get_profiles_list_context(no_one_profiles)
-        no_one_pairs_indexes = []
+            _generate_profile(users_subject, similarity_levels[i], "A", name_instance=users_subject.current_phase.name+" - " + "SlowPhase-No_One-1")
+            _generate_profile(users_subject, similarity_levels[i], "A", name_instance=users_subject.current_phase.name+" - " + "SlowPhase-No_One-2")
+            _generate_profile(users_subject, similarity_levels[i], "C", name_instance=users_subject.current_phase.name+" - " + "SlowPhase-No_One-1")
+            _generate_profile(users_subject, similarity_levels[i], "C", name_instance=users_subject.current_phase.name+" - " + "SlowPhase-No_One-2")
+            trials_context_A["profiles_list"].insert(trial+i, "no_one")
+            trials_context_C["profiles_list"].insert(trial+i, "no_one")
+        no_one_profiles_A = ArtificialProfileModel.objects.filter(name__contains ="SlowPhase-No", profile_label_set="A", target_subject=users_subject)
+        no_one_profiles_C = ArtificialProfileModel.objects.filter(name__contains ="SlowPhase-No", profile_label_set="C", target_subject=users_subject)
+        no_one_profiles_context_A = _get_profiles_list_context(no_one_profiles_A)
+        no_one_profiles_context_C = _get_profiles_list_context(no_one_profiles_C)
+        no_one_pairs_indexes_A = []
+        no_one_pairs_indexes_C = []
         for slevel in similarity_levels:
-            p1, p2 = no_one_profiles.filter(name__contains = str(slevel))
-            no_one_pairs_indexes.append([p1.id, p2.id])
-        d2 = {"identification_task" : json.dumps({"subject": sp,
-                                                "artificials":trials_context,
-                                                "no_one_pairs_indexes": no_one_pairs_indexes,
-                                                "no_one_profiles":no_one_profiles_context,
+            p1, p2 = no_one_profiles_A.filter(name__contains = str(slevel))
+            no_one_pairs_indexes_A.append([p1.id, p2.id])
+            p1, p2 = no_one_profiles_C.filter(name__contains = str(slevel))
+            no_one_pairs_indexes_C.append([p1.id, p2.id])
+
+        total_trials_ammount = len(trials_context_A["profiles_list"])
+        set_trials = ["A"]*int(total_trials_ammount/2) + ["C"]*int(total_trials_ammount/2)
+        random.shuffle(set_trials)
+        users_subject.trials_set += ','.join(set_trials) + ","
+        users_subject.save()
+        d2 = {"set_trials" : json.dumps(set_trials),
+                "identification_task" : json.dumps({"subject_A": sp_A,
+                                                "subject_C":sp_C,
+                                                "artificials_A":trials_context_A,
+                                                "artificials_C":trials_context_C,
+                                                "no_one_pairs_indexes_A": no_one_pairs_indexes_A,
+                                                "no_one_pairs_indexes_C": no_one_pairs_indexes_C,
+                                                "no_one_profiles_A":no_one_profiles_context_A,
+                                                "no_one_profiles_C":no_one_profiles_context_C,
                                                 "no_one_trial_indexes": trials_nta_indexes
                                                 })}
         context.update(d2)
@@ -744,14 +762,20 @@ def get_data_page(request):
     for file in files:
         paths.append(os.path.join("ipa_2/data/", file))
         df_paths.append(os.path.join(data_path, file))
+
     paths_files = zip(paths, files)
 
     df_all = get_single_df_all_data(data_path)
     df_all.to_excel(os.path.join(data_path, "all_data.xlsx"), index=False)
 
 
-    from_dir = data_path
     to_dir = os.path.join("static", "ipa_2", "data")
+    to_dir_files = os.listdir(to_dir)
+    to_dir_files = [file.split("/")[-1] for file in to_dir_files]
+    df_paths = [added_file for added_file in df_paths if not added_file.split("/")[-1] in to_dir_files]
+    df_paths.append(all_data_path)
+    from_dir = data_path
+
     copy_tree(from_dir, to_dir)
 
     exp = Experiment.objects.get(name="IPA2")
@@ -790,14 +814,24 @@ def save_try(request):
 
 def get_single_df_all_data(data_dir):
     files = os.listdir(r''+data_dir)
-    all_data = pd.DataFrame()
+
+    all_data_file_path = os.path.join(data_dir,"all_data.xlsx")
+    existing_subjects = []
+    if not os.path.exists(all_data_file_path):
+        all_data = pd.DataFrame()
+    else:
+        all_data = pd.read_excel(all_data_file_path)
+        existing_subjects = all_data.subject_num.unique().tolist()
+
     for file in files:
         if file.endswith(".xlsx") and file != "all_data.xlsx":
-            df = pd.read_excel(os.path.join(r''+data_dir,file))
-            subject_group = df.subject_group.unique()[0]
-            for i in range(len(COL_NAMES_BY_GROUP[subject_group])):
-                subject_feature = COL_NAMES_BY_GROUP[subject_group][i]
-                profile_feature = PROFILE_COL_NAMES_BY_GROUP[subject_group][i]
-                df["Feature-"+str(i+1)] = (100 - (abs(df[subject_feature]-df[profile_feature])))/100
-            all_data = all_data.append(df)
+            subject_num = int(file.split("-")[1])
+            if not subject_num in existing_subjects:
+                df = pd.read_excel(os.path.join(r''+data_dir,file))
+                subject_group = df.subject_group.unique()[0]
+                for i in range(len(COL_NAMES_BY_GROUP[subject_group])):
+                    subject_feature = COL_NAMES_BY_GROUP[subject_group][i]
+                    profile_feature = PROFILE_COL_NAMES_BY_GROUP[subject_group][i]
+                    df["Feature-"+str(i+1)] = (100 - (abs(df[subject_feature]-df[profile_feature])))/100
+                all_data = all_data.append(df)
     return all_data

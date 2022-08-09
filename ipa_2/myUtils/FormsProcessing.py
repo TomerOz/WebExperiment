@@ -103,6 +103,7 @@ class PhasesDataSaver(object):
         subject.identification_rts += post_data["reactionTimes"]
         subject.identification_profiles_left += post_data["profilesListLeft"]
         subject.identification_profiles_right += post_data["profilesListRight"]
+        subject.save()
 
     def save_posted_data(self, phase_name, post_data, subject):
         if phase_name in self.phase_to_saver_function:
@@ -116,6 +117,7 @@ class PhasesDataSaver(object):
         subject.profiles_response_times += post_data["reactionTimes"]
         subject.trial_features_order += post_data["trialFeatureOrder"]
         subject.subject_profile_sides += post_data["profilesSides"]
+        subject.trials_set += post_data["trials_set"]
         subject.save()
 
     # Fills subject model with posted features provided by the subject user (subject profile witg default values already exists)

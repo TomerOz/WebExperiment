@@ -613,7 +613,6 @@ def get_data_page(request):
         paths.append(os.path.join("ipa_1_2/data/", file))
         df_paths.append(os.path.join(data_path, file))
 
-
     paths_files = zip(paths, files)
 
     df_all = get_single_df_all_data(data_path)

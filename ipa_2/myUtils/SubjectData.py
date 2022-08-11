@@ -23,8 +23,7 @@ class SubjectData(object):
         self.meta_profiles = [subject] + self._get_list_from_query_set(MinMaxProfileModel.objects.filter(target_subject=subject))
         self.add_trials(subject, ProfileModel, partial_save=partial_save)
 
-        # self.debug_dict(self.subject_data_dictionary)
-        
+        self.debug_dict(self.subject_data_dictionary)
         subject_df = pd.DataFrame(self.subject_data_dictionary)
         data_path = "ipa_2/static/ipa_2/data/"
         path = os.path.join(data_path, "Subject-{}-Data.xlsx".format(str(subject.subject_num)))
@@ -58,6 +57,9 @@ class SubjectData(object):
             self.subject_data_dictionary["experiment_duration"].append((subject.end_time-subject.start_time).seconds/60)
             self.subject_data_dictionary["education"].append(subject.education)
             self.subject_data_dictionary["sets_order"].append(subject.sets_order)
+            for meta_profile in self.meta_profiles:
+                prefix = self.get_profile_prefix(meta_profile)
+                self.add_profile_features(meta_profile, prefix)
 
     def trials_to_list(self, data, seperator=",", initial="-", end=","):
         data1 = data[len(initial):len(data)-len(end)]
@@ -68,7 +70,6 @@ class SubjectData(object):
         # general
         trials_set = self.trials_to_list(subject.trials_set)
         self.subject_data_dictionary["trials_set"] = self.subject_data_dictionary["trials_set"] + trials_set
-
 
         # identification task responses:
         identification_response = self.trials_to_list(subject.subject_reported_sides) # reponse
@@ -84,7 +85,6 @@ class SubjectData(object):
         self.subject_data_dictionary["identification_profiles_sides"] = self.subject_data_dictionary["identification_profiles_sides"] + identification_info
         self.subject_data_dictionary["trial_features_order"] = self.subject_data_dictionary["trial_features_order"] + [" "]*len(identification_response) # not relevant to this phase
         self.subject_data_dictionary["response_time_profiles"] = self.subject_data_dictionary["response_time_profiles"] + [" "]*len(identification_response) # not relevant to this phase
-        self.subject_data_dictionary["response_time_features"] = self.subject_data_dictionary["response_time_features"] + [" "]*len(identification_response) # not relevant to this phase
         self._add_meta_data(subject, "identification", identification_response)
 
         # profiles responses
@@ -101,29 +101,27 @@ class SubjectData(object):
             self.subject_data_dictionary["trial_profile_right"] = self.subject_data_dictionary["trial_profile_right"] + profiles_p_name_right
             self.subject_data_dictionary["trial_features_order"] = self.subject_data_dictionary["trial_features_order"] + features_order
             self.subject_data_dictionary["response_time"] = self.subject_data_dictionary["response_time"] + [" "]*len(profiles_response) # not relevant to this phase
-            self.subject_data_dictionary["identification_profiles_sides"] = self.subject_data_dictionary["identification_profiles_sides"] + [" "]*len(profiles_response) # not relevant to this phase
             self._add_meta_data(subject, "profiles", profiles_response)
 
+        trial_counter = 0
         for i, profile_name in enumerate(self.subject_data_dictionary["trial_profile_left"]):
             profile_set = trials_set[i]
             if profile_name[:7] == "Subject":
                 profile = ProfileModel.objects.get(name=profile_name)
             else:
                 profile = ProfileModel.objects.get(name=profile_name, profile_label_set=profile_set)
-            self.add_profile_features(profile, "profile_left_")
-            for meta_profile in self.meta_profiles:
-                prefix = self.get_profile_prefix(meta_profile)
-                self.add_profile_features(meta_profile, prefix)
+            self.add_profile_features(profile, "profile_left_", trial_counter, trials_set)
+            trial_counter += 1
+
+        trial_counter = 0
         for i, profile_name in enumerate(self.subject_data_dictionary["trial_profile_right"]):
             profile_set = trials_set[i]
             if profile_name[:7] == "Subject":
                 profile = ProfileModel.objects.get(name=profile_name)
             else:
                 profile = ProfileModel.objects.get(name=profile_name, profile_label_set=profile_set)
-            self.add_profile_features(profile, "profile_right_")
-            for meta_profile in self.meta_profiles:
-                prefix = self.get_profile_prefix(meta_profile)
-                self.add_profile_features(meta_profile, prefix)
+            self.add_profile_features(profile, "profile_right_", trial_counter, trials_set)
+            trial_counter += 1
 
 
         for key in self.subject_data_dictionary:
@@ -146,12 +144,32 @@ class SubjectData(object):
 
         return prefix
 
-    def add_profile_features(self, profile, prefix):
+    def add_profile_features(self, profile, prefix, trial_counter=None, trials_set=None):
         # features prefices:
-        profile_features = profile.get_features_dict()
-        for f in profile_features:
-            subject_data_key = prefix+f
-            self.subject_data_dictionary[subject_data_key].append(profile_features[f])
+        feature_names_A = ["way_of_speech", "socio_economic", "ethnicity_skin_color", "personality", "dress_propeties", "political_affiliation", "hobbies", "body_size", "intelligence"]
+        feature_names_C = ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9"]
+        set_features = {"A": feature_names_A, "C": feature_names_C}
+
+
+        if trial_counter != None and trials_set != None:
+            profile_set = trials_set[trial_counter]
+            empty_set = "A"
+            if profile_set == "A":
+                empty_set = "C"
+            profile_features = profile.get_features_dict()
+            for f in profile_features:
+                if f in set_features[profile_set]:
+                    subject_data_key = prefix+f
+                    self.subject_data_dictionary[subject_data_key].append(profile_features[f])
+
+            for f in set_features[empty_set]:
+                subject_data_key = prefix+f
+                self.subject_data_dictionary[subject_data_key].append(" ")
+        else:
+            profile_features = profile.get_features_dict()
+            for f in profile_features:
+                subject_data_key = prefix+f
+                self.subject_data_dictionary[subject_data_key].append(profile_features[f])
         # features names:
         '''
                 "way_of_speech"

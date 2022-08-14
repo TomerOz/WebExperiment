@@ -104,7 +104,7 @@ def _get_phases_instructions(phase_name, users_subject, errors):
             if pic_name=="nan":
                 pictures_paths.append(pic_name)
             else:
-                pictures_paths.append(r'/static/ipa_1_2/media/images/' + pic_name)
+                pictures_paths.append(r'/static/ipa_2/media/images/' + pic_name)
 
     off_order_instructions_dict = {}
     off_order_instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=False)
@@ -464,14 +464,17 @@ def arrage_in_pairs(profiles_list, ids_to_profile_identifier, profile_identifier
     pairs = [
                 ["0.2", "0.8"],
                 ["0.3", "0.7"],
+                ["0.35", "0.65"],
                 ["0.4", "0.6"],
                 ["0.501", "0.5011"],
                 ["0.9", "0.901"],
                 ["0.301", "0.3011"],
+                ["0.72", "1.0"],
             ]
     practice_pairs = [
                         ['0.7-p','0.2-p'],
                         ['0.32-p','0.62-p'],
+                        ['0.41-p','0.51-p'],
                     ]
 
     new_profiles_list = []
@@ -546,10 +549,10 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         })
     elif current_phase == "During Profile Presentation":
         peofiles_A, peofiles_C = _get_profile_list_for_profiles_presentation_phase(users_subject)
-        trials = len(peofiles_A["profiles_list"])-2
+        trials = len(peofiles_A["profiles_list"])-3
         games_types = ["shoot"]*int(trials/2) + ["help"]*int(trials/2)
         random.shuffle(games_types)
-        games_types = ["help", "shoot"] + games_types
+        games_types = ["help", "shoot", "help"] + games_types
         context.update({"task_profiles_A":json.dumps(peofiles_A)})
         context.update({"task_profiles_C":json.dumps(peofiles_C)})
         context.update({"gameTypes":json.dumps(games_types)})

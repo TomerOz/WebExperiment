@@ -19,6 +19,9 @@
         <button class="btn btn-primary btn-lg" id="NextInstructionButton" type="button" name="button">{{ off_order_instructions_dict.continueButtonText }}</button>
     </div>
 
+  <div id="trialInstruction" class="container text-center">
+    <h3 id="trialInstructionHeader"></h3>
+  </div>
   <div id="headInstruction" class="container text-center">
     <h3 id="gameCompetitiveHead">{{ off_order_instructions_dict.gameCompetitive }}</h3>
     <h3 id="gameCooperativeHead">{{ off_order_instructions_dict.gameCooperative }}</h3>
@@ -29,11 +32,17 @@
       <tr>
         <td>
           <button class="btn btn-primary btn-lg" id="setAButton" type="button" name="button">{{ off_order_instructions_dict.setAName }}</button>
-          <!-- set image here -->
         </td>
         <td>
           <button class="btn btn-primary btn-lg" id="setCButton" type="button" name="button">{{ off_order_instructions_dict.setBName }}</button>
-          <!-- set image here -->
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img class="center" src="{% static 'IPA_2/media/images/set_a.jpg' %}" alt="">
+        </td>
+        <td>
+          <img class="center" src="{% static 'IPA_2/media/images/set_c.jpg' %}" alt="">
         </td>
       </tr>
     </table>
@@ -73,9 +82,23 @@
       </tr>
     </table>
 
-    <p id="shootAction">{{ off_order_instructions_dict.shootAction }}</p>
-    <p id="helpAction">{{ off_order_instructions_dict.helpAction }}</p>
+    <div id="explanationsTexts" class="container text-center">
+      <p id="explanationsTextsPar"></p>
+      <br>
+      <img class="center" id="helpMatrix" src="{% static 'IPA_2/media/images/game_matrix_help.jpg' %}" alt="">
+      <img class="center" id="shootMatrix" src="{% static 'IPA_2/media/images/game_matrix_shoot.jpg' %}" alt="">
+      <button class="btn btn-primary btn-lg" id="nextTrialButton" type="button" name="button">אישור והמשך לאינטראקציה הבאה</button>
+    </div>
 
+    <div id="explanationsTextsVariables">
+      <p id="shootAction">{{ off_order_instructions_dict.shootAction }}</p>
+      <p id="helpAction">{{ off_order_instructions_dict.helpAction }}</p>
+      <p id="ignoreAction">{{ off_order_instructions_dict.ignoreAction }}</p>
+      <p id="youChose">{{ off_order_instructions_dict.youChose }}</p>
+      <p id="shootThisProfile">{{ off_order_instructions_dict.shootThisProfile }}</p>
+      <p id="helpThisProfile">{{ off_order_instructions_dict.helpThisProfile }}</p>
+      <p id="ignoreThisProfile">{{ off_order_instructions_dict.ignoreThisProfile }}</p>
+    </div>
       <script>
        var n_trials = {{n_trials|safe}}
        var n_practice_trials = {{n_practice_trials|safe}}

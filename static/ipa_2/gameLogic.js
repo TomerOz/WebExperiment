@@ -1,6 +1,8 @@
 explanationTexts = document.getElementById("ExplanationTexts").textContent.split(",")
 
 var [you_cohse,if_other,youll_get,otherll_get,and_if_other] = explanationTexts
+var subjectChoice;
+subjectChoice = "No Choice"
 
 // Rows management:
 rowA = document.getElementsByClassName("A");
@@ -72,9 +74,18 @@ function ChooseRow(rowIndex){
   rows[otherIndex]["button"].classList.remove("rowSelected");
   explantionsDiv.style.display = "block";
   explantionsDiv.innerHTML  = ChoiceToText(rowIndex);
-
+  subjectChoice = stratgies[rowIndex]
+  nextProfileButton.disabled = false;
 };
 
+function RemoveRowsSelection(){
+  rows[0]["Top"].classList.remove("rowSelected");
+  rows[0]["Bottom"].classList.remove("rowSelected");
+  rows[0]["button"].classList.remove("rowSelected");
+  rows[1]["Top"].classList.remove("rowSelected");
+  rows[1]["Bottom"].classList.remove("rowSelected");
+  rows[1]["button"].classList.remove("rowSelected");
+}
 stratgies = [gameJSON["A"], gameJSON["B"]];
 // payoffs arranged by others
 subject_payoffs = [[gameJSON["pA_Aa"], gameJSON["pA_Ab"]],[gameJSON["pA_Ba"], gameJSON["pA_Bb"]]];
@@ -86,9 +97,9 @@ function ChoiceToText(rowIndex){
   otherIfOther_b = other_payoffs[rowIndex][1]
 
   var [you_cohse,if_other,youll_get,otherll_get,and_if_other] = explanationTexts
-  choiceText = you_cohse + ": "  + stratgies[rowIndex]
+  choiceText = you_cohse + ": "  + "<strong>" +stratgies[rowIndex] + "</strong>"
   textIfOther_a =  if_other + " " + "<strong>" + stratgies[0] + "</strong>" + " " + youll_get + " " + youIfOther_a + " " + otherll_get + " " + otherIfOther_a
-  textIfOther_b = and_if_other + " " + stratgies[1] + " " + youll_get + " " + youIfOther_b + " " + otherll_get + " " + otherIfOther_b
+  textIfOther_b = and_if_other + " " + "<strong>" + stratgies[1] + "</strong>" + " " + youll_get + " " + youIfOther_b + " " + otherll_get + " " + otherIfOther_b
   finalText = choiceText + "<br>" + textIfOther_a + "<br>" + textIfOther_b
   return finalText
 }
@@ -100,7 +111,10 @@ bChoice.addEventListener("click", function(){ChooseRow(1)});
 showMatrixButton = document.getElementById("showMatrixButton");
 matrixContainer = document.getElementById("matrixContainer");
 
-matrixContainer.style.display = "none";
-showMatrixButton.addEventListener("click" , function(){
-  matrixContainer.style.display = "block";
-});
+
+if(document.title != "profile"){
+  matrixContainer.style.display = "none";
+  showMatrixButton.addEventListener("click" , function(){
+    matrixContainer.style.display = "block";
+  });
+}

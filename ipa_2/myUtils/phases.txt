@@ -1,12 +1,19 @@
 Consent phase
 Pre Task
+Get Min Max Similarity
 Pre Get Profile
-During Get Profile1
-During Get Profile2
+During Get Profile
 Pre Identification Task
 Identification Task
+Pre Get Max Profile
+Get Max Similarity Profile
+Pre Get Min Profile
+Get Min Similarity Profile
+Matrix tutorial
 Pre Profile Presentation
 During Profile Presentation
+Pre Get Ideal Profile
+Get Ideal Profile
 Demographics
 End Screen
 GeneralPhase

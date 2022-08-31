@@ -77,8 +77,7 @@ class PhasesDataSaver(object):
         self.FeatureValue = FeatureValue
         self.MinMaxProfileModel = MinMaxProfileModel
         self.phase_to_saver_function = {
-            "During Get Profile1" : self._process_create_new_subject_profile,
-            "During Get Profile2" : self._process_create_new_subject_profile,
+            "During Get Profile" : self._process_create_new_subject_profile,
             "During Profile Presentation": self._save_trials_data,
             "Get Min Max Similarity" : self._process_min_max_similarity,
             "Get Max Similarity Profile" : self._get_min_max_similarity_profile,
@@ -101,9 +100,7 @@ class PhasesDataSaver(object):
         subject.subject_profile_sides += post_data["profilesSides"]
         subject.subject_reported_sides += post_data["responses"]
         subject.identification_rts += post_data["reactionTimes"]
-        subject.identification_profiles_left += post_data["profilesListLeft"]
-        subject.identification_profiles_right += post_data["profilesListRight"]
-        subject.save()
+        subject.identification_profiles += post_data["profilesList"]
 
     def save_posted_data(self, phase_name, post_data, subject):
         if phase_name in self.phase_to_saver_function:
@@ -112,31 +109,17 @@ class PhasesDataSaver(object):
 
     def _save_trials_data(self, post_data, subject):
         subject.trials_responses_list += post_data["responses"]
-        subject.profile_names_left += post_data["profilesListLeft"]
-        subject.profile_names_right += post_data["profilesListRight"]
-        subject.profiles_response_times += post_data["reactionTimes"]
+        subject.trials_string_list += post_data["profilesList"]
+        subject.profiles_response_times += post_data["profileRTs"]
+        subject.feature_response_times += post_data["subjectRTs"]
         subject.trial_features_order += post_data["trialFeatureOrder"]
-        subject.subject_profile_sides += post_data["profilesSides"]
-        subject.trials_set += post_data["trials_set"]
         subject.save()
 
     # Fills subject model with posted features provided by the subject user (subject profile witg default values already exists)
     def _process_create_new_subject_profile(self, post_data, new_subject):
-        # new_subject.featurevalue_set.all().delete() #
-        # shuld be cahnged 12.07.22
+        new_subject.featurevalue_set.all().delete() # deeleting existing features data on this profile if re-entered
         ########################### Mind which features set to choose from! 13.07.21
-
-        if new_subject.current_phase.name == "During Get Profile1":
-            label_set = new_subject.sets_order.split(",")[0]
-        else:
-            label_set = new_subject.sets_order.split(",")[1]
-
-        # deeleting existing features data on this profile if re-entered
-        for feature in new_subject.featurevalue_set.all():
-            if feature.target_feature.label_set == label_set:
-                feature.delete()
-
-        feaure_labels = self.FeatureLabels.objects.filter(label_set=label_set).values_list("feature_name", flat=True)
+        feaure_labels = self.FeatureLabels.objects.filter(label_set=new_subject.profile_label_set).values_list("feature_name", flat=True)
         ###########################
         for feature_name in feaure_labels:
             feature = self.FeatureLabels.objects.get(feature_name=feature_name)

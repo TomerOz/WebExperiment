@@ -1,0 +1,12 @@
+Consent phase
+Pre Task
+Pre Get Profile
+During Get Profile1
+During Get Profile2
+Pre Identification Task
+Identification Task
+Pre Profile Presentation
+During Profile Presentation
+Demographics
+End Screen
+GeneralPhase

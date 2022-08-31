@@ -60,6 +60,7 @@
        var n_practice_trials = {{n_practice_trials|safe}}
        var instructionText = {{off_order_instructions_dict|safe}}
        var task_profiles = {{identification_task|safe}}
+       var current_set = {{set_trials|safe}}
        var subject_group = "{{ subject_group }}"
       // working with the variable context
       </script>
@@ -72,6 +73,8 @@
       <input id="RTs" type="hidden" name="reactionTimes" value="">
       <input id="profilesSides" type="hidden" name="profilesSides" value="">
       <input id="profilesList" type="hidden" name="profilesList" value="">
+      <input id="profilesListLeft" type="hidden" name="profilesListLeft" value="">
+      <input id="profilesListRight" type="hidden" name="profilesListRight" value="">
       <!-- <input id="profilesIDs" type="hidden" name="profilesIDsList" value="{{ context.profiles_ids_list }}"> -->
     </form>
   </body>

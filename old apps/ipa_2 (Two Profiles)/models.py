@@ -190,6 +190,8 @@ class Instruction(models.Model):
 class Subject(ProfileModel):
     is_subject = True
     subject_num = models.CharField(max_length=50, default="not_provided")
+    sets_order = models.CharField(max_length=50, default="A,C")
+    trials_set = models.CharField(max_length=50, default="-")
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
     completed_experiments = models.CharField(max_length=500, default="-") # a list-like string of experiment -> "SGS1, SGS2,"
     subject_session  = models.IntegerField(default=0) # on creation of subject - session is 1, as in first session.
@@ -203,17 +205,18 @@ class Subject(ProfileModel):
     min_similarity_name = models.CharField(max_length=50, default="not_provided")
 
     # profiles assesment - similarity reports:
-    trials_string_list = models.TextField(default="-")
+    profile_names_left = models.TextField(default="-")
+    profile_names_right = models.TextField(default="-")
     trials_responses_list = models.TextField(default="-")
     profiles_response_times = models.TextField(default="-")
-    feature_response_times = models.TextField(default="-")
     trial_features_order = models.TextField(default="-")
 
     # identification task:
     subject_profile_sides = models.TextField(default="-")
     subject_reported_sides = models.TextField(default="-")
     identification_rts = models.TextField(default="-")
-    identification_profiles = models.TextField(default="-")
+    identification_profiles_left = models.TextField(default="-")
+    identification_profiles_right = models.TextField(default="-")
 
     start_time = models.DateTimeField(null=True)
     end_time = models.DateTimeField(null=True)

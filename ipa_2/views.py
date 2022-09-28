@@ -392,22 +392,55 @@ def get_dubbled_profiles_list(subject, trials):
 def _get_profile_list_for_profiles_presentation_phase(subject):
     _create_subject_artificials_for_this_phase(subject)
     regulars = ProfileModel.objects.filter(profile_label_set=subject.profile_label_set, is_artificial=False, is_subject=False, is_MinMax=False).all()
-    min_max = MinMaxProfileModel.objects.filter(profile_label_set=subject.profile_label_set,target_subject=subject).all()
+    # min_max = MinMaxProfileModel.objects.filter(profile_label_set=subject.profile_label_set,target_subject=subject).all()
     artificials = ArtificialProfileModel.objects.filter(profile_label_set=subject.profile_label_set,target_subject=subject, target_phase=subject.current_phase).all()
-    sp_model = ProfileModel.objects.filter(name=subject.name, profile_label_set=subject.profile_label_set, is_artificial=False, is_subject=True, is_MinMax=False).all()
+    # sp_model = ProfileModel.objects.filter(name=subject.name, profile_label_set=subject.profile_label_set, is_artificial=False, is_subject=True, is_MinMax=False).all()
     practice = artificials.filter(name__contains='Practice')
     trials = artificials.filter(name__contains='Trials')
 
-    all  = _get_list_from_query_set(min_max) + _get_list_from_query_set(regulars) + _get_list_from_query_set(sp_model) \
-     + _get_list_from_query_set(trials) + get_dubbled_profiles_list(subject, trials)
+    # all  = _get_list_from_query_set(min_max) + _get_list_from_query_set(regulars) + _get_list_from_query_set(sp_model) \
+    #  + _get_list_from_query_set(trials) + get_dubbled_profiles_list(subject, trials)
+
+    n_of_game_matrices = len(GameMatrix.objects.filter(phase__name=subject.current_phase.name))
+    all  = _get_list_from_query_set(regulars) + _get_list_from_query_set(trials)
 
     practice_context = _get_profiles_list_context(practice) # _get_profiles_list_context also shuffles trials order
-    regulars_min_max_trials_subject = _get_profiles_list_context(all) # _get_profiles_list_context also shuffles trials order
+    trials_context = _get_profiles_list_context(trials)
+    trials_context["profiles_list"] = trials_context["profiles_list"]*n_of_game_matrices
+    regulars_context = _get_profiles_list_context(_get_list_from_query_set(regulars))
+    regulars_list = regulars_context["profiles_list"]
+    regulars_context.update(trials_context)
+    regulars_context["profiles_list"] = regulars_context["profiles_list"] + regulars_list
+    regulars_min_max_trials_subject = regulars_context
+    random.shuffle(regulars_min_max_trials_subject["profiles_list"])
     all_profiles_list = [] + regulars_min_max_trials_subject["profiles_list"]
     regulars_min_max_trials_subject.update(practice_context) # addint the profiles data
     regulars_min_max_trials_subject["profiles_list"] = practice_context["profiles_list"] + all_profiles_list # putting practice profiles first
     regulars_min_max_trials_subject["profiles_list"] = regulars_min_max_trials_subject["profiles_list"]
+    regulars_min_max_trials_subject = match_profile_to_matrix(regulars_min_max_trials_subject, subject)
+    ipdb.set_trace()
     return regulars_min_max_trials_subject
+
+def get_specific_game_name_pattern(game):
+    name = game.game_name + "-" + str(game.ps_threshold)
+    return name
+
+def match_profile_to_matrix(profiles_context, subject):
+    games = GameMatrix.objects.filter(phase__name=subject.current_phase.name)
+    profiles_to_games = {}
+    for profile in profiles_context["profiles_list"]:
+        profiles_to_games.setdefault(profile, [])
+        prfile_data = profiles_context[profile]
+        not_yet_assignes_games = [get_specific_game_name_pattern(game) for game in games if not get_specific_game_name_pattern(game) in profiles_to_games[profile]]
+        if len(not_yet_assignes_games) > 0:
+            new_game = not_yet_assignes_games[random.randint(0,len(not_yet_assignes_games)-1)]
+            profiles_to_games[profile].append(new_game)
+            prfile_data.setdefault("profile_games", []).append(new_game)
+            prfile_data["game_index"] = 0
+    # ipdb.set_trace()
+    return profiles_context
+
+
 
 # Updates the generic context on specific phases
 def _update_context_if_necessry(context, current_phase, users_subject):
@@ -419,21 +452,21 @@ def _update_context_if_necessry(context, current_phase, users_subject):
 
     elif current_phase == "Matrix tutorial":
         game = _get_game_data(users_subject)
-        gameJSON = json.dumps(_get_game_dict(game))
+        gameJSON = json.dumps(_get_game_dict(game, "Matrix tutorial"))
         context.update({"game":game,
                         "gameJSON":gameJSON,
                         })
     elif current_phase == "During Profile Presentation":
         peofiles = _get_profile_list_for_profiles_presentation_phase(users_subject)
-        game = _get_game_data(users_subject)
-        gameJSON = json.dumps(_get_game_dict(game))
+        games = _get_game_data(users_subject) # only in this phase it returns few games and not a single game
+        gamesJSON = json.dumps(_get_game_dict(games, "During Profile Presentation"))
         context.update({"context":json.dumps(peofiles)})
         context.update({"maxValue":users_subject.max_similarity_value,
                         "maxName": json.dumps(users_subject.max_similarity_name),
                         "minValue":users_subject.min_similarity_value,
                         "minName": json.dumps(users_subject.min_similarity_name),
-                        "game":game,
-                        "gameJSON":gameJSON,
+                        "games":games,
+                        "gamesJSON":gamesJSON,
                         })
     elif current_phase == "Identification Task":
         _create_subject_artificials_for_this_phase(users_subject, practice_name="---", trials_name="SlowPhase")
@@ -529,21 +562,39 @@ def _get_game_data(subject):
     if subject.current_phase.name == "Matrix tutorial":
         game = GameMatrix.objects.get(phase__name=subject.current_phase.name)
     else:
-        game = GameMatrix.objects.get(phase__name=subject.current_phase.name, context_group=subject.context_group, ps_threshold=ps_threshold)
-    return game
+        games = GameMatrix.objects.filter(phase__name=subject.current_phase.name)
+    return games
 
-def _get_game_dict(game):
-    game_dict = {}
-    game_dict["A"] = game.strategy_a
-    game_dict["B"] = game.strategy_b
-    game_dict["pA_Aa"] = game.pA_Aa
-    game_dict["pB_Aa"] = game.pB_Aa
-    game_dict["pA_Ab"] = game.pA_Ab
-    game_dict["pB_Ab"] = game.pB_Ab
-    game_dict["pA_Ba"] = game.pA_Ba
-    game_dict["pB_Ba"] = game.pB_Ba
-    game_dict["pA_Bb"] = game.pA_Bb
-    game_dict["pB_Bb"] = game.pB_Bb
+def _get_game_dict(game, phase):
+    if phase == "During Profile Presentation":
+        game_dict = {}
+        games = game
+        for g in games:
+            specific_name = get_specific_game_name_pattern(g)
+            game_dict.setdefault(specific_name, {})
+            game_dict[specific_name]["A"] = g.strategy_a
+            game_dict[specific_name]["B"] = g.strategy_b
+            game_dict[specific_name]["pA_Aa"] = g.pA_Aa
+            game_dict[specific_name]["pB_Aa"] = g.pB_Aa
+            game_dict[specific_name]["pA_Ab"] = g.pA_Ab
+            game_dict[specific_name]["pB_Ab"] = g.pB_Ab
+            game_dict[specific_name]["pA_Ba"] = g.pA_Ba
+            game_dict[specific_name]["pB_Ba"] = g.pB_Ba
+            game_dict[specific_name]["pA_Bb"] = g.pA_Bb
+            game_dict[specific_name]["pB_Bb"] = g.pB_Bb
+        return game_dict
+    else:
+        game_dict = {}
+        game_dict["A"] = game.strategy_a
+        game_dict["B"] = game.strategy_b
+        game_dict["pA_Aa"] = game.pA_Aa
+        game_dict["pB_Aa"] = game.pB_Aa
+        game_dict["pA_Ab"] = game.pA_Ab
+        game_dict["pB_Ab"] = game.pB_Ab
+        game_dict["pA_Ba"] = game.pA_Ba
+        game_dict["pB_Ba"] = game.pB_Ba
+        game_dict["pA_Bb"] = game.pA_Bb
+        game_dict["pB_Bb"] = game.pB_Bb
 
     return game_dict
 

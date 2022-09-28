@@ -45,7 +45,6 @@ function HighLightCell(cellGroup){
     cellGroup[i].classList.toggle("cellHighlighted");
 };
 
-
 for (var j = 0; j < cells[0].length; j++) {
   cellAa[j].addEventListener("mouseover", function(){HighLightCell(cellAa)});
   cellAa[j].addEventListener("mouseout", function(){HighLightCell(cellAa)});
@@ -86,10 +85,12 @@ function RemoveRowsSelection(){
   rows[1]["Bottom"].classList.remove("rowSelected");
   rows[1]["button"].classList.remove("rowSelected");
 }
-stratgies = [gameJSON["A"], gameJSON["B"]];
+
+stratgies = [gamesJSON["A"], gamesJSON["B"]];
 // payoffs arranged by others
-subject_payoffs = [[gameJSON["pA_Aa"], gameJSON["pA_Ab"]],[gameJSON["pA_Ba"], gameJSON["pA_Bb"]]];
-other_payoffs = [[gameJSON["pB_Aa"], gameJSON["pB_Ab"]],[gameJSON["pB_Ba"], gameJSON["pB_Bb"]]];
+subject_payoffs = [[gamesJSON["pA_Aa"], gamesJSON["pA_Ab"]],[gamesJSON["pA_Ba"], gamesJSON["pA_Bb"]]];
+other_payoffs = [[gamesJSON["pB_Aa"], gamesJSON["pB_Ab"]],[gamesJSON["pB_Ba"], gamesJSON["pB_Bb"]]];
+
 function ChoiceToText(rowIndex){
   youIfOther_a = subject_payoffs[rowIndex][0]
   youIfOther_b = subject_payoffs[rowIndex][1]

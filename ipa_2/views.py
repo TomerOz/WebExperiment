@@ -487,7 +487,7 @@ def _update_context_if_necessry(context, current_phase, users_subject):
         no_one_profiles_context = _get_profiles_list_context(no_one_profiles)
         no_one_pairs_indexes = []
         for slevel in similarity_levels:
-            p1, p2 = no_one_profiles.filter(name__contains = str(slevel))
+            p1, p2 = no_one_profiles.filter(name__contains = str(slevel)+"(") # the meaning of the +"(" is to focus the name filter only on the targeted s-level not actual
             no_one_pairs_indexes.append([p1.id, p2.id])
         d2 = {"identification_task" : json.dumps({"subject": sp,
                                                 "artificials":trials_context,

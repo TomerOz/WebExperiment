@@ -1,13 +1,12 @@
 var slidecontainer = document.getElementById("slidecontainer");
 var resonsesForm = document.getElementById("subjectResonseForm");
 var profilesList = document.getElementById("profilesList");
+var gamesNames = document.getElementById("gamesNames");
 var showReportButton = document.getElementById('showReportButton');
-var moreSimilarity = document.getElementById('moreSimilarity');
-var lessSimilarity = document.getElementById('lessSimilarity');
 var similarityInput = document.getElementById('similarityInput');
 var subjectResonses = document.getElementById('subjectResonses');
 var profilesDescriptions = document.getElementById('profilesDescriptions'); // the hidden input fiel in the hidden form
-var similarityReportSection = document.getElementById("SimilarityReportSection");
+var gameMatrixSection = document.getElementById("GameMatrixSection");
 var instrucionSection = document.getElementById("instrucion");
 var nextProfileButtonSection = document.getElementById("NextProfileButtonSection");
 var trialFeatureOrder = document.getElementById("trialFeatureOrder");
@@ -51,7 +50,6 @@ var intervalID;
 var changeRate = 25;
 var contiousDelay = 500;
 var direction;
-var sim_value = parseInt(similarityInput.value);
 var timeOutIntervalIDs = [];
 
 function changeFontSize(fontSize) {
@@ -121,14 +119,15 @@ function GetProfileFeatureData (feature) {
 function startReportPhase(){
   if(reportT0 == null){
     reportT0 = new Date();
-  }
+  };
+  UpdateGame(); // function from gameLogic.js
   featuresTable.style.display = "none";
   slidecontainer.innerHTML = "";
   body = document.getElementsByTagName("body")[0];
   instrucionSection.style.display = "block";
-  similarityReportSection.style.display = "block";
-  PresentAllCircles(); // event NewProfile is defined in Slider logic
   nextProfileButtonSection.style.display = "block";
+  gameMatrixSection.style.display = "block";
+  updateMatrixCells(); // function from gameLogic.js
 };
 
 function InitializeProfilePresentation(current_profile){
@@ -161,6 +160,13 @@ function InitializeProfilePresentation(current_profile){
   };
 };
 
+function HideReoportSection(){
+  instrucionSection.style.display = "none";
+  nextProfileButtonSection.style.display = "none";
+  gameMatrixSection.style.display = "none";
+  explantionsDiv.style.display = "none";
+};
+
 // Next Trial - New profile:
 function startNextTrial(){
   inTaskInstructions.style.display = "none";
@@ -170,22 +176,26 @@ function startNextTrial(){
     reportT0 = null; // reseting reportT0 to null
     profile_dictionary = context[all_profiles_ids[current_profile]];
     profilesList.value = profilesList.value + profile_dictionary.name + "," ;
-    subjectResonses.value = subjectResonses.value + similarityInput.value + ",";
+    gamesNames.value = gamesNames.value + currentGameName + "," ;
+    subjectResonses.value = subjectResonses.value + subjectChoice  + "," ;// + replace with approriate value
     trialFeatureOrder.value = trialFeatureOrder.value + featuresOrderOfPresentation.toString() + "-**NextProfile**-";
     featuresOrderOfPresentation = []; // emptying the list after data was saved
     subjectRTs.value = subjectRTs.value + rts.toString() + "-**NextProfile**-"
     rts = []; // needs to be reseted between trials
     profileRTs.value = pRts.toString(); // updates it self between trials
-    similarityInput.value = 0;
-    sim_value = parseInt(similarityInput.value);
+
     preProfile = "מיד תחל הצגת פרופיל חדש";
     current_profile +=1;
+
     document.getElementsByTagName("body")[0].dispatchEvent(event); // Dispatch the event.
+
     if(current_profile < all_profiles_ids.length){
       pre_profile_counter = 0;
       featuresTable.style.display = "block";
       buttonActivationDelay = buttonActivationDelayOriginal;
       featuresPresentaionNumber = 1;
+      nextProfileButton.disabled = true;
+      RemoveRowsSelection();
       HideReoportSection();
       ProfileCountDown();
     } else { // enf og trials
@@ -249,6 +259,8 @@ function PresentProfileAgain(){
   featuresTable.style.display = "block";
   buttonActivationDelay = 0;
   isProfilePresentedAgain = true;
+  context[all_profiles_ids[current_profile]].game_index--; // making sure the same game remains
+  RemoveRowsSelection();
   HideReoportSection();
   ProfileCountDown();
 };
@@ -291,43 +303,13 @@ function delayActivateButton(){
 
 }
 
-function endMovement(){
-  for (var i = 0; i < timeOutIntervalIDs.length; i++) {
-    clearInterval(timeOutIntervalIDs[i]);
-  }
-  timeOutIntervalIDs = [];
-  buttonClicked = false;
-}
-
-moreSimilarity.addEventListener("mousedown", function(){
-  buttonClicked = true;
-  direction = "+";
-  ChagngeSimilarityValue(direction)
-  changeCircles();
-  idTO = setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
-  timeOutIntervalIDs.push(idTO);
-});
-
-
-moreSimilarity.addEventListener("mouseup", endMovement);
-moreSimilarity.addEventListener("mouseleave", endMovement);
-
-lessSimilarity.addEventListener("mousedown", function(){
-  buttonClicked = true;
-  direction = "-";
-  ChagngeSimilarityValue(direction)
-  changeCircles();
-  idTO = setTimeout(function(){ContinuousPressChange(direction)}, contiousDelay);
-  timeOutIntervalIDs.push(idTO);
-});
-
-lessSimilarity.addEventListener("mouseup", endMovement);
-lessSimilarity.addEventListener("mouseleave", endMovement);
-
 nextFeatureButton.addEventListener("click", function() {InitializeProfilePresentation(current_profile)});
 nextFromInstructionsButton.addEventListener("click", startNextTrial);
 nextProfileButton.addEventListener("click",startNextTrial);
 presentProfileAgainButton.addEventListener("click", PresentProfileAgain);
 
+nextProfileButton.disabled = true;
+
+HideReoportSection();
 
 ProfileCountDown();

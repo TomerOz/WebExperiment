@@ -33,14 +33,15 @@
 }
 
 .topRowHighligt {
-  border-top: 1px solid #CCFF99;
+  /* border-top: 1px solid #CCFF99; */
   border-bottom: none;
 }
 
 .bottomRowHighligt {
-  border-bottom: 1px solid #CCFF99;
+  /* border-bottom: 1px solid #CCFF99; */
   border-top: none;
-  box-shadow: 0px 9px 4px -6px #CCFF99;
+  border-color: black;
+  /* box-shadow: 0px 9px 4px -6px #CCFF99; */
 }
 
 .rowSelected {
@@ -69,3 +70,32 @@
       width: 90%;
    }
   }
+
+.border-right {
+  border-bottom: solid;
+  border-right: solid;
+}
+
+.border-left {
+  border-bottom: solid;
+  border-left: solid;
+}
+td {
+  border-bottom: solid;
+}
+.no-border {
+  border: none;
+}
+.selfColor {
+  color: #8A2BE2;
+  border-color: black;
+}
+.otherColor {
+  /* color: #922b3e; */
+  color: #FFAE42;
+  border-color: black;
+}
+#youArea {
+  background-color: #CCFFCC;
+  border: none;
+}

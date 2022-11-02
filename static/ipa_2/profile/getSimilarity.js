@@ -61,13 +61,7 @@ function PresentAllCircles(){
 };
 
 
-function HideReoportSection(){
-  similarityReportSection.style.display = "none";
-  instrucionSection.style.display = "none";
-  nextProfileButtonSection.style.display = "none";
-};
 
-HideReoportSection();
 
 if(document.title != "profile"){
   reportSections["max"].style.display = "none";

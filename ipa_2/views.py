@@ -98,7 +98,7 @@ def _get_phases_instructions(phase_name, users_subject, errors):
             if pic_name=="nan":
                 pictures_paths.append(pic_name)
             else:
-                pictures_paths.append(r'/static/ipa_1_2/media/images/' + pic_name)
+                pictures_paths.append(r'/static/ipa_2/media/images/' + pic_name)
 
     off_order_instructions_dict = {}
     off_order_instruction_queryset = Instruction.objects.filter(str_phase__name=phase_name, is_in_order=False)

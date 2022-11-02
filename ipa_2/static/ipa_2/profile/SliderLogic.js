@@ -1,6 +1,7 @@
 var slidecontainer = document.getElementById("slidecontainer");
 var resonsesForm = document.getElementById("subjectResonseForm");
 var profilesList = document.getElementById("profilesList");
+var gamesNames = document.getElementById("gamesNames");
 var showReportButton = document.getElementById('showReportButton');
 var similarityInput = document.getElementById('similarityInput');
 var subjectResonses = document.getElementById('subjectResonses');
@@ -118,13 +119,15 @@ function GetProfileFeatureData (feature) {
 function startReportPhase(){
   if(reportT0 == null){
     reportT0 = new Date();
-  }
+  };
+  UpdateGame(); // function from gameLogic.js
   featuresTable.style.display = "none";
   slidecontainer.innerHTML = "";
   body = document.getElementsByTagName("body")[0];
   instrucionSection.style.display = "block";
   nextProfileButtonSection.style.display = "block";
   gameMatrixSection.style.display = "block";
+  updateMatrixCells(); // function from gameLogic.js
 };
 
 function InitializeProfilePresentation(current_profile){
@@ -173,6 +176,7 @@ function startNextTrial(){
     reportT0 = null; // reseting reportT0 to null
     profile_dictionary = context[all_profiles_ids[current_profile]];
     profilesList.value = profilesList.value + profile_dictionary.name + "," ;
+    gamesNames.value = gamesNames.value + currentGameName + "," ;
     subjectResonses.value = subjectResonses.value + subjectChoice  + "," ;// + replace with approriate value
     trialFeatureOrder.value = trialFeatureOrder.value + featuresOrderOfPresentation.toString() + "-**NextProfile**-";
     featuresOrderOfPresentation = []; // emptying the list after data was saved
@@ -255,6 +259,7 @@ function PresentProfileAgain(){
   featuresTable.style.display = "block";
   buttonActivationDelay = 0;
   isProfilePresentedAgain = true;
+  context[all_profiles_ids[current_profile]].game_index--; // making sure the same game remains
   RemoveRowsSelection();
   HideReoportSection();
   ProfileCountDown();

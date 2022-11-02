@@ -53,7 +53,7 @@ def _get_two_random_features(feature_names):
     feature_2 = feature_names[features_indexes[1]]
     return feature_1, feature_2
 
-def create_artificial_profile_3(subject_profile, target_similarity, relative_similarity_level, model, artificial_profile, get_simialrity_function):
+def create_artificial_profile_3(subject_profile, target_similarity, model, artificial_profile, get_simialrity_function):
     # for development checks purpose: ########################
     # target_similarity = 0
     # subject_profile = _create_fake_prfile(50, subject_profile)

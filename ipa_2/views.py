@@ -22,15 +22,10 @@ from .myUtils.AnalyzeData import AnalyzeData
 phase_to_html_page = {
                         "Consent phase":                "Index",
                         "Pre Task":                     "instruction",
-                        "Get Min Max Similarity":       "MinMaxSimilariy",
                         "Pre Get Profile":              "instruction",
                         "During Get Profile":           "GetSubject/getSubjectProfile",
                         "Pre Identification Task":      "instruction",
                         "Identification Task":          "IdentificationTask",
-                        "Pre Get Max Profile":          "instruction",
-                        "Get Max Similarity Profile":   "GetSubject/getSubjectProfile",
-                        "Pre Get Min Profile":          "instruction",
-                        "Get Min Similarity Profile":   "GetSubject/getSubjectProfile",
                         "Matrix tutorial":              "MatrixLearnTest",
                         "Pre Profile Presentation":     "instruction",
                         "During Profile Presentation":  "profile",
@@ -337,19 +332,22 @@ def _generate_profile(users_subject, target_similarity, name_instance=""):
     sp = _get_subject_profile(users_subject) # subject profile
     model = SimilarityContextModel.objects.get(context__name=users_subject.context_group.name, label_set=users_subject.profile_label_set)
     min_s = _get_min_similarity(model, sp) # min possible similarity
-    relative_similarity_level = (1-min_s)*target_similarity + min_s
+    actual_similarity = target_similarity
+    if min_s > target_similarity:
+        actual_similarity = min_s
     initial_profile = copy.deepcopy(sp)
 
-    ap = create_artificial_profile_3(sp, target_similarity, relative_similarity_level, model, initial_profile, _get_subject_other_similarity)
+    ap = create_artificial_profile_3(sp, actual_similarity, model, initial_profile, _get_subject_other_similarity)
     random.shuffle(ap["features_order"]) ## Maybe should be in the same order
     ap["is_subject"] = False
-    ap_name = "Artificial-" + str(target_similarity) + "-" + name_instance + "-Subject-" + users_subject.subject_num
+    articial_index = len(ArtificialProfileModel.objects.filter(target_subject=users_subject, name__contains=str(target_similarity)+"-").filter(name__contains=users_subject.current_phase.name)) + 1
+    ap_name = "Artificial-" + str(target_similarity) + "(" + str(actual_similarity) + ")" + "-" + str(articial_index) + "-" + name_instance + "-Subject-" + users_subject.subject_num
     ap["name"] = ap_name
 
     # save this profile
     ArtificialProfileModel.objects.filter(target_subject=users_subject, name=ap_name).delete() # first_deleting an existing profile
     ap_instance = ArtificialProfileModel(is_artificial=True, target_subject=users_subject)
-    ap_instance.name = ap_instance.get_name_pattern(str(target_similarity), name_instance)
+    ap_instance.name = ap_instance.get_name_pattern(str(target_similarity), actual_similarity, name_instance, profile_index=articial_index)
     ap_instance.target_phase = users_subject.current_phase
     ap_instance.profile_label_set = users_subject.profile_label_set
     ap_instance.save()
@@ -371,6 +369,8 @@ def _get_list_from_query_set(qset):
 
 def _create_subject_artificials_for_this_phase(subject, practice_name="Practice", trials_name="Trials"):
     '''Generates subject artificial profiles for the current phase '''
+    ArtificialProfileModel.objects.filter(target_subject=subject, name__contains=subject.current_phase.name).delete()
+
     practice_similarities_levels = subject.current_phase.get_practice_trials_content()
 
     for slevel in practice_similarities_levels:
@@ -418,7 +418,6 @@ def _get_profile_list_for_profiles_presentation_phase(subject):
     regulars_min_max_trials_subject["profiles_list"] = practice_context["profiles_list"] + all_profiles_list # putting practice profiles first
     regulars_min_max_trials_subject["profiles_list"] = regulars_min_max_trials_subject["profiles_list"]
     regulars_min_max_trials_subject = match_profile_to_matrix(regulars_min_max_trials_subject, subject)
-    ipdb.set_trace()
     return regulars_min_max_trials_subject
 
 def get_specific_game_name_pattern(game):
@@ -516,8 +515,8 @@ def _get_enriched_instructions_if_nesseccary(subject, phases_instructions, singl
         phases_instructions[0] = phases_instructions[0].format(off_order_instructions[subject.profile_label_set])
     elif subject.current_phase.name == "Matrix tutorial":
         game = _get_game_data(subject)
-        a =game.strategy_a
-        b=game.strategy_b
+        a = game.strategy_a
+        b = game.strategy_b
         phases_instructions[1] = phases_instructions[1].format(a, b, a, b, b)
 
         off_order_instructions["You_Aa"] = off_order_instructions["You"].format(game.strategy_a, game.strategy_a)
@@ -560,7 +559,7 @@ def _get_game_data(subject):
     if subject.subject_session == 2:
         ps_threshold = subject.session_2_ps
     if subject.current_phase.name == "Matrix tutorial":
-        game = GameMatrix.objects.get(phase__name=subject.current_phase.name)
+        games = GameMatrix.objects.get(phase__name=subject.current_phase.name)
     else:
         games = GameMatrix.objects.filter(phase__name=subject.current_phase.name)
     return games

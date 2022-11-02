@@ -5,17 +5,17 @@ from .models import ProfileModel, FeatureLabels, FeatureValue, Subject, Experime
 from .models import Context, FeatureWeight, SimilarityContextModel, UserToSubject
 
 
-admin.site.register(ProfileModel)
-admin.site.register(FeatureLabels)
-admin.site.register(FeatureValue)
-admin.site.register(Subject)
-admin.site.register(Instruction)
-admin.site.register(Experiment)
-admin.site.register(ExperimentPhase)
-admin.site.register(GameMatrix)
-admin.site.register(Context)
-admin.site.register(FeatureWeight)
-admin.site.register(SimilarityContextModel)
-admin.site.register(UserToSubject)
+# admin.site.register(ProfileModel)
+# admin.site.register(FeatureLabels)
+# admin.site.register(FeatureValue)
+# admin.site.register(Subject)
+# admin.site.register(Instruction)
+# admin.site.register(Experiment)
+# admin.site.register(ExperimentPhase)
+# admin.site.register(GameMatrix)
+# admin.site.register(Context)
+# admin.site.register(FeatureWeight)
+# admin.site.register(SimilarityContextModel)
+# admin.site.register(UserToSubject)
 
 # 13.07.21 - requiers update, currently its a copy of profilePresntaion

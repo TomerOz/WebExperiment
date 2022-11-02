@@ -15,7 +15,7 @@
       <div id="instructionContainer" class="jumbotron">
         <h1> {{ off_order_instructions_dict.title }}</h1>
 
-        <p>{{ single_instructions }}</p>
+        <p id="mainPar">{{ single_instructions }}</p>
 
         <p>{{ off_order_instructions_dict.checkboxTitle }}</p>
         <form action=""  method="post">
@@ -45,7 +45,8 @@
       </div>
     </div>
     <script type="text/javascript">
-
+        instructions_list = {{instructions_list|safe}}
+        mainPar.innerHTML = instructions_list[0]
         fitty(document.getElementsByClassName('jumbotron'))
     </script>
   </body>

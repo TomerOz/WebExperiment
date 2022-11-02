@@ -9,7 +9,7 @@ class SubjectData(object):
             print(k +"-" +  str(len(data_dict[k])))
 
     def save_subject_data(self, subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel, partial_save=False):
-        CURRENT_APP_NAME = 'ipa_1_2'
+        CURRENT_APP_NAME = 'ipa_2'
         path_to_empty_session_df = os.path.join(CURRENT_APP_NAME,"myUtils","empty_session_df.xlsx")
         self.empty_session_df = pd.read_excel(path_to_empty_session_df)
 
@@ -27,8 +27,9 @@ class SubjectData(object):
         # ipdb.set_trace()
 
         subject_df = pd.DataFrame(self.subject_data_dictionary)
-        data_path = "ipa_1_2/static/ipa_1_2/data/"
+        data_path = "ipa_2/static/ipa_2/data/"
         path = os.path.join(data_path, "Subject-{}-Data.xlsx".format(str(subject.subject_num)))
+
         subject_df.to_excel(path, index=False)
 
     def _get_list_from_query_set(self, qset):
@@ -47,10 +48,6 @@ class SubjectData(object):
             self.subject_data_dictionary["subject_num"].append(subject.subject_num)
             self.subject_data_dictionary["gender"].append(subject.gender)
             self.subject_data_dictionary["age"].append(subject.age)
-            self.subject_data_dictionary["max_value"].append(subject.max_similarity_value)
-            self.subject_data_dictionary["min_value"].append(subject.min_similarity_value)
-            self.subject_data_dictionary["max_name"].append(subject.max_similarity_name)
-            self.subject_data_dictionary["min_name"].append(subject.min_similarity_name)
             self.subject_data_dictionary["subject_group"].append(subject.profile_label_set)
             self.subject_data_dictionary["session_num"].append(subject.subject_session)
             self.subject_data_dictionary["experiment"].append(subject.experiment.name)
@@ -77,6 +74,7 @@ class SubjectData(object):
         self.subject_data_dictionary["trial_features_order"] = self.subject_data_dictionary["trial_features_order"] + [" "]*len(identification_response) # not relevant to this phase
         self.subject_data_dictionary["response_time_profiles"] = self.subject_data_dictionary["response_time_profiles"] + [" "]*len(identification_response) # not relevant to this phase
         self.subject_data_dictionary["response_time_features"] = self.subject_data_dictionary["response_time_features"] + [" "]*len(identification_response) # not relevant to this phase
+        self.subject_data_dictionary["game_name"] = self.subject_data_dictionary["game_name"] + [" "]*len(identification_response) # not relevant to this phase
         self._add_meta_data(subject, "identification", identification_response)
 
         # profiles responses
@@ -85,9 +83,11 @@ class SubjectData(object):
             features_rts = self.trials_to_list(subject.feature_response_times, seperator="-**NextProfile**-", end="-**NextProfile**-") # rt
             profiles_rts = self.trials_to_list(subject.profiles_response_times, seperator=",", end="") # rt
             profiles_p_name = self.trials_to_list(subject.trials_string_list) # profile name
+            game_names = self.trials_to_list(subject.trials_games_names) # profile name
             features_order = self.trials_to_list(subject.trial_features_order, seperator="-**NextProfile**-", end="-**NextProfile**-") # info
 
             self.subject_data_dictionary["response_value"] = self.subject_data_dictionary["response_value"] + profiles_response
+            self.subject_data_dictionary["game_name"] = self.subject_data_dictionary["game_name"] + game_names
             self.subject_data_dictionary["response_time_profiles"] = self.subject_data_dictionary["response_time_profiles"] + profiles_rts
             self.subject_data_dictionary["response_time_features"] = self.subject_data_dictionary["response_time_features"] + features_rts
             self.subject_data_dictionary["trial_profile"] = self.subject_data_dictionary["trial_profile"] + profiles_p_name

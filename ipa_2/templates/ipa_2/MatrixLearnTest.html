@@ -28,47 +28,56 @@
       <button id="showMatrixButton" class="btn btn-primary btn" type="button" name="button">{{ off_order_instructions_dict.presentTableButton }}</button>
       <button id="NextStepButton" class="btn btn-primary btn" type="button" name="button">{{ off_order_instructions_dict.NextStep }}</button>
     </div>
+
     <!-- Game table -->
       <div class="text-center">
         <div id="matrixContainer">
           <table class="gameTable">
             <tbody>
-          <tr>
-            <td>X</td>
-            <td colspan="2">{{game.strategy_a}}</td>
-            <td colspan="2">{{game.strategy_b}}</td>
-          </tr>
-          <tr class="A TopRow">
-            <td id="A" class="choiceButton" rowspan="2">{{game.strategy_a}}</td>
-            <!-- A or B stands for row choice, a or b stands for col choice -->
-            <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
-            <td class="Aa">{{off_order_instructions_dict.youGet}}</td>
-            <td class="Aa">{{off_order_instructions_dict.OtherGet}}</td>
-            <td class="Ab">{{off_order_instructions_dict.youGet}}</td>
-            <td class="Ab">{{off_order_instructions_dict.OtherGet}}</td>
-          </tr>
-          <tr class="A BottomRow">
-            <td class="Aa">{{game.pA_Aa}}</td>
-            <td class="Aa">{{game.pB_Aa}}</td>
-            <td class="Ab">{{game.pA_Ab}}</td>
-            <td class="Ab">{{game.pB_Ab}}</td>
-          <tr class="B TopRow">
-            <td rowspan="2" id="B" class="choiceButton">{{game.strategy_b}}</td>
-            <!-- A or B stands for row choice, a or b stands for col choice -->
-            <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
-            <td class="Ba">{{off_order_instructions_dict.youGet}}</td>
-            <td class="Ba">{{off_order_instructions_dict.OtherGet}}</td>
-            <td class="Bb">{{off_order_instructions_dict.youGet}}</td>
-            <td class="Bb">{{off_order_instructions_dict.OtherGet}}</td>
-          </tr>
-          <tr class="B BottomRow">
-            <td class="Ba">{{game.pA_Ba}}</td>
-            <td class="Ba">{{game.pB_Ba}}</td>
-            <td class="Bb">{{game.pA_Bb}}</td>
-            <td class="Bb">{{game.pB_Bb}}</td>
-          </tr>
+              <tr>
+                <td class="no-border"></td>
+                <td class="no-border"></td>
+                <td colspan="4">האחר</td>
+              </tr>
+              <tr>
+                <td class="no-border"></td>
+                <td class="no-border"></td>
+                <td class="border-right" colspan="2">{{game.strategy_a}}</td>
+                <td colspan="2">{{game.strategy_b}}</td>
+              </tr>
+              <tr class="A TopRow">
+                <td id="youArea" colspan="1" rowspan="4">אתה</td>
+                <td id="A" class="choiceButton" rowspan="2">{{game.strategy_a}}</td>
+                <!-- A or B stands for row choice, a or b stands for col choice -->
+                <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
+                <!-- <td class="Aa">{{off_order_instructions_dict.youGet}}</td> -->
+                <!-- <td class="Aa">{{off_order_instructions_dict.OtherGet}}</td> -->
+                <!-- <td class="Ab">{{off_order_instructions_dict.youGet}}</td> -->
+                <!-- <td class="Ab">{{off_order_instructions_dict.OtherGet}}</td> -->
+              </tr>
+              <tr class="A BottomRow">
+                <td id="youAa" class="Aa selfColor">{{game.pA_Aa}}</td>
+                <td id="otherAa" class="Aa otherColor border-right">{{game.pB_Aa}}</td>
+                <td id="youAb" class="Ab selfColor border-left">{{game.pA_Ab}}</td>
+                <td id="otherAb" class="Ab otherColor">{{game.pB_Ab}}</td>
+              <tr class="B TopRow">
+                <td rowspan="2" id="B" class="choiceButton">{{game.strategy_b}}</td>
+                <!-- A or B stands for row choice, a or b stands for col choice -->
+                <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
+                <!-- <td class="Ba">{{off_order_instructions_dict.youGet}}</td> -->
+                <!-- <td class="Ba">{{off_order_instructions_dict.OtherGet}}</td> -->
+                <!-- <td class="Bb">{{off_order_instructions_dict.youGet}}</td> -->
+                <!-- <td class="Bb">{{off_order_instructions_dict.OtherGet}}</td> -->
+              </tr>
+              <tr class="B BottomRow">
+                <td id="youBa" class="Ba selfColor">{{game.pA_Ba}}</td>
+                <td id="otherBa" class="Ba otherColor border-right">{{game.pB_Ba}}</td>
+                <td id="youBb" class="Bb selfColor border-left">{{game.pA_Bb}}</td>
+                <td id="otherBb" class="Bb otherColor">{{game.pB_Bb}}</td>
+              </tr>
         </tbody>
         </table>
+
       </div><br>
       <div class="explantions">
       </div><br>
@@ -83,7 +92,7 @@
         <br/>
         <p>
         <center>
-            <h3>מבחן הבנה - ענה.י על השאלות הבאות:</h3>
+            <h3>ענה.י על השאלות הבאות</h3>
         </center>
         </p>
         <br/>
@@ -128,7 +137,7 @@
           <span>One answer or more is incorrect!<span><br>
           {% endif %}
           <input type="hidden" name="form_phase" value="{{ form_phase }}">
-          <button type="submit" href="/">Submit</button>
+          <button type="submit" href="/">אישור</button>
         </div>
       </form>
     </div>

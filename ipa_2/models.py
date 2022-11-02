@@ -171,15 +171,15 @@ class FeatureWeight(models.Model):
 
 class Instruction(models.Model):
     experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE) # To wich experiment it is related
-    instruction_text = models.CharField(max_length=1000, default="") # Which text it contains
+    instruction_text = models.CharField(max_length=2000, default="") # Which text it contains
     int_place = models.IntegerField() # Place in order in case of multiple instructions
     str_phase = models.ForeignKey(ExperimentPhase, on_delete=models.CASCADE) # Description of phase,e.g. "Initial", "Mid break", "Report instrucion"
 
     is_in_order = models.BooleanField(default=True)
     off_order_place = models.CharField(max_length=40, default="irrelevant")
 
-    instruction_text_male = models.CharField(max_length=1000, default="") # Which text it contains
-    instruction_text_female = models.CharField(max_length=1000, default="") # Which text it contains
+    instruction_text_male = models.CharField(max_length=2000, default="") # Which text it contains
+    instruction_text_female = models.CharField(max_length=2000, default="") # Which text it contains
 
     pitctures_names = models.CharField(max_length=1000, default="")
 
@@ -204,6 +204,7 @@ class Subject(ProfileModel):
 
     # profiles assesment - similarity reports:
     trials_string_list = models.TextField(default="-")
+    trials_games_names = models.TextField(default="-")
     trials_responses_list = models.TextField(default="-")
     profiles_response_times = models.TextField(default="-")
     feature_response_times = models.TextField(default="-")
@@ -253,8 +254,8 @@ class ArtificialProfileModel(ProfileModel):
     def __str__(self):
         return (self.name)
 
-    def get_name_pattern(self, target_similarity, name_instance):
-        return "Artificial-" + str(target_similarity) + "-" + name_instance + "-Subject-" + self.target_subject.subject_num
+    def get_name_pattern(self, target_similarity, actual_similarity, name_instance, profile_index=1):
+        return "Artificial-" + str(target_similarity) + "(" + str(actual_similarity) + ")" + "-" + str(profile_index) + "-" + name_instance + "-Subject-" + self.target_subject.subject_num
 
 class MinMaxProfileModel(ProfileModel):
     '''

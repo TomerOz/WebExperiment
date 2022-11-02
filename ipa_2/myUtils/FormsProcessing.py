@@ -110,6 +110,7 @@ class PhasesDataSaver(object):
     def _save_trials_data(self, post_data, subject):
         subject.trials_responses_list += post_data["responses"]
         subject.trials_string_list += post_data["profilesList"]
+        subject.trials_games_names += post_data["gamesNames"]
         subject.profiles_response_times += post_data["profileRTs"]
         subject.feature_response_times += post_data["subjectRTs"]
         subject.trial_features_order += post_data["trialFeatureOrder"]

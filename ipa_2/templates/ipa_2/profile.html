@@ -17,10 +17,10 @@
     <div id="featuresTable">
       <table>
         <tr class="thirdScreen">
-          <td></td>
+          <td class="no-border"></td>
         </tr>
         <tr class="thirdScreen">
-          <td>
+          <td  class="no-border">
             <div class="slidecontainer text-center" id="slidecontainer"></div>
             <div class="buttonMoreLess">
               <button id="nextFeatureButton" class="btn btn-primary btn" type="button" name="button">{{ off_order_instructions_dict.nextButtonText }}</button>
@@ -36,7 +36,7 @@
           </td>
         </tr>
         <tr class="thirdScreen">
-          <td></td>
+          <td class="no-border"></td>
         </tr>
       </table>
     </div>
@@ -48,41 +48,49 @@
         <table class="gameTable">
           <tbody>
             <tr>
-              <td>X</td>
-              <td colspan="2">{{game.strategy_a}}</td>
-              <td colspan="2">{{game.strategy_b}}</td>
+              <td class="no-border"></td>
+              <td class="no-border"></td>
+              <td colspan="4">האחר</td>
+            </tr>
+            <tr>
+              <td class="no-border"></td>
+              <td class="no-border"></td>
+              <td id="Aother" class="border-right" colspan="2">{{game.strategy_a}}</td>
+              <td id="Bother" colspan="2">{{game.strategy_b}}</td>
             </tr>
             <tr class="A TopRow">
+              <td id="youArea" colspan="1" rowspan="4">אתה</td>
               <td id="A" class="choiceButton" rowspan="2">{{game.strategy_a}}</td>
               <!-- A or B stands for row choice, a or b stands for col choice -->
               <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
-              <td class="Aa">{{off_order_instructions_dict.youGet}}</td>
-              <td class="Aa">{{off_order_instructions_dict.OtherGet}}</td>
-              <td class="Ab">{{off_order_instructions_dict.youGet}}</td>
-              <td class="Ab">{{off_order_instructions_dict.OtherGet}}</td>
+              <!-- <td class="Aa">{{off_order_instructions_dict.youGet}}</td> -->
+              <!-- <td class="Aa">{{off_order_instructions_dict.OtherGet}}</td> -->
+              <!-- <td class="Ab">{{off_order_instructions_dict.youGet}}</td> -->
+              <!-- <td class="Ab">{{off_order_instructions_dict.OtherGet}}</td> -->
             </tr>
             <tr class="A BottomRow">
-              <td class="Aa">{{game.pA_Aa}}</td>
-              <td class="Aa">{{game.pB_Aa}}</td>
-              <td class="Ab">{{game.pA_Ab}}</td>
-              <td class="Ab">{{game.pB_Ab}}</td>
+              <td id="youAa" class="Aa selfColor">{{game.pA_Aa}}</td>
+              <td id="otherAa" class="Aa otherColor border-right">{{game.pB_Aa}}</td>
+              <td id="youAb" class="Ab selfColor border-left">{{game.pA_Ab}}</td>
+              <td id="otherAb" class="Ab otherColor">{{game.pB_Ab}}</td>
             <tr class="B TopRow">
               <td rowspan="2" id="B" class="choiceButton">{{game.strategy_b}}</td>
               <!-- A or B stands for row choice, a or b stands for col choice -->
               <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
-              <td class="Ba">{{off_order_instructions_dict.youGet}}</td>
-              <td class="Ba">{{off_order_instructions_dict.OtherGet}}</td>
-              <td class="Bb">{{off_order_instructions_dict.youGet}}</td>
-              <td class="Bb">{{off_order_instructions_dict.OtherGet}}</td>
+              <!-- <td class="Ba">{{off_order_instructions_dict.youGet}}</td> -->
+              <!-- <td class="Ba">{{off_order_instructions_dict.OtherGet}}</td> -->
+              <!-- <td class="Bb">{{off_order_instructions_dict.youGet}}</td> -->
+              <!-- <td class="Bb">{{off_order_instructions_dict.OtherGet}}</td> -->
             </tr>
             <tr class="B BottomRow">
-              <td class="Ba">{{game.pA_Ba}}</td>
-              <td class="Ba">{{game.pB_Ba}}</td>
-              <td class="Bb">{{game.pA_Bb}}</td>
-              <td class="Bb">{{game.pB_Bb}}</td>
+              <td id="youBa" class="Ba selfColor">{{game.pA_Ba}}</td>
+              <td id="otherBa" class="Ba otherColor border-right">{{game.pB_Ba}}</td>
+              <td id="youBb" class="Bb selfColor border-left">{{game.pA_Bb}}</td>
+              <td id="otherBb" class="Bb otherColor">{{game.pB_Bb}}</td>
             </tr>
-          </tbody>
-        </table>
+      </tbody>
+      </table>
+
       </div>
     </div>
 
@@ -134,6 +142,7 @@
       <input type="hidden" name="form_phase" value="{{ form_phase }}">
       <input id="subjectResonses" type="hidden" name="responses" value="">
       <input id="profilesList" type="hidden" name="profilesList" value="">
+      <input id="gamesNames" type="hidden" name="gamesNames" value="">
       <input id="profilesDescriptions" type="hidden" name="profilesDescriptions" value="">
       <input id="subjectRTs" type="hidden" name="subjectRTs" value=""> <!-- each feature rt-->
       <input id="profileRTs" type="hidden" name="profileRTs" value=""> <!-- each profile rt-->

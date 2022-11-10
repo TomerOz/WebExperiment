@@ -37,17 +37,17 @@
               <tr>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
-                <td colspan="4">האחר</td>
+                <td class="no-border" colspan="4">האחר</td>
               </tr>
               <tr>
                 <td class="no-border"></td>
                 <td class="no-border"></td>
-                <td class="border-right" colspan="2">{{game.strategy_a}}</td>
-                <td colspan="2">{{game.strategy_b}}</td>
+                <td class="border-right otherColor" colspan="2">{{game.strategy_a}}</td>
+                <td class="otherColor" colspan="2">{{game.strategy_b}}</td>
               </tr>
               <tr class="A TopRow">
                 <td id="youArea" colspan="1" rowspan="4">אתה</td>
-                <td id="A" class="choiceButton" rowspan="2">{{game.strategy_a}}</td>
+                <td id="A" class="choiceButton selfColor" rowspan="2">{{game.strategy_a}}</td>
                 <!-- A or B stands for row choice, a or b stands for col choice -->
                 <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
                 <!-- <td class="Aa">{{off_order_instructions_dict.youGet}}</td> -->
@@ -61,7 +61,7 @@
                 <td id="youAb" class="Ab selfColor border-left">{{game.pA_Ab}}</td>
                 <td id="otherAb" class="Ab otherColor">{{game.pB_Ab}}</td>
               <tr class="B TopRow">
-                <td rowspan="2" id="B" class="choiceButton">{{game.strategy_b}}</td>
+                <td rowspan="2" id="B" class="choiceButton selfColor">{{game.strategy_b}}</td>
                 <!-- A or B stands for row choice, a or b stands for col choice -->
                 <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
                 <!-- <td class="Ba">{{off_order_instructions_dict.youGet}}</td> -->
@@ -70,10 +70,10 @@
                 <!-- <td class="Bb">{{off_order_instructions_dict.OtherGet}}</td> -->
               </tr>
               <tr class="B BottomRow">
-                <td id="youBa" class="Ba selfColor">{{game.pA_Ba}}</td>
-                <td id="otherBa" class="Ba otherColor border-right">{{game.pB_Ba}}</td>
-                <td id="youBb" class="Bb selfColor border-left">{{game.pA_Bb}}</td>
-                <td id="otherBb" class="Bb otherColor">{{game.pB_Bb}}</td>
+                <td id="youBa" class="Ba selfColor no-border">{{game.pA_Ba}}</td>
+                <td id="otherBa" class="Ba otherColor no-border">{{game.pB_Ba}}</td>
+                <td id="youBb" class="Bb selfColor no-border">{{game.pA_Bb}}</td>
+                <td id="otherBb" class="Bb otherColor no-border">{{game.pB_Bb}}</td>
               </tr>
         </tbody>
         </table>

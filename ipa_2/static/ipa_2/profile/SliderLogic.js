@@ -260,6 +260,7 @@ function PresentProfileAgain(){
   buttonActivationDelay = 0;
   isProfilePresentedAgain = true;
   context[all_profiles_ids[current_profile]].game_index--; // making sure the same game remains
+  nextProfileButton.disabled = true;
   RemoveRowsSelection();
   HideReoportSection();
   ProfileCountDown();

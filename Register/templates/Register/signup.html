@@ -60,8 +60,8 @@
                            <div class="form-group">
                              <select name="subject_set" id="subject_set" class="form-select" aria-label="Default select example">
                                <option selected>Select Subject Group Letter</option>
-                               <option {{selectedA}} value="A">A</option>
-                               <option {{selectedB}} value="B">B</option>
+                               <option {{selectedA}}selected value="A">A</option>
+                               <!-- <option {{selectedB}} value="B">B</option> -->
                                <option {{selectedC}} value="C">C</option>
                              </select>
                              <p style="color:red"> {{ subject_set_errors }} </p>
@@ -79,7 +79,7 @@
                               <div class="form-group">
                                 <select name="runningLocation" id="runningLocation" class="form-select" aria-label="Default select example">
                                   <option selected>Select Running Location </option>
-                                  <option {{selectedLab}} value="Lab">Lab</option>
+                                  <option {{selectedLab}}selected value="Lab">Lab</option>
                                   <option {{selectedHome}} value="Home">Home</option>
                                 </select>
                                 <p style="color:red"> {{ runningLocation_errors }} </p>
@@ -88,16 +88,16 @@
                                <div class="form-group">
                                  <select name="assignesExperiment" id="assignesExperiment" class="form-select" aria-label="Default select example">
                                    <option selected>Select Experiment </option>
-                                   <option {{selectedIPA_1.2}}selected value="IPA_1.2">IPA 1.2</option>
-                                   <option {{selectedIPA_2}} value="IPA_2">IPA 2</option>
+                                   <!-- <option {{selectedIPA_1.2}} value="IPA_1.2">IPA 1.2</option> -->
+                                   <option {{selectedIPA_2}}selected value="IPA_2">IPA 2</option>
                                  </select>
                                  <p style="color:red"> {{ assignesExperiment_errors }} </p>
                                 </div>
 
                             <div class="form-group form-button">
                               <input type="hidden" name="flow" id="flowInput" value="goHome">
-                              <input name="signupContinue" id="signupContinue" class="form-submit" value="Register and Continue"/>
-                              <input type="submit" name="signup" id="signup" class="form-submit" value="Register Now"/>
+                              <input name="signupContinue" id="signupContinue" class="form-submit" value="Register multiple subjects"/>
+                              <input type="submit" name="signup" id="signup" class="form-submit" value="Register & run subject on this computer"/>
                             </div>
                         </form>
                     </div>

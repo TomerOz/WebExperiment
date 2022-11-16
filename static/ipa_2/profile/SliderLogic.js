@@ -24,7 +24,7 @@ const event = new Event('NewProfile');
 
 var minwWordsPerDescription = 0;
 var milisecondsPerFeature = 2000; //2000;
-var preProfileTime = 3000; //3000;
+var preProfileTime = 5000; //3000;
 var buttonActivationDelay = 3000; //3000; // cnages in presentProfileAgain
 var buttonActivationDelayOriginal = buttonActivationDelay // 3000
 var featuresPresentaionNumber = 1; // indicating the first presentaion
@@ -260,6 +260,7 @@ function PresentProfileAgain(){
   buttonActivationDelay = 0;
   isProfilePresentedAgain = true;
   context[all_profiles_ids[current_profile]].game_index--; // making sure the same game remains
+  nextProfileButton.disabled = true;
   RemoveRowsSelection();
   HideReoportSection();
   ProfileCountDown();

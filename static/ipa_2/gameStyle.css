@@ -82,6 +82,7 @@
 }
 td {
   border-bottom: solid;
+  font-size: 30px;
 }
 .no-border {
   border: none;
@@ -99,3 +100,7 @@ td {
   background-color: #CCFFCC;
   border: none;
 }
+ #youBb {
+   border-left: solid;
+   border-color: black; 
+ }

@@ -614,6 +614,11 @@ def render_next_phase(request, users_subject):
                 users_subject.update_subject_session_on_complete()
                 sd = SubjectData()
                 sd.save_subject_data(users_subject, ProfileModel, MinMaxProfileModel, ArtificialProfileModel)
+
+            if (users_subject.current_phase.name == "Pre Identification Task") & (int(users_subject.subject_num) in [881, 882, 883, 884, 885, 886, 887, 888]):
+                users_subject.current_phase = ExperimentPhase.objects.get(name="End Screen")
+                users_subject.save()
+
         else: # in case of errorsJSON
             if users_subject.current_phase.name == "Identification Task":
                 users_subject.n_identification_task_rounds += 1 # saving an occurance of mistkes in identification task

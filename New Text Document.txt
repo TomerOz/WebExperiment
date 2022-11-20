@@ -1,0 +1,3 @@
+ipa_1_2/migrations/*
+ipa_1_2/static/ipa_1_2/data/*
+static/ipa_1_2/data/*

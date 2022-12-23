@@ -3,7 +3,7 @@ from django.contrib import admin
 # Register your models here.
 from .models import ProfileModel, FeatureLabels, FeatureValue, Subject, Experiment, Instruction, ExperimentPhase, GameMatrix
 from .models import Context, FeatureWeight, SimilarityContextModel, UserToSubjectIPA2
-
+#
 
 admin.site.register(ProfileModel)
 admin.site.register(FeatureLabels)

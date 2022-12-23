@@ -242,7 +242,7 @@ function ProfileCountDown() {
   }
   setTimeout(function(){
     inTaskInstructions.style.display = "none";
-    feature_presentaion_index = 7;
+    feature_presentaion_index = 7; // =-1 
     HideReoportSection();
     window.scrollTo(0, 0);
     nextFeatureButton.style.display = "block";

@@ -19,8 +19,10 @@ class Experiment(models.Model):
     n_identification_rounds_allowed = models.IntegerField(default=2)
     dubbled_artificials_list = models.CharField(max_length=100, default="0.2, 0.4, 0.6, 0.8")
     subject_bonuses = models.TextField(default="9999-0,")
-    ps_l = models.IntegerField(default=15)
-    ps_h = models.IntegerField(default=15)
+    ps_l_A = models.IntegerField(default=15)
+    ps_h_A = models.IntegerField(default=15)
+    ps_l_C = models.IntegerField(default=15)
+    ps_h_C = models.IntegerField(default=15)
 
     def __str__(self):
         return (self.name)

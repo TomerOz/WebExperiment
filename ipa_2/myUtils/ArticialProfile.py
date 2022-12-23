@@ -30,7 +30,6 @@ def _create_profile_at_realtive_similarity_same_feature_pattern(subject_profile,
         profile_feature_value = subject_feature_value*target_similarity
         if subject_feature_value < 50:
             profile_feature_value = 100 - (100 - subject_feature_value) * (target_similarity)
-
         # at random cases, we change the location of the profile value to be above or below subject value if possible
         if random.randint(0,1) == 1:
             if profile_feature_value > subject_feature_value:
@@ -42,7 +41,6 @@ def _create_profile_at_realtive_similarity_same_feature_pattern(subject_profile,
                 d = subject_feature_value-profile_feature_value
                 if d <= 100-subject_feature_value:
                     profile_feature_value = subject_feature_value+d
-
         artificial_profile["features"][feature]["value"] = profile_feature_value
     return artificial_profile
 
@@ -73,10 +71,12 @@ def create_artificial_profile_3(subject_profile, target_similarity, model, artif
         f1_value = artificial_profile["features"][feature_1]["value"] # profile value in feature 1
         s_f2_value = subject_profile["features"][feature_2]["value"]
         f2_value = artificial_profile["features"][feature_2]["value"]
+
         f1_can_towards = _get_bouderies(s_f1_value, f1_value, "towards") # how much feature 1 can come towards original value
         # f1_can_away = _get_bouderies(subject_profile["features"][feature_1]["value"], artificial_profile["features"][feature_1]["value"], "away")
         # f2_can_towards = _get_bouderies(subject_profile["features"][feature_2]["value"], artificial_profile["features"][feature_2]["value"], "towards")
         f2_can_away = _get_bouderies(s_f2_value, f2_value, "away") # how much feature 1 can go away from original value
+
         w1 = model.featureweight_set.get(feature_label__feature_name=feature_1).value
         w2 = model.featureweight_set.get(feature_label__feature_name=feature_2).value
         ws = [w1, w2]

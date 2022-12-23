@@ -57,7 +57,7 @@ EXPERIMENT_NAME = "ipa_2"
 EXPERIMENT_FIRST_SESSION = {"ipa_1_2" : 2, "ipa_2": 1}
 
 ps_l = 0.55
-ps_h = 0.75
+ps_h = 0.8
 
 ## Assistant functions: ###############################################################################################################################################
 # saves subject model with the new phase
@@ -151,11 +151,8 @@ def _create_subject(user):
     new_subject.education = user.usertosubjectipa2.education
     new_subject.gender = user.usertosubjectipa2.gender
     new_subject.runningLocation = user.usertosubjectipa2.runningLocation
-    # new_subject.start_time = pytz.timezone("Israel").localize(datetime.datetime.now())
-    # tz = pytz.timezone("Israel")
-    # new_subject.start_time = tz.localize(datetime.datetime.now())
 
-    subject_ps = _assign_ps_to_subject()
+    subject_ps = _assign_ps_to_subject(new_subject.profile_label_set)
     new_subject.subject_ps = subject_ps
 
     new_subject.start_time = datetime.datetime.now()
@@ -163,14 +160,30 @@ def _create_subject(user):
     user.save()
     return new_subject
 
-def _assign_ps_to_subject():
+def _assign_ps_to_subject(label_set):
     exp = Experiment.objects.get(name="IPA2")
-    ps_left = {ps_l: exp.ps_l, ps_h: exp.ps_h}
-    pss = [ps_l]*exp.ps_l + [ps_h]*exp.ps_h
-    subject_ps = random.sample(pss, 1)[0]
-    ps_left[subject_ps] -= 1
-    if ps_left[subject_ps] <= 0:
-        ps_left[subject_ps] = 0
+    if label_set == "A":
+        pss = [ps_l]*exp.ps_l_A + [ps_h]*exp.ps_h_A
+        subject_ps = random.sample(pss, 1)[0]
+        if subject_ps == ps_l:
+            exp.ps_l_A -= 1
+            if exp.ps_l_A <= 0:
+                exp.ps_l_A = 0
+        elif subject_ps == ps_h:
+            exp.ps_h_A -= 1
+            if exp.ps_h_A <= 0:
+                exp.ps_h_A = 0
+    elif label_set == "C":
+        pss = [ps_l]*exp.ps_l_C + [ps_h]*exp.ps_h_C
+        subject_ps = random.sample(pss, 1)[0]
+        if subject_ps == ps_l:
+            exp.ps_l_C -= 1
+            if exp.ps_l_C <= 0:
+                exp.ps_l_C = 0
+        elif subject_ps == ps_h:
+            exp.ps_h_C -= 1
+            if exp.ps_h_C <= 0:
+                exp.ps_h_C = 0
     exp.save()
     return subject_ps
 
@@ -423,7 +436,7 @@ def _get_profile_list_for_profiles_presentation_phase(subject):
     # all  = _get_list_from_query_set(min_max) + _get_list_from_query_set(regulars) + _get_list_from_query_set(sp_model) \
     #  + _get_list_from_query_set(trials) + get_dubbled_profiles_list(subject, trials)
 
-    n_of_game_matrices = len(GameMatrix.objects.filter(phase__name=subject.current_phase.name, game_name__contains=str(subject.subject_ps)))
+    n_of_game_matrices = len(GameMatrix.objects.filter(phase__name=subject.current_phase.name, ps_threshold=subject.subject_ps))
     all  = _get_list_from_query_set(regulars) + _get_list_from_query_set(trials)
 
     practice_context = _get_profiles_list_context(practice) # _get_profiles_list_context also shuffles trials order
@@ -447,7 +460,7 @@ def get_specific_game_name_pattern(game):
     return name
 
 def match_profile_to_matrix(profiles_context, subject):
-    games = GameMatrix.objects.filter(phase__name=subject.current_phase.name, game_name__contains=str(subject.subject_ps))
+    games = GameMatrix.objects.filter(phase__name=subject.current_phase.name, ps_threshold=subject.subject_ps)
     profiles_to_games = {}
     for profile in profiles_context["profiles_list"]:
         profiles_to_games.setdefault(profile, [])
@@ -585,7 +598,7 @@ def _get_game_data(subject):
     if subject.current_phase.name == "Matrix tutorial":
         games = GameMatrix.objects.get(phase__name=subject.current_phase.name)
     else:
-        games = GameMatrix.objects.filter(phase__name=subject.current_phase.name, game_name__contains=str(subject.subject_ps))
+        games = GameMatrix.objects.filter(phase__name=subject.current_phase.name, ps_threshold=subject.subject_ps)
     return games
 
 def _get_game_dict(game, phase):

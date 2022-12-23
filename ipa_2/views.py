@@ -56,6 +56,9 @@ phases_data_saver = PhasesDataSaver(FeatureLabels, FeatureValue, MinMaxProfileMo
 EXPERIMENT_NAME = "ipa_2"
 EXPERIMENT_FIRST_SESSION = {"ipa_1_2" : 2, "ipa_2": 1}
 
+ps_l = 0.55
+ps_h = 0.75
+
 ## Assistant functions: ###############################################################################################################################################
 # saves subject model with the new phase
 def _update_subject_phase(subject, direction=None):
@@ -151,10 +154,25 @@ def _create_subject(user):
     # new_subject.start_time = pytz.timezone("Israel").localize(datetime.datetime.now())
     # tz = pytz.timezone("Israel")
     # new_subject.start_time = tz.localize(datetime.datetime.now())
+
+    subject_ps = _assign_ps_to_subject()
+    new_subject.subject_ps = subject_ps
+
     new_subject.start_time = datetime.datetime.now()
     new_subject.save(force_update=True)
     user.save()
     return new_subject
+
+def _assign_ps_to_subject():
+    exp = Experiment.objects.get(name="IPA2")
+    ps_left = {ps_l: exp.ps_l, ps_h: exp.ps_h}
+    pss = [ps_l]*exp.ps_l + [ps_h]*exp.ps_h
+    subject_ps = random.sample(pss, 1)[0]
+    ps_left[subject_ps] -= 1
+    if ps_left[subject_ps] <= 0:
+        ps_left[subject_ps] = 0
+    exp.save()
+    return subject_ps
 
 # return the Subject instance associated with the authenticated user
 def _get_user_subject(user):
@@ -389,19 +407,23 @@ def get_dubbled_profiles_list(subject, trials):
                 dubbled_profiles.append(profile)
     return dubbled_profiles
 
+def _get_subject_context(subject):
+    sp_model = ProfileModel.objects.filter(name=subject.name, profile_label_set=subject.profile_label_set, is_artificial=False, is_subject=True, is_MinMax=False).all()
+    sp_model_context = _get_profiles_list_context(_get_list_from_query_set(sp_model))
+    return sp_model_context
+
 def _get_profile_list_for_profiles_presentation_phase(subject):
     _create_subject_artificials_for_this_phase(subject)
     regulars = ProfileModel.objects.filter(profile_label_set=subject.profile_label_set, is_artificial=False, is_subject=False, is_MinMax=False).all()
     # min_max = MinMaxProfileModel.objects.filter(profile_label_set=subject.profile_label_set,target_subject=subject).all()
     artificials = ArtificialProfileModel.objects.filter(profile_label_set=subject.profile_label_set,target_subject=subject, target_phase=subject.current_phase).all()
-    # sp_model = ProfileModel.objects.filter(name=subject.name, profile_label_set=subject.profile_label_set, is_artificial=False, is_subject=True, is_MinMax=False).all()
     practice = artificials.filter(name__contains='Practice')
     trials = artificials.filter(name__contains='Trials')
 
     # all  = _get_list_from_query_set(min_max) + _get_list_from_query_set(regulars) + _get_list_from_query_set(sp_model) \
     #  + _get_list_from_query_set(trials) + get_dubbled_profiles_list(subject, trials)
 
-    n_of_game_matrices = len(GameMatrix.objects.filter(phase__name=subject.current_phase.name))
+    n_of_game_matrices = len(GameMatrix.objects.filter(phase__name=subject.current_phase.name, game_name__contains=str(subject.subject_ps)))
     all  = _get_list_from_query_set(regulars) + _get_list_from_query_set(trials)
 
     practice_context = _get_profiles_list_context(practice) # _get_profiles_list_context also shuffles trials order
@@ -425,7 +447,7 @@ def get_specific_game_name_pattern(game):
     return name
 
 def match_profile_to_matrix(profiles_context, subject):
-    games = GameMatrix.objects.filter(phase__name=subject.current_phase.name)
+    games = GameMatrix.objects.filter(phase__name=subject.current_phase.name, game_name__contains=str(subject.subject_ps))
     profiles_to_games = {}
     for profile in profiles_context["profiles_list"]:
         profiles_to_games.setdefault(profile, [])
@@ -457,9 +479,11 @@ def _update_context_if_necessry(context, current_phase, users_subject):
                         })
     elif current_phase == "During Profile Presentation":
         peofiles = _get_profile_list_for_profiles_presentation_phase(users_subject)
+        subject_context = _get_subject_context(users_subject)
         games = _get_game_data(users_subject) # only in this phase it returns few games and not a single game
         gamesJSON = json.dumps(_get_game_dict(games, "During Profile Presentation"))
         context.update({"context":json.dumps(peofiles)})
+        context.update({"subjectContext":json.dumps(subject_context)})
         context.update({"maxValue":users_subject.max_similarity_value,
                         "maxName": json.dumps(users_subject.max_similarity_name),
                         "minValue":users_subject.min_similarity_value,
@@ -561,7 +585,7 @@ def _get_game_data(subject):
     if subject.current_phase.name == "Matrix tutorial":
         games = GameMatrix.objects.get(phase__name=subject.current_phase.name)
     else:
-        games = GameMatrix.objects.filter(phase__name=subject.current_phase.name)
+        games = GameMatrix.objects.filter(phase__name=subject.current_phase.name, game_name__contains=str(subject.subject_ps))
     return games
 
 def _get_game_dict(game, phase):
@@ -681,19 +705,7 @@ def get_data_page(request):
     from_dir = data_path
     to_dir = os.path.join("static", "ipa_2", "data")
     copy_tree(from_dir, to_dir)
-
-    exp = Experiment.objects.get(name="IPA2")
-    bounuses = get_bonuses_dict(exp.subject_bonuses)
-    for df in df_paths:
-        if df.endswith(".xlsx") and "Subject" in df:
-            subject_num = df.split("-")[1]
-            if not subject_num in bounuses.keys():
-                ad = AnalyzeData(df)
-                bounuses[subject_num] = ad.get_subject_bonus()
-    bounuses_string = get_string_from_bonuses_dict(bounuses)
-    exp.subject_bonuses = bounuses_string
-    exp.save()
-    return render(request, 'ipa_2/data.html', {"paths_files": paths_files, "bounuses": json.dumps(bounuses)})
+    return render(request, 'ipa_2/data.html', {"paths_files": paths_files})
 
 def get_bonuses_dict(bounuses_string):
     bounuses_string = bounuses_string.split(",")

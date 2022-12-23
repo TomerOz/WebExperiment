@@ -1,28 +1,18 @@
-#layerHide{
-  width: 80vw;
-  height: 80vh;
-}
-
-#layerHideTextArea{
-  outline: none;
-  border: none;
-}
-
 .slidecontainer {
-  width: 85%; /* Width of the outside container */
-  margin: auto;
+  /* width: 95%; /* Width of the outside container */ */
+  /* margin: atuto; */
 }
 
 @media all and (min-width: 1366px) {
   .slidecontainer {
-    max-width: 60%; /* Width of the outside container */
+    max-width: 90%; /* Width of the outside container */
     margin: auto;
   }
 }
 
-.container {
+/* .container {
   width: 100%;
-}
+} */
 
 /* The slider itself */
 .slider {
@@ -64,13 +54,18 @@
   text-align: center;
 }
 
-.side {
-  width: 25%;
-  font-size: 18px;
+.sideFull {
+  width: 20%;
+  font-size: 14px;
+  font-weight: bold;
 }
 
-.middle {
-  width: 50%;
+.middleFull {
+  width: 45%;
+}
+.row{
+  margin-right: -125px;
+  margin-left: 75px;
 }
 /* Clear floats after the columns */
 .row:after {
@@ -79,12 +74,18 @@
   clear: both;
 }
 
+.feature_end{
+  font-size: 11px;
+}
 
 #title{
-  font-size: 22px;
+  font-size: 17px;
   text-align: center;
-  margin: 0px;
-  margin-bottom: 10%;
+  margin: 10px;
+  font-weight: bold;
+  margin-bottom: 2px;
+  margin-top: 14px;
+  margin-left: 75px;
 }
 
 table{
@@ -93,77 +94,14 @@ table{
 }
 
 td {
-  width: 85vw;
+  width: 75vw;
 }
 
-.thirdScreen {
-  height: 22vh;
-  width: 85vw;
-}
-
-.buttonMoreLess{
+button {
   margin: auto;
   text-align: center;
-  margin-top: 3%;
 }
 
-.moreLessSimButton{
-  background-color: #aaaaaa !important;
-  color: white !important;
-  border-color: #aaaaaa !important;
-  outline: #aaaaaa !important;
+.featureCanvas {
+  width: 99%;
 }
-
-.moreLessSimButton:hover{
-  background-color: #eeeeee !important;
-  color: black !important;
-  outline: #aaaaaa !important;
-  /* outline: gray; */
-}
-
-.moreLessSimButton:active{
-  border-color: #aaaaaa !important;
-  outline: #aaaaaa !important;
-}
-
-#nextFeatureButton{
-  margin: auto;
-  margin-top: 15%;
-  margin-bottom: 2%;
-}
-
-
-.jumbotron {
-  background: #7a2134;
-  color: white;
-  font-size: 22px;
-  text-align: right;
-  direction: rtl;
-
-  border-radius: 3%;
-  padding: 2%;
-  width: 66vw;
-  margin: auto;
-}
-
-#instrucion{
-  margin-top: 2%;
-}
-
-.spaceDownButtons {
-  margin-top: 4%;
-}
-
-.spaced-buttons{
-  margin-left: 8%;
-  margin-right: 8%;
-}
- #bufferLeyer{
-   border: none;
- }
- #leftCell {
-   width: 45%;
- }
- #rightCell {
-   width: 30%;
- }

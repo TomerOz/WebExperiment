@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'ipa_2/profile/SliderStyle.css' %}">
     <link rel="stylesheet" href="{% static 'ipa_2/profile/getSimilarity.css' %}">
     <link rel="stylesheet" href="{% static 'ipa_2/gameStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'ipa_2/fullProfile.css' %}">
 
     <link rel="stylesheet" href="{% static 'ipa_2/profile/anchorsStyle.css' %}">
   </head>
@@ -42,61 +43,84 @@
     </div>
     <div class="text-center" id="instrucion" style="direction:rtl">{{off_order_instructions_dict.report_instructions}}<br></div>
 
-    <!-- Start of Game Matrix -->
-    <div class="text-center" id="GameMatrixSection">
-      <div id="matrixContainer">
-        <table class="gameTable">
-          <tbody>
-            <tr>
-              <td class="no-border"></td>
-              <td class="no-border"></td>
-              <td class="no-border" colspan="4">האחר</td>
-            </tr>
-            <tr>
-              <td class="no-border"></td>
-              <td class="no-border"></td>
-              <td id="Aother" class="border-right otherColor" colspan="2">{{game.strategy_a}}</td>
-              <td id="Bother" class="otherColor" colspan="2">{{game.strategy_b}}</td>
-            </tr>
-            <tr class="A TopRow">
-              <td id="youArea" colspan="1" rowspan="4">אתה</td>
-              <td id="A" class="choiceButton selfColor" rowspan="2">{{game.strategy_a}}</td>
-              <!-- A or B stands for row choice, a or b stands for col choice -->
-              <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
-              <!-- <td class="Aa">{{off_order_instructions_dict.youGet}}</td> -->
-              <!-- <td class="Aa">{{off_order_instructions_dict.OtherGet}}</td> -->
-              <!-- <td class="Ab">{{off_order_instructions_dict.youGet}}</td> -->
-              <!-- <td class="Ab">{{off_order_instructions_dict.OtherGet}}</td> -->
-            </tr>
-            <tr class="A BottomRow">
-              <td id="youAa" class="Aa selfColor">{{game.pA_Aa}}</td>
-              <td id="otherAa" class="Aa otherColor border-right">{{game.pB_Aa}}</td>
-              <td id="youAb" class="Ab selfColor border-left">{{game.pA_Ab}}</td>
-              <td id="otherAb" class="Ab otherColor">{{game.pB_Ab}}</td>
-            <tr class="B TopRow">
-              <td rowspan="2" id="B" class="choiceButton selfColor">{{game.strategy_b}}</td>
-              <!-- A or B stands for row choice, a or b stands for col choice -->
-              <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
-              <!-- <td class="Ba">{{off_order_instructions_dict.youGet}}</td> -->
-              <!-- <td class="Ba">{{off_order_instructions_dict.OtherGet}}</td> -->
-              <!-- <td class="Bb">{{off_order_instructions_dict.youGet}}</td> -->
-              <!-- <td class="Bb">{{off_order_instructions_dict.OtherGet}}</td> -->
-            </tr>
-            <tr class="B BottomRow">
-              <td id="youBa" class="Ba selfColor no-border">{{game.pA_Ba}}</td>
-              <td id="otherBa" class="Ba otherColor border-right no-border">{{game.pB_Ba}}</td>
-              <td id="youBb" class="Bb selfColor border-left no-border">{{game.pA_Bb}}</td>
-              <td id="otherBb" class="Bb otherColor no-border">{{game.pB_Bb}}</td>
-            </tr>
-      </tbody>
-      </table>
+    <table id="reportTable">
+      <tr>
+        <td id="leftCell">
+          <div class="slidecontainer text-center" id="fullProfileContainer">
+            </div>
+            <div class="text-center">
+              <br>
+            </div>
+        </td>
 
-      </div>
-    </div>
+        <td id="rightCell">
+          <div class="slidecontainer text-center">
+            </div>
+            <div class="text-center">
+              <!-- Start of Game Matrix -->
+              <div class="text-center" id="GameMatrixSection">
+                <div id="matrixContainer">
+                  <table class="gameTable" id="gameTable_1">
+                    <tbody>
+                      <tr>
+                        <td class="no-border"></td>
+                        <td class="no-border"></td>
+                        <td class="no-border" colspan="4">האחר</td>
+                      </tr>
+                      <tr>
+                        <td class="no-border"></td>
+                        <td class="no-border"></td>
+                        <td id="Aother" class="border-right otherColor" colspan="2">{{game.strategy_a}}</td>
+                        <td id="Bother" class="otherColor" colspan="2">{{game.strategy_b}}</td>
+                      </tr>
+                      <tr class="A TopRow">
+                        <td id="youArea" colspan="1" rowspan="4">אתה</td>
+                        <td id="A" class="choiceButton selfColor" rowspan="2">{{game.strategy_a}}</td>
+                        <!-- A or B stands for row choice, a or b stands for col choice -->
+                        <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
+                        <!-- <td class="Aa">{{off_order_instructions_dict.youGet}}</td> -->
+                        <!-- <td class="Aa">{{off_order_instructions_dict.OtherGet}}</td> -->
+                        <!-- <td class="Ab">{{off_order_instructions_dict.youGet}}</td> -->
+                        <!-- <td class="Ab">{{off_order_instructions_dict.OtherGet}}</td> -->
+                      </tr>
+                      <tr class="A BottomRow">
+                        <td id="youAa" class="Aa selfColor">{{game.pA_Aa}}</td>
+                        <td id="otherAa" class="Aa otherColor border-right">{{game.pB_Aa}}</td>
+                        <td id="youAb" class="Ab selfColor border-left">{{game.pA_Ab}}</td>
+                        <td id="otherAb" class="Ab otherColor">{{game.pB_Ab}}</td>
+                      <tr class="B TopRow">
+                        <td rowspan="2" id="B" class="choiceButton selfColor">{{game.strategy_b}}</td>
+                        <!-- A or B stands for row choice, a or b stands for col choice -->
+                        <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
+                        <!-- <td class="Ba">{{off_order_instructions_dict.youGet}}</td> -->
+                        <!-- <td class="Ba">{{off_order_instructions_dict.OtherGet}}</td> -->
+                        <!-- <td class="Bb">{{off_order_instructions_dict.youGet}}</td> -->
+                        <!-- <td class="Bb">{{off_order_instructions_dict.OtherGet}}</td> -->
+                      </tr>
+                      <tr class="B BottomRow">
+                        <td id="youBa" class="Ba selfColor no-border">{{game.pA_Ba}}</td>
+                        <td id="otherBa" class="Ba otherColor border-right no-border">{{game.pB_Ba}}</td>
+                        <td id="youBb" class="Bb selfColor border-left no-border">{{game.pA_Bb}}</td>
+                        <td id="otherBb" class="Bb otherColor no-border">{{game.pB_Bb}}</td>
+                      </tr>
+                </tbody>
+                </table>
 
-    <br>
-    <div class="explantions" id="explantionsDiv" style="direction:rtl">
-    </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="explantions" id="explantionsDiv" style="direction:rtl">
+            </div>
+        </td>
+      </tr>
+    </table>
+
+
+
+
+
+
     <!-- End of Game Matrix -->
 
       <!-- consider deleting the following -->
@@ -105,16 +129,11 @@
       </div>
       <div class="container" id="hiddenInputs"></div>
       <!-- end deletion consideration -->
-      <br>
-      <br>
-
       <div id="NextProfileButtonSection"class="container text-center">
         <div id="presentProfileAgainButtonSection"class="container text-center spaceDownButtons">
-          <br><br>
           <button id="NextProfileButton" class="btn btn-primary btn spaced-buttons" type="button" name="button">{{ off_order_instructions_dict.continueToNextProfileButtonText }}</button>
           <button id="presentProfileAgainButton" class="btn btn-primary btn spaced-buttons" type="button" name="button">{{ off_order_instructions_dict.pesentAgainButtonText }}</button>
         </div>
-        <br>
       </div>
 
       <p style="display:none" id="beforeNewProfile">{{off_order_instructions_dict.beforeNewProfile}}</p>
@@ -125,6 +144,7 @@
         b.style.width = window.screen.height
         b.style.height = window.screen.height
        var context = {{context|safe}}
+       var subjectContext = {{subjectContext|safe}}
        var maxValue = {{maxValue|safe}}
        var minValue = {{minValue|safe}}
        var maxName = {{maxName|safe}}
@@ -156,6 +176,7 @@
   integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
   crossorigin="anonymous"></script>
 
+  <script src="{% static 'ipa_2/fullProfile.js' %}"></script>
   <script src="{% static 'ipa_2/profile/SliderLogic.js' %}"></script>
   <!-- <script src="{% static 'ipa_2/profile/getSimilarity.js' %}"></script> -->
   <script src="{% static 'ipa_2/gameLogic.js' %}"></script>

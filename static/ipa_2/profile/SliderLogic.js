@@ -22,15 +22,16 @@ inTaskInstructions.style.display = "none";
 
 const event = new Event('NewProfile');
 
+var preProfileTime = 12; //5000;
+var buttonActivationDelay = 12; //3000; // cnages in presentProfileAgain
+var current_profile = 0; //0; //
+var featuresPresentaionNumber = 2; // 1 // indicating the first presentaion
+// change back "feature_presentaion_index" in L.245 to "-1"
+var feature_presentaion_index;
 var minwWordsPerDescription = 0;
-var milisecondsPerFeature = 2000; //2000;
-var preProfileTime = 5000; //3000;
-var buttonActivationDelay = 3000; //3000; // cnages in presentProfileAgain
 var buttonActivationDelayOriginal = buttonActivationDelay // 3000
-var featuresPresentaionNumber = 1; // indicating the first presentaion
 var presentationNumber = 2; // total ammount of presentation
 var db_features = "features"
-var current_profile = 0;
 var all_profiles_ids = context["profiles_list"]
 var title = "Title new"
 var right_end = "r"
@@ -44,7 +45,6 @@ var rts = [];
 var pRts = [];
 var featuresOrderOfPresentation = [];
 var pre_profile_counter = 0
-var feature_presentaion_index;
 var buttonClicked = false;
 var intervalID;
 var changeRate = 25;
@@ -128,6 +128,8 @@ function startReportPhase(){
   nextProfileButtonSection.style.display = "block";
   gameMatrixSection.style.display = "block";
   updateMatrixCells(); // function from gameLogic.js
+
+  InitializeProfilePresentationFull(current_profile);
 };
 
 function InitializeProfilePresentation(current_profile){
@@ -165,6 +167,8 @@ function HideReoportSection(){
   nextProfileButtonSection.style.display = "none";
   gameMatrixSection.style.display = "none";
   explantionsDiv.style.display = "none";
+  profileContainer.style.display = 'none';
+  reportTable.style.display = 'none';
 };
 
 // Next Trial - New profile:
@@ -238,7 +242,7 @@ function ProfileCountDown() {
   }
   setTimeout(function(){
     inTaskInstructions.style.display = "none";
-    feature_presentaion_index = -1;
+    feature_presentaion_index = 7;
     HideReoportSection();
     window.scrollTo(0, 0);
     nextFeatureButton.style.display = "block";
@@ -311,6 +315,7 @@ presentProfileAgainButton.addEventListener("click", PresentProfileAgain);
 
 nextProfileButton.disabled = true;
 
-HideReoportSection();
+reportTable.style.display = 'block';
 
+HideReoportSection();
 ProfileCountDown();

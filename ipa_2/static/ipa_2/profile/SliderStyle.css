@@ -161,3 +161,9 @@ td {
  #bufferLeyer{
    border: none;
  }
+ #leftCell {
+   width: 45%;
+ }
+ #rightCell {
+   width: 30%;
+ }

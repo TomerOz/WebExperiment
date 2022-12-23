@@ -63,6 +63,7 @@
   background: gray;
   padding: 2%;
   direction: rtl;
+  font-size: 18px;
   }
 
   @media screen and (max-width: 600px) {
@@ -102,5 +103,10 @@ td {
 }
  #youBb {
    border-left: solid;
-   border-color: black; 
+   border-color: black;
  }
+
+#gameTable_1{
+  width: 80%;
+  margin: unset;
+}

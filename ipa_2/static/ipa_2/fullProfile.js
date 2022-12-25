@@ -6,9 +6,9 @@ var correctPass = "E22Gaya";
 var timeSelfProfile = 1500;
 var timeSelfOtherProfile = 1500;
 var timeToReport = 0;
-var reportText1 = "כעת מוצג שלך בכתום";
-var reportText2 = "כעת אתה רואה את האחר בסגול";
-var reportText3 = "כעת אתה משהו ארוך";
+var InstructionsText1 = reportText1.textContent;
+var InstructionsText2 = reportText2.textContent;
+var InstructionsText3 = reportText3.textContent;
 
 function InjectProfileDataToHTMLFull(title, right_end, left_end, value, feature_name){
   basicProfileHTMLText = '<h3 id="title">'+ feature_name + '</h3>\
@@ -33,7 +33,7 @@ function paintCanvasesOtherFeture(feature_name, value, value_s) {
   ctx.fillRect(value*4 + 20, 9, 20, rectHeight);
 
   ctx.stroke()
-  instrucion.innerHTML = reportText2;
+  instrucion.innerHTML = InstructionsText2;
 }
 
 function paintSelfFeature(feature_name, value) {
@@ -79,7 +79,7 @@ function InitializeProfilePresentationFull(current_profile){
   text_1 = GetProfileData(profile_features, features_list);
   profileContainer.innerHTML = text_1;
 
-  instrucion.innerHTML = reportText1;
+  instrucion.innerHTML = InstructionsText1;
 
   for (i=0; i<features_list.length; i++ ) {
     feature = features_list[i]
@@ -104,7 +104,7 @@ function InitializeProfilePresentationFull(current_profile){
     }
   }, timeSelfProfile);
   setTimeout(function(){
-    instrucion.innerHTML = reportText3;
+    instrucion.innerHTML = InstructionsText3;
 
   }, timeSelfProfile+ timeSelfOtherProfile);
   reportTable.style.display = 'block';

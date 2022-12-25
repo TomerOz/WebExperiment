@@ -371,7 +371,8 @@ def _generate_profile(users_subject, target_similarity, name_instance=""):
     ap = create_artificial_profile_3(sp, actual_similarity, model, initial_profile, _get_subject_other_similarity)
     random.shuffle(ap["features_order"]) ## Maybe should be in the same order
     ap["is_subject"] = False
-    articial_index = len(ArtificialProfileModel.objects.filter(target_subject=users_subject, name__contains=str(target_similarity)+"-").filter(name__contains=users_subject.current_phase.name)) + 1
+    namep = "-"+str(target_similarity)+"("+str(actual_similarity)+")"+"-"
+    articial_index = len(ArtificialProfileModel.objects.filter(target_subject=users_subject, name__contains=(namep)).filter(name__contains=users_subject.current_phase.name)) + 1
     ap_name = "Artificial-" + str(target_similarity) + "(" + str(actual_similarity) + ")" + "-" + str(articial_index) + "-" + name_instance + "-Subject-" + users_subject.subject_num
     ap["name"] = ap_name
 
@@ -410,6 +411,10 @@ def _create_subject_artificials_for_this_phase(subject, practice_name="Practice"
     similarities_levels = subject.current_phase.get_trials_content()
     for slevel in similarities_levels:
         _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - " + trials_name)
+        if subject.current_phase.name == "During Profile Presentation":
+            _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - " + trials_name)
+            _generate_profile(subject, slevel, name_instance=subject.current_phase.name+" - " + trials_name)
+
 
 def get_dubbled_profiles_list(subject, trials):
     dubbled_profiles = []

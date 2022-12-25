@@ -105,3 +105,11 @@ button {
 .featureCanvas {
   width: 99%;
 }
+
+#meButton {
+  background: #8A2BE2;
+}
+
+#otherButton {
+  background: #FFAE42;
+}

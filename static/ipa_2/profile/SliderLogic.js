@@ -22,7 +22,7 @@ inTaskInstructions.style.display = "none";
 
 const event = new Event('NewProfile');
 
-var preProfileTime = 12; //5000;
+var preProfileTime = 3000; //5000;
 var buttonActivationDelay = 12; //3000; // cnages in presentProfileAgain
 var current_profile = 0; //0; //
 var featuresPresentaionNumber = 2; // 1 // indicating the first presentaion
@@ -51,6 +51,7 @@ var changeRate = 25;
 var contiousDelay = 500;
 var direction;
 var timeOutIntervalIDs = [];
+var timeToReport; // defined in fullProfile.js
 
 function changeFontSize(fontSize) {
   var cols = document.getElementsByClassName('side');
@@ -123,13 +124,15 @@ function startReportPhase(){
   UpdateGame(); // function from gameLogic.js
   featuresTable.style.display = "none";
   slidecontainer.innerHTML = "";
-  body = document.getElementsByTagName("body")[0];
   instrucionSection.style.display = "block";
-  nextProfileButtonSection.style.display = "block";
-  gameMatrixSection.style.display = "block";
-  updateMatrixCells(); // function from gameLogic.js
-
   InitializeProfilePresentationFull(current_profile);
+
+  setTimeout(function(){
+    body = document.getElementsByTagName("body")[0];
+    nextProfileButtonSection.style.display = "block";
+    gameMatrixSection.style.display = "block";
+    updateMatrixCells(); // function from gameLogic.js
+  }, timeSelfProfile + timeSelfOtherProfile + timeToReport);
 };
 
 function InitializeProfilePresentation(current_profile){
@@ -242,12 +245,12 @@ function ProfileCountDown() {
   }
   setTimeout(function(){
     inTaskInstructions.style.display = "none";
-    feature_presentaion_index = 7;
-    HideReoportSection();
+    feature_presentaion_index = 7; // =-1
+    startReportPhase();
     window.scrollTo(0, 0);
     nextFeatureButton.style.display = "block";
     layerHide.style.display = "none";
-    InitializeProfilePresentation(current_profile);
+    // InitializeProfilePresentation(current_profile);
     if(isProfilePresentedAgain){
       isProfilePresentedAgain = false;
     }
@@ -318,4 +321,5 @@ nextProfileButton.disabled = true;
 reportTable.style.display = 'block';
 
 HideReoportSection();
-ProfileCountDown();
+// ProfileCountDown();
+nextFeatureButton.style.display = "none";

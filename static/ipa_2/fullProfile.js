@@ -2,13 +2,20 @@
 var profileContainer = document.getElementById("fullProfileContainer");
 
 var BetweenProfilesInterval = 1000// 1000; // 1 seconds between profiles
+var correctPass = "E22Gaya";
+var timeSelfProfile = 1500;
+var timeSelfOtherProfile = 1500;
+var timeToReport = 0;
+var reportText1 = "כעת מוצג שלך בכתום";
+var reportText2 = "כעת אתה רואה את האחר בסגול";
+var reportText3 = "כעת אתה משהו ארוך";
 
 function InjectProfileDataToHTMLFull(title, right_end, left_end, value, feature_name){
   basicProfileHTMLText = '<h3 id="title">'+ feature_name + '</h3>\
     <div class="row"> \
       <div class="column sideFull">'+ left_end + '</div> \
       <div class="column middleFull"> \
-      <canvas class="featureCanvas" id="' + "ID_" + feature_name + '" width="440" height="35" style="border:1px solid black;"></canvas>\
+      <canvas class="featureCanvas" id="' + "ID_" + feature_name + '" width="440" height="35" style="border:0px solid black;"></canvas>\
       </div>\
       <div class="column sideFull">'+ right_end + '</div>\
   </div>';
@@ -26,6 +33,7 @@ function paintCanvasesOtherFeture(feature_name, value, value_s) {
   ctx.fillRect(value*4 + 20, 9, 20, rectHeight);
 
   ctx.stroke()
+  instrucion.innerHTML = reportText2;
 }
 
 function paintSelfFeature(feature_name, value) {
@@ -71,6 +79,8 @@ function InitializeProfilePresentationFull(current_profile){
   text_1 = GetProfileData(profile_features, features_list);
   profileContainer.innerHTML = text_1;
 
+  instrucion.innerHTML = reportText1;
+
   for (i=0; i<features_list.length; i++ ) {
     feature = features_list[i]
     right_end, left_end, value, feature_name = GetProfileFeatureDataFull(subject_features[feature]);
@@ -92,32 +102,20 @@ function InitializeProfilePresentationFull(current_profile){
         paintCanvasesOtherFeture(feature_name, value, value_s);
       }
     }
-  }, 500);
+  }, timeSelfProfile);
+  setTimeout(function(){
+    instrucion.innerHTML = reportText3;
+
+  }, timeSelfProfile+ timeSelfOtherProfile);
   reportTable.style.display = 'block';
   profileContainer.style.display = 'block';
 }
 
 
-
-
-
-// InitializeProfilePresentationFull(current_profile);
-// <!DOCTYPE html>
-// <html>
-// <body>
-//
-// <canvas id="myCanvas" width="300" height="100" style="border:1px solid #d3d3d3;">
-// Your browser does not support the HTML5 canvas tag.</canvas>
-//
-// <script>
-// var c = document.getElementById("myCanvas");
-// var ctx = c.getContext("2d");
-// ctx.beginPath();
-// ctx.rect(50, 40, 200, 20);
-// ctx.rect(100, 40, 20, 20);
-// ctx.rect(150, 40, 20, 20);
-// ctx.stroke();
-// </script>
-//
-// </body>
-// </html>
+function checkPass() {
+  if (experimenterCode.value == correctPass){
+    experimenterCodeDiv.style.display = "none";
+    ProfileCountDown();
+  }
+}
+experimenterCodeButton.addEventListener("click", checkPass);

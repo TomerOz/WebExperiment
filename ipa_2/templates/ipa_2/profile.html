@@ -11,10 +11,18 @@
     <link rel="stylesheet" href="{% static 'ipa_2/profile/getSimilarity.css' %}">
     <link rel="stylesheet" href="{% static 'ipa_2/gameStyle.css' %}">
     <link rel="stylesheet" href="{% static 'ipa_2/fullProfile.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'ipa_2/MatrixTutorialStyle.css' %}"> -->
 
     <link rel="stylesheet" href="{% static 'ipa_2/profile/anchorsStyle.css' %}">
   </head>
   <body id="body">
+
+    <div id="experimenterCodeDiv" class="text-center item" style="width: 50%; margin: auto;"><label for="pA_Ba"> {{ off_order_instructions_dict.You_Ba  }}</label>
+      <!-- <input id="fname" type="text" name="You_Aa" required/> -->
+        <input type="text" id="experimenterCode" name="experimenterCode">
+        <button id="experimenterCodeButton" class="btn btn-primary btn" type="button" name="button">נסיין</button>
+    </div>
+
     <div id="featuresTable">
       <table>
         <tr class="thirdScreen">
@@ -54,6 +62,10 @@
         </td>
 
         <td id="rightCell">
+          <div class="text-center">
+            <button id="meButton" class="btn btn-primary btn" type="button" name="button">אני</button>
+            <button id="otherButton" class="btn btn-primary btn" type="button" name="button">האחר.ת</button>
+          </div>
           <div class="slidecontainer text-center">
             </div>
             <div class="text-center">

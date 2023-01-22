@@ -120,6 +120,8 @@ function startReportPhase(){
     reportT0 = new Date();
   };
   UpdateGame(); // function from gameLogic.js
+  emptyMatrixCells()
+  gameMatrixSection.style.display = "block";
   featuresTable.style.display = "none";
   slidecontainer.innerHTML = "";
   instrucionSection.style.display = "block";
@@ -237,8 +239,6 @@ function ProfileCountDown() {
   inTaskInstructions.style.display = "block";
   if(isProfilePresentedAgain){
     inTaskInstructionsText.innerHTML = presentAgainText;
-
-
   } else {
     inTaskInstructionsText.innerHTML = beforeNewProfileText;
     changeWords();

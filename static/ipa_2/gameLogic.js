@@ -68,6 +68,22 @@ function updateMatrixCells() {
   Bother.textContent = stratgies[1];
 }
 
+function emptyMatrixCells() {
+  aChoice.textContent = stratgies[0];
+  bChoice.textContent = stratgies[1];
+  Aother.textContent = stratgies[0];
+  Bother.textContent = stratgies[1];
+  
+  youAa.textContent = " ";
+  youAb.textContent = " ";
+  youBa.textContent = " ";
+  youBb.textContent = " ";
+  otherAa.textContent = " ";
+  otherAb.textContent = " ";
+  otherBa.textContent = " ";
+  otherBb.textContent = " ";
+}
+
 for (var j = 0; j < cells[0].length; j++) {
   cellAa[j].addEventListener("mouseover", function(){HighLightCell(cellAa)});
   cellAa[j].addEventListener("mouseout", function(){HighLightCell(cellAa)});

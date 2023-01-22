@@ -20,7 +20,7 @@ function InjectProfileDataToHTMLFull(title, right_end, left_end, value, feature_
     <div class="row"> \
       <div class="column sideFull">'+ left_end + '</div> \
       <div class="column middleFull"> \
-      <canvas class="featureCanvas" id="' + "ID_" + feature_name + left_end + '" width="440" height="35" style="border:0px solid black;"></canvas>\
+      <canvas class="featureCanvas" id="' + "ID_" + feature_name + left_end + '" width="460" height="35" style="border:0px solid black;"></canvas>\
       </div>\
       <div class="column sideFull">'+ right_end + '</div>\
   </div>';
@@ -39,7 +39,12 @@ function changeWords() {
     inTaskInstructionsText.innerHTML = inTaskInstructionsText.innerHTML.replace("השונים", "השונות");
   }
 }
-
+function changeFontSizeFull(fontSize) {
+  var cols = document.getElementsByClassName('sideFull');
+  for(i = 0; i < cols.length; i++) {
+    cols[i].style.fontSize  = fontSize + "px";
+  }
+}
 function paintCanvasesOtherFeture(feature_name, value, value_s) {
   var c = document.getElementById("ID_"+feature_name);
   var ctx = c.getContext("2d");
@@ -111,7 +116,7 @@ function InitializeProfilePresentationFull(current_profile){
     }
   }
   if(subject_group=="C"){
-    changeFontSize(24);
+    changeFontSizeFull(25);
   }
   setTimeout(function(){
     for (ii=0; ii<features_list.length; ii++ ) {

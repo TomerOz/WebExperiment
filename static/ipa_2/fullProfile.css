@@ -108,8 +108,10 @@ button {
 
 #meButton {
   background: #8A2BE2;
+  width: 80px;
 }
 
 #otherButton {
   background: #FFAE42;
+  width: 80px;
 }

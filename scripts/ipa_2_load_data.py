@@ -258,7 +258,7 @@ def run():
     # create_contexts()
     # create_models() # updte sensitive
     # create_ecological_profiles()
-    # create_games_matrices()
+    create_games_matrices()
 
     # squezze_in_new_phases()
     # create_n_pilot_profiles(3)

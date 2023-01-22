@@ -3,24 +3,43 @@ var profileContainer = document.getElementById("fullProfileContainer");
 
 var BetweenProfilesInterval = 1000// 1000; // 1 seconds between profiles
 var correctPass = "E22Gaya";
-var timeSelfProfile = 1500;
-var timeSelfOtherProfile = 1500;
+var timeSelfProfile = 3000;
+var timeSelfOtherProfile = 6000;
 var timeToReport = 0;
 var InstructionsText1 = reportText1.textContent;
 var InstructionsText2 = reportText2.textContent;
 var InstructionsText3 = reportText3.textContent;
+
+var a_features_reff_name_1 = a_features_1.textContent;
+var a_features_reff_name_2 = a_features_2.textContent;
+var c_features_reff_name_1 = c_features_1.textContent;
+var c_features_reff_name_2 = c_features_2.textContent;
 
 function InjectProfileDataToHTMLFull(title, right_end, left_end, value, feature_name){
   basicProfileHTMLText = '<h3 id="title">'+ feature_name + '</h3>\
     <div class="row"> \
       <div class="column sideFull">'+ left_end + '</div> \
       <div class="column middleFull"> \
-      <canvas class="featureCanvas" id="' + "ID_" + feature_name + '" width="440" height="35" style="border:0px solid black;"></canvas>\
+      <canvas class="featureCanvas" id="' + "ID_" + feature_name + left_end + '" width="440" height="35" style="border:0px solid black;"></canvas>\
       </div>\
       <div class="column sideFull">'+ right_end + '</div>\
   </div>';
     return basicProfileHTMLText;
 };
+
+function changeWords() {
+  if (subject_group == "C"){
+    instrucion.innerHTML = instrucion.innerHTML.replace(a_features_reff_name_1, c_features_reff_name_1);
+    instrucion.innerHTML = instrucion.innerHTML.replace(a_features_reff_name_2, c_features_reff_name_2);
+    instrucion.innerHTML = instrucion.innerHTML.replace("האישיים", "");
+
+    inTaskInstructionsText.innerHTML = inTaskInstructionsText.innerHTML.replace(a_features_reff_name_1, c_features_reff_name_1);
+    inTaskInstructionsText.innerHTML = inTaskInstructionsText.innerHTML.replace(a_features_reff_name_2, c_features_reff_name_2);
+    inTaskInstructionsText.innerHTML = inTaskInstructionsText.innerHTML.replace("האישיים", "");
+    inTaskInstructionsText.innerHTML = inTaskInstructionsText.innerHTML.replace("השונים", "השונות");
+  }
+}
+
 function paintCanvasesOtherFeture(feature_name, value, value_s) {
   var c = document.getElementById("ID_"+feature_name);
   var ctx = c.getContext("2d");
@@ -34,6 +53,7 @@ function paintCanvasesOtherFeture(feature_name, value, value_s) {
 
   ctx.stroke()
   instrucion.innerHTML = InstructionsText2;
+  changeWords();
 }
 
 function paintSelfFeature(feature_name, value) {
@@ -42,7 +62,7 @@ function paintSelfFeature(feature_name, value) {
   ctx.beginPath();
   // scale:
   ctx.fillStyle = "#d3d3d3";
-  ctx.fillRect(20, 10, 400, 20);
+  ctx.fillRect(20, 10, 420, 20);
   // self value:
   ctx.fillStyle = "#8A2BE2";
   ctx.fillRect(value*4 + 20, 9, 20, 22);
@@ -80,13 +100,14 @@ function InitializeProfilePresentationFull(current_profile){
   profileContainer.innerHTML = text_1;
 
   instrucion.innerHTML = InstructionsText1;
+  changeWords();
 
   for (i=0; i<features_list.length; i++ ) {
     feature = features_list[i]
     right_end, left_end, value, feature_name = GetProfileFeatureDataFull(subject_features[feature]);
     // check if the property/key is defined in the object itself, not in parent
     if (profile_features.hasOwnProperty(feature)) {
-      paintSelfFeature(feature_name, value);
+      paintSelfFeature(feature_name+left_end, value);
     }
   }
   if(subject_group=="C"){
@@ -99,12 +120,13 @@ function InitializeProfilePresentationFull(current_profile){
       value_s = subject_features[feature].value
       // check if the property/key is defined in the object itself, not in parent
       if (profile_features.hasOwnProperty(feature)) {
-        paintCanvasesOtherFeture(feature_name, value, value_s);
+        paintCanvasesOtherFeture(feature_name+left_end, value, value_s);
       }
     }
   }, timeSelfProfile);
   setTimeout(function(){
     instrucion.innerHTML = InstructionsText3;
+    changeWords();
 
   }, timeSelfProfile+ timeSelfOtherProfile);
   reportTable.style.display = 'block';

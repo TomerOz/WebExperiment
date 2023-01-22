@@ -63,9 +63,6 @@
 
         <td id="rightCell">
           <div class="text-center">
-            <button id="meButton" class="btn btn-primary btn" type="button" name="button">אני</button>
-            <button id="otherButton" class="btn btn-primary btn" type="button" name="button">האחר.ת</button>
-            <br>
           </div>
           <div class="slidecontainer text-center">
             </div>
@@ -78,7 +75,7 @@
                       <tr>
                         <td class="no-border"></td>
                         <td class="no-border"></td>
-                        <td class="no-border" colspan="4">האחר</td>
+                        <td class="no-border otherColor" colspan="4">המשתתף האחר</td>
                       </tr>
                       <tr>
                         <td class="no-border"></td>
@@ -87,7 +84,7 @@
                         <td id="Bother" class="otherColor" colspan="2">{{game.strategy_b}}</td>
                       </tr>
                       <tr class="A TopRow">
-                        <td id="youArea" colspan="1" rowspan="4">אתה</td>
+                        <td id="youArea" colspan="1" rowspan="4" class="selfColor">אני</td>
                         <td id="A" class="choiceButton selfColor" rowspan="2">{{game.strategy_a}}</td>
                         <!-- A or B stands for row choice, a or b stands for col choice -->
                         <!-- pA or pB stands for how much a p(player) A or B gets in each cell-->
@@ -145,7 +142,6 @@
       <div id="NextProfileButtonSection"class="container text-center">
         <div id="presentProfileAgainButtonSection"class="container text-center spaceDownButtons">
           <button id="NextProfileButton" class="btn btn-primary btn spaced-buttons" type="button" name="button">{{ off_order_instructions_dict.continueToNextProfileButtonText }}</button>
-          <button id="presentProfileAgainButton" class="btn btn-primary btn spaced-buttons" type="button" name="button">{{ off_order_instructions_dict.pesentAgainButtonText }}</button>
         </div>
       </div>
 
@@ -156,6 +152,12 @@
       <p style="display:none" id="reportText1">{{off_order_instructions_dict.reportText1}}</p>
       <p style="display:none" id="reportText2">{{off_order_instructions_dict.reportText2}}</p>
       <p style="display:none" id="reportText3">{{off_order_instructions_dict.reportText3}}</p>
+
+      <p style="display:none" id="a_features_1">{{off_order_instructions_dict.a_features_text_1}}</p>
+      <p style="display:none" id="a_features_2">{{off_order_instructions_dict.a_features_text_2}}</p>
+      <p style="display:none" id="c_features_1">{{off_order_instructions_dict.c_features_text_1}}</p>
+      <p style="display:none" id="c_features_2">{{off_order_instructions_dict.c_features_text_2}}</p>
+
 
       <script>
         var b = document.getElementsByTagName("body")[0];

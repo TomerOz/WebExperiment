@@ -57,7 +57,7 @@ EXPERIMENT_NAME = "ipa_2"
 EXPERIMENT_FIRST_SESSION = {"ipa_1_2" : 2, "ipa_2": 1}
 
 ps_l = 0.55
-ps_h = 0.8
+ps_h = 0.75
 
 ## Assistant functions: ###############################################################################################################################################
 # saves subject model with the new phase

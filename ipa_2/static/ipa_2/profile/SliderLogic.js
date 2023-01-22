@@ -10,7 +10,6 @@ var gameMatrixSection = document.getElementById("GameMatrixSection");
 var instrucionSection = document.getElementById("instrucion");
 var nextProfileButtonSection = document.getElementById("NextProfileButtonSection");
 var trialFeatureOrder = document.getElementById("trialFeatureOrder");
-var presentProfileAgainButton = document.getElementById("presentProfileAgainButton");
 var featuresTable = document.getElementById("featuresTable");
 var nextFeatureButton = document.getElementById("nextFeatureButton");
 var inTaskInstructions = document.getElementById("inTaskInstructions");
@@ -22,11 +21,10 @@ inTaskInstructions.style.display = "none";
 
 const event = new Event('NewProfile');
 
-var preProfileTime = 3000; //5000;
-var buttonActivationDelay = 12; //3000; // cnages in presentProfileAgain
+var preProfileTime = 5000; //5000;
+var buttonActivationDelay = 3000; //3000; // cnages in presentProfileAgain
 var current_profile = 0; //0; //
-var featuresPresentaionNumber = 2; // 1 // indicating the first presentaion
-// change back "feature_presentaion_index" in L.245 to "-1"
+var featuresPresentaionNumber = 1; // 1 // indicating the first presentaion
 var feature_presentaion_index;
 var minwWordsPerDescription = 0;
 var buttonActivationDelayOriginal = buttonActivationDelay // 3000
@@ -238,14 +236,16 @@ function ProfileCountDown() {
   featuresTable.style.display = "block";
   inTaskInstructions.style.display = "block";
   if(isProfilePresentedAgain){
-    inTaskInstructionsText.innerHTML = presentAgainText
+    inTaskInstructionsText.innerHTML = presentAgainText;
+
 
   } else {
-    inTaskInstructionsText.innerHTML = beforeNewProfileText
+    inTaskInstructionsText.innerHTML = beforeNewProfileText;
+    changeWords();
   }
   setTimeout(function(){
     inTaskInstructions.style.display = "none";
-    feature_presentaion_index = 7; // =-1
+    feature_presentaion_index = -1;
     startReportPhase();
     window.scrollTo(0, 0);
     nextFeatureButton.style.display = "block";
@@ -314,7 +314,6 @@ function delayActivateButton(){
 nextFeatureButton.addEventListener("click", function() {InitializeProfilePresentation(current_profile)});
 nextFromInstructionsButton.addEventListener("click", startNextTrial);
 nextProfileButton.addEventListener("click",startNextTrial);
-presentProfileAgainButton.addEventListener("click", PresentProfileAgain);
 
 nextProfileButton.disabled = true;
 

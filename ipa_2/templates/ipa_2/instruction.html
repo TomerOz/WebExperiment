@@ -26,10 +26,16 @@
       <button class="btn btn-primary btn-lg" id="NextInstructionButton" type="button" name="button">{{ off_order_instructions_dict.nextButtonText }}</button>
     </form>
   </div>
+  <p style="display:none" id="a_features_1">{{off_order_instructions_dict.a_features_text_1}}</p>
+  <p style="display:none" id="a_features_2">{{off_order_instructions_dict.a_features_text_2}}</p>
+  <p style="display:none" id="c_features_1">{{off_order_instructions_dict.c_features_text_1}}</p>
+  <p style="display:none" id="c_features_2">{{off_order_instructions_dict.c_features_text_2}}</p>
+
     <script>
      var instructions_list = {{instructions_list|safe}}
      var wordsToHighlight = {{words_to_highlight|safe}}
      var picturesPaths = {{pictures_paths|safe}}
+     var subject_group = "{{ subject_group }}"
 
     </script>
 
